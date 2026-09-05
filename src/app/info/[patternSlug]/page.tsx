@@ -33,7 +33,7 @@ function injectNofollow(html: string): string {
 async function getPatternData(patternSlug: string) {
     try {
         const response = await fetchFromBackend(`/patterns/${patternSlug}`, {
-            next: { revalidate: 3600, tags: [`pattern-${patternSlug}`] }
+            next: { tags: [`pattern-${patternSlug}`] }
         });
 
         if (!response.ok) {

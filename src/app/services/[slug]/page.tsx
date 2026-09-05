@@ -26,7 +26,7 @@ import ServiceChapterDots, { ServiceChapterItem } from "@/components/services/Se
 import ServiceMobileCta from "@/components/services/ServiceMobileCta";
 import PricingSection from "@/components/Pricing/PricingSection";
 
-export const revalidate = 3600;
+export const revalidate = false; // Pure On-Demand ISR: cached permanently on Edge CDN until webhook purge
 
 export async function generateStaticParams() {
     try {
@@ -52,7 +52,7 @@ interface ServiceParams {
 async function getServiceData(slug: string, pageUrl?: string): Promise<ServiceData | null> {
     try {
         const response = await fetchFromBackend(`/services/${slug}`, {
-            next: { revalidate: 3600, tags: ['services'] }
+            next: { tags: [`service-${slug}`, 'services'] }
         });
 
         if (!response.ok) {

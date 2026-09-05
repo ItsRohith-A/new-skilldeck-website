@@ -35,6 +35,7 @@ import RouteProgressBar from "@/components/shared/RouteProgressBar";
 import ScrollToTopOnRefresh from "@/components/shared/ScrollToTopOnRefresh";
 import { Suspense } from "react";
 import DynamicScripts from "@/lib/DynamicScripts";
+import UtmTracker from "@/components/shared/UtmTracker";
 import Script from "next/script";
 
 export default function RootLayout({
@@ -53,7 +54,7 @@ export default function RootLayout({
       "@id": "https://skilldeck.net/#organization"
     }
   };
-
+  
   const orgSchema = {
     "@context": "https://schema.org",
     "@type": "Organization",
@@ -98,6 +99,7 @@ export default function RootLayout({
         <ScrollToTopOnRefresh />
         <DynamicScripts />
         <Suspense fallback={null}>
+          <UtmTracker />
           <RouteProgressBar />
         </Suspense>
         <GeoLocationInitializer />

@@ -1,5 +1,4 @@
-import { IPlan, PlanStatus, PlanInterval } from "@/types/interface-lib";
-
+import { IPlan } from "@/types/interface-lib";
 export interface PricingPlan extends IPlan {
     uiMetadata: {
         isHighlighted: boolean;
@@ -66,7 +65,7 @@ export const fetchPlans = async (currency?: string): Promise<PricingPlan[]> => {
         const url = `${apiUrl}/api/v1/admin/plans${queryString ? `?${queryString}` : ""}`;
 
         const response = await fetch(url, {
-            next: { revalidate: 3600, tags: ['plans'] }
+            next: { tags: ['plans'] }
         });
 
         if (!response.ok) {

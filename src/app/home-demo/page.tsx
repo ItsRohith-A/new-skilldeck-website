@@ -14,7 +14,7 @@ export const metadata: Metadata = {
     },
 };
 
-export const revalidate = 3600;
+export const revalidate = false;
 
 // Internal-only design reference — a redesign of the homepage against the real
 // content set. Does not touch or replace the production "/" route.

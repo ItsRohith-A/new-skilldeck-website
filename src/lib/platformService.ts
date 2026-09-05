@@ -29,7 +29,7 @@ export interface PlatformSchedule {
 export async function getBlogs(page = 1, limit = 20) {
     try {
         const res = await fetch(`${BASE_URL}/blogs?page=${page}&limit=${limit}`, {
-            next: { revalidate: 3600, tags: ['blogs'] }
+            next: { tags: ['blogs'] }
         });
         if (!res.ok) throw new Error("Failed to fetch blogs");
         return await res.json();
@@ -71,7 +71,7 @@ export const getSchedules = cache(async (params: {
         console.log("[platformService] getSchedules URL:", finalUrl);
 
         const res = await fetch(finalUrl, {
-            next: { revalidate: 3600, tags: ['schedules'] }
+            next: { tags: ['schedules'] }
         });
         if (!res.ok) throw new Error("Failed to fetch schedules");
 
@@ -168,7 +168,7 @@ export async function getTenants(params: {
 export async function getTenantProfile(id: string) {
     try {
         const res = await fetch(`${BASE_URL}/tenants/${id}?fields=all`, {
-            next: { revalidate: 3600, tags: ['tenants'] }
+            next: { tags: ['tenants'] }
         });
         if (!res.ok) {
             return null;

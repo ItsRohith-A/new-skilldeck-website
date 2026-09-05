@@ -10,6 +10,7 @@ import ToastNotification from '../Notification';
 import { formValidation } from './FormValidation';
 import PhoneInput from './PhoneInput';
 import TurnstileWidget from './TurnstileWidget';
+import { getAttributionData } from '@/lib/utm';
 
 // ============================================
 // Reusable Form Components
@@ -349,6 +350,7 @@ const GenericForm: React.FC<GenericFormProps> = ({
 
         setIsSubmitting(true);
         try {
+            const attribution = getAttributionData();
             const submissionData = {
                 email: formData.email,
                 fullName: formData.firstname,
@@ -359,12 +361,13 @@ const GenericForm: React.FC<GenericFormProps> = ({
                 message: formData.message,
                 pagePath: formData.page || (typeof window !== 'undefined' ? window.location.pathname : ''),
                 formId: formId,
-                referrer: typeof document !== 'undefined' ? (localStorage.getItem('initial_referrer') || document.referrer || '-') : '-',
-                utmSource: getUTMParam('utm_source'),
-                utmMedium: getUTMParam('utm_medium'),
-                utmCampaign: getUTMParam('utm_campaign'),
-                utmTerm: getUTMParam('utm_term'),
-                utmContent: getUTMParam('utm_content'),
+                referrer: attribution.referrer || (typeof document !== 'undefined' ? (localStorage.getItem('initial_referrer') || document.referrer || '-') : '-'),
+                utmSource: attribution.utmSource || getUTMParam('utm_source'),
+                utmMedium: attribution.utmMedium || getUTMParam('utm_medium'),
+                utmCampaign: attribution.utmCampaign || getUTMParam('utm_campaign'),
+                utmTerm: attribution.utmTerm || getUTMParam('utm_term'),
+                utmContent: attribution.utmContent || getUTMParam('utm_content'),
+                gclid: attribution.gclid,
                 customFields: {
                     company: formData.company,
                     designation: formData.designation,

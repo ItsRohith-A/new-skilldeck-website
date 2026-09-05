@@ -25,7 +25,7 @@ export const metadata: Metadata = {
     },
 };
 
-export const revalidate = 3600;
+export const revalidate = false; // Pure On-Demand ISR: cached permanently until webhook tag/path purge
 
 export default async function Page() {
     const [plans, partnerLogos, services] = await Promise.all([

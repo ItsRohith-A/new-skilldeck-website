@@ -33,22 +33,104 @@ export async function POST(request: NextRequest) {
 
     const purgeUrls: string[] = [...urls];
 
-    // ── Adapt every branch below to this project's actual page routes ──
-    if ((type === 'course' || type === 'schedule') && slug && categorySlug) {
-        revalidatePath(`/${categorySlug}/${slug}`);
-        purgeUrls.push(`${SITE_URL}/${categorySlug}/${slug}`);
+    // ── Adapt every branch below to match backend cacheInvalidation types ──
+    if ((type === 'course' || type === 'courses' || type === 'schedule' || type === 'schedules') && slug) {
+        // Granular purge: only this specific course and its schedule
+        revalidateTag(`course-${slug}`, 'max');
+        revalidateTag(`schedules-${slug}`, 'max');
+        if (categorySlug) {
+            revalidatePath(`/${categorySlug}/${slug}`);
+            purgeUrls.push(`${SITE_URL}/${categorySlug}/${slug}`);
+        }
         revalidatePath(`/schedules/${slug}`);
         purgeUrls.push(`${SITE_URL}/schedules/${slug}`);
-    } else if (type === 'category' && slug) {
-        revalidatePath(`/${slug}`);
-        purgeUrls.push(`${SITE_URL}/${slug}`);
-    } else if (type === 'service' && slug && categorySlug) {
-        revalidatePath(`/services/${categorySlug}/${slug}`);
-        purgeUrls.push(`${SITE_URL}/services/${categorySlug}/${slug}`);
-    } else if (type === 'blog' && slug) {
-        revalidatePath('/blog');
-        revalidatePath(`/blog/${slug}`);
-        purgeUrls.push(`${SITE_URL}/blog`, `${SITE_URL}/blog/${slug}`);
+    } else if (type === 'course' || type === 'courses') {
+        revalidateTag('courses', 'max');
+        revalidatePath('/', 'layout');
+    } else if (type === 'category' || type === 'categories') {
+        if (slug) {
+            revalidateTag(`category-${slug}`, 'max');
+            revalidatePath(`/${slug}`);
+            purgeUrls.push(`${SITE_URL}/${slug}`);
+        } else {
+            revalidateTag('categories', 'max');
+            revalidateTag('courses', 'max');
+        }
+    } else if (type === 'service' || type === 'services') {
+        if (slug) {
+            revalidateTag(`service-${slug}`, 'max');
+            revalidatePath(`/services/${slug}`);
+            purgeUrls.push(`${SITE_URL}/services/${slug}`);
+        } else {
+            revalidateTag('services', 'max');
+            revalidateTag('service-categories', 'max');
+            revalidatePath('/');
+        }
+    } else if (type === 'service-category' || type === 'service-categories') {
+        revalidateTag('service-categories', 'max');
+        revalidateTag('services', 'max');
+        revalidatePath('/');
+    } else if (type === 'blog' || type === 'blogs') {
+        if (slug) {
+            revalidateTag(`blog-${slug}`, 'max');
+            revalidatePath(`/blog/${slug}`);
+            purgeUrls.push(`${SITE_URL}/blog/${slug}`);
+            revalidatePath('/blog');
+            purgeUrls.push(`${SITE_URL}/blog`);
+        } else {
+            revalidateTag('blogs', 'max');
+            revalidatePath('/blog');
+        }
+    } else if (type === 'trainer' || type === 'trainers') {
+        if (slug) {
+            revalidateTag(`course-${slug}`, 'max');
+            if (categorySlug) revalidatePath(`/${categorySlug}/${slug}`);
+        } else {
+            revalidateTag('courses', 'max');
+        }
+    } else if (type === 'pattern' || type === 'patterns') {
+        if (slug) {
+            revalidateTag(`pattern-${slug}`, 'max');
+            revalidatePath(`/info/${slug}`);
+            purgeUrls.push(`${SITE_URL}/info/${slug}`);
+        } else {
+            revalidateTag('patterns', 'max');
+        }
+    } else if (type === 'plan' || type === 'plans' || type === 'pricing') {
+        // SkillDeck SaaS Subscription Plans (/pricing & homepage)
+        revalidateTag('plans', 'max');
+        revalidatePath('/pricing');
+        revalidatePath('/');
+        purgeUrls.push(`${SITE_URL}/pricing`, `${SITE_URL}/`);
+    } else if (type === 'pricing-template' || type === 'pricing-templates') {
+        // Schedule Pricing Templates
+        revalidateTag('schedules', 'max');
+        revalidateTag('plans', 'max');
+        revalidatePath('/pricing');
+        revalidatePath('/');
+        purgeUrls.push(`${SITE_URL}/pricing`, `${SITE_URL}/`);
+    } else if (type === 'llms-txt' || type === 'llms.txt') {
+        revalidatePath('/llms.txt');
+        purgeUrls.push(`${SITE_URL}/llms.txt`);
+    } else if (type === 'ribbons' || type === 'ribbon') {
+        revalidateTag('footer', 'max');
+        revalidateTag('scripts', 'max');
+        revalidatePath('/', 'layout');
+        purgeUrls.push(`${SITE_URL}/*`);
+    } else if (type === 'scripts') {
+        revalidateTag('scripts', 'max');
+        revalidatePath('/', 'layout');
+        purgeUrls.push(`${SITE_URL}/*`);
+    } else if (type === 'tenant' || type === 'tenants' || type === 'company') {
+        revalidateTag('tenants', 'max');
+        if (slug) {
+            revalidatePath(`/companies/${slug}`);
+            purgeUrls.push(`${SITE_URL}/companies/${slug}`);
+        }
+        revalidatePath('/companies');
+    } else if (type === 'testimonial' || type === 'testimonials') {
+        revalidateTag('testimonials', 'max');
+        revalidatePath('/', 'layout');
     } else if (type === 'footer') {
         revalidateTag('footer', 'max');
         revalidatePath('/', 'layout');

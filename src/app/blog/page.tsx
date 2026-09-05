@@ -10,7 +10,7 @@ import BlogGridSkeleton from "@/components/Blogs/CategoryAndBlogsListing/element
 import CourseRelatedLinks from "@/components/category/courses/overview/CourseRelatedLinks";
 import { getCityContentByPath } from "@/lib/seo-registry";
 
-export const revalidate = 3600; // Revalidate every 1 hour (on-demand webhook handles updates)
+export const revalidate = false; // Pure On-Demand ISR: cached permanently on Edge CDN until webhook purge
 
 const baseUrl = env.NEXT_PUBLIC_SITE_URL || 'https://skilldeck.net';
 
