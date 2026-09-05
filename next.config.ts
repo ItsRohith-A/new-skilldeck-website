@@ -16,6 +16,8 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "cloud-local.skilldeck.net" },
       { protocol: "https", hostname: "img.youtube.com" },
       { protocol: "https", hostname: "flagcdn.com" },
+      // Stock photography for the /service-demo design concept.
+      { protocol: "https", hostname: "images.unsplash.com" },
     ],
     formats: ["image/avif", "image/webp"],
     minimumCacheTTL: 31536000,
