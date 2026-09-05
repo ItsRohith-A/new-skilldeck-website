@@ -1,5 +1,6 @@
 import { useIpLocation } from '@/hooks/useIpLocation';
 import { allCountries } from '@/lib/countryData';
+import { getAttributionData } from '@/lib/utm';
 import { ArrowRight, Calendar, Check, Mail, MessageSquare, User } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
@@ -211,6 +212,7 @@ const CompanyForm: React.FC<CompanyFormProps> = ({ onClose, className = '', tena
 
 
         try {
+            const attribution = getAttributionData();
             const payload = {
                 ...formData,
                 phone: `${phoneDialCode}${formData.phone}`,
@@ -219,12 +221,13 @@ const CompanyForm: React.FC<CompanyFormProps> = ({ onClose, className = '', tena
                 turnstileToken,
                 tenantId, // Ensure this is not undefined
                 pagePath: pathname,
-                referrer: typeof document !== 'undefined' ? (localStorage.getItem('initial_referrer') || document.referrer || '-') : '-',
-                utmSource: getUTMParam('utm_source'),
-                utmMedium: getUTMParam('utm_medium'),
-                utmCampaign: getUTMParam('utm_campaign'),
-                utmTerm: getUTMParam('utm_term'),
-                utmContent: getUTMParam('utm_content'),
+                referrer: attribution.referrer || (typeof document !== 'undefined' ? (localStorage.getItem('initial_referrer') || document.referrer || '-') : '-'),
+                utmSource: attribution.utmSource || getUTMParam('utm_source'),
+                utmMedium: attribution.utmMedium || getUTMParam('utm_medium'),
+                utmCampaign: attribution.utmCampaign || getUTMParam('utm_campaign'),
+                utmTerm: attribution.utmTerm || getUTMParam('utm_term'),
+                utmContent: attribution.utmContent || getUTMParam('utm_content'),
+                gclid: attribution.gclid,
                 participantsCount: 1,
                 scheduleId,
                 courseId,

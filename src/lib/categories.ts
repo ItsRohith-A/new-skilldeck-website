@@ -10,7 +10,7 @@ export const getCategories = cache(async () => {
         limit: "100",
       }),
       cache: "force-cache",
-      next: { revalidate: 3600, tags: ['categories', 'courses'] },
+      next: { tags: ['categories', 'courses'] },
     });
 
     if (!catRes.ok) return [];
@@ -23,7 +23,7 @@ export const getCategories = cache(async () => {
     const firstPageRes = await fetchFromBackend("/courses", {
       queryParams: new URLSearchParams({ limit: limit.toString(), page: "1", select: courseFields }),
       cache: "force-cache",
-      next: { revalidate: 3600, tags: ['categories', 'courses'] },
+      next: { tags: ['categories', 'courses'] },
     });
 
     if (!firstPageRes.ok) return [];
@@ -40,7 +40,7 @@ export const getCategories = cache(async () => {
           fetchFromBackend("/courses", {
             queryParams: new URLSearchParams({ limit: limit.toString(), page: p.toString(), select: courseFields }),
             cache: "force-cache",
-            next: { revalidate: 3600, tags: ['categories', 'courses'] },
+            next: { tags: ['categories', 'courses'] },
           }).then((res) => (res.ok ? res.json() : { data: [] }))
         );
       }
@@ -85,7 +85,7 @@ export const getCategoryPageCourses = cache(async (categorySlug: string) => {
         const firstPageRes = await fetchFromBackend('/courses', {
             queryParams: new URLSearchParams({ limit: limit.toString(), page: '1', select: courseFields }),
             cache: 'force-cache',
-            next: { revalidate: 3600, tags: ['categories', 'courses'] }
+            next: { tags: ['categories', 'courses'] }
         });
 
         if (!firstPageRes.ok) return { data: [], meta: { total: 0, page: 1, limit: 6, pages: 0 } };
@@ -101,7 +101,7 @@ export const getCategoryPageCourses = cache(async (categorySlug: string) => {
                     fetchFromBackend('/courses', {
                         queryParams: new URLSearchParams({ limit: limit.toString(), page: p.toString(), select: courseFields }),
                         cache: 'force-cache',
-                        next: { revalidate: 3600, tags: ['categories', 'courses'] }
+                        next: { tags: ['categories', 'courses'] }
                     }).then(res => res.ok ? res.json() : { data: [] })
                 );
             }

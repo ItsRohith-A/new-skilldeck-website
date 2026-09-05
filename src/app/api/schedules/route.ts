@@ -10,7 +10,7 @@ export async function GET(request: NextRequest) {
             request,
             queryParams: searchParams,
             prefix: "/api/v1/skilldeck",
-            next: { revalidate: 3600, tags: ['schedules'] }
+            next: { tags: ['schedules'] }
         });
 
         if (!response.ok) {

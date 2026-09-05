@@ -35,7 +35,7 @@ export default async function DynamicScripts() {
     let activeScripts: ScriptItem[] = [];
 
     try {
-        const response = await fetchFromBackend("/scripts", { next: { tags: ['scripts'], revalidate: 3600 } });
+        const response = await fetchFromBackend("/scripts", { next: { tags: ['scripts'] } });
 
         if (response.ok) {
             const data: ScriptsResponse = await response.json();

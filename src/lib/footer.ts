@@ -6,7 +6,7 @@ export * from "@/types/footer";
 export async function getFooterData(): Promise<FooterData | null> {
     try {
         const response = await fetchFromBackend("/footer", {
-            next: { revalidate: 3600, tags: ["footer"] }
+            next: { tags: ["footer"] }
         });
 
         if (!response.ok) {

@@ -9,7 +9,7 @@ export async function GET(request: NextRequest) {
         const response = await fetchFromBackend("/testimonials", {
             request,
             queryParams: searchParams,
-            next: { revalidate: 3600, tags: ['testimonials'] }
+            next: { tags: ['testimonials'] }
         });
 
         if (!response.ok) {

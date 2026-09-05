@@ -32,7 +32,7 @@ const faqs = [
     },
 ];
 
-export const revalidate = 3600; // Cache on CDN for 1 hour; client-side hook dynamically resolves currency
+export const revalidate = false; // Pure On-Demand ISR: cached permanently on Edge CDN until webhook purge
 
 export default async function PricingPage() {
     // Fetch default USD plans on server for the initial SSR skeleton.

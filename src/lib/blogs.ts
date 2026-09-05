@@ -9,7 +9,7 @@ export const fetchCategories = async (pageUrl?: string): Promise<BlogCategory[]>
     try {
         // endpoint changed to /blogs/categories because fetchFromBackend prepends API_BASE_URL
         const response = await fetchFromBackend('/blogs/categories', {
-            next: { revalidate: 3600, tags: ['blogs'] }
+            next: { tags: ['blogs'] }
         });
 
         if (!response.ok) {
@@ -62,7 +62,7 @@ export const fetchBlogs = async (category: string = 'All', queryParams: BlogQuer
         // endpoint changed to /blogs because fetchFromBackend prepends API_BASE_URL
         const response = await fetchFromBackend('/blogs', {
             queryParams: params,
-            next: { revalidate: 3600, tags: ['blogs'] }
+            next: { tags: ['blogs'] }
         });
 
         if (!response.ok) {
@@ -114,7 +114,7 @@ export const fetchAggregatedBlogs = async (queryParams: BlogQueryParams = {}, pa
             headers: {
                 'x-api-key': env.API_KEY,
             },
-            next: { revalidate: 3600, tags: ['blogs'] }
+            next: { tags: ['blogs'] }
         });
 
         if (!res.ok) {
@@ -184,7 +184,7 @@ export const fetchBlogBySlug = async (slug: string, blogId?: string, pageUrl?: s
             headers: {
                 'x-api-key': env.API_KEY,
             },
-            next: { revalidate: 3600, tags: ['blogs'] }
+            next: { tags: [`blog-${slug}`, 'blogs'] }
         });
 
         if (res.ok) {
@@ -208,7 +208,7 @@ export const fetchBlogBySlug = async (slug: string, blogId?: string, pageUrl?: s
 
         // Fallback to the original tenant-specific blog fetch if not found in aggregated
         const response = await fetchFromBackend(`/blogs/${slug}`, {
-            next: { revalidate: 3600, tags: ['blogs'] }
+            next: { tags: [`blog-${slug}`, 'blogs'] }
         });
 
         if (response.ok) {

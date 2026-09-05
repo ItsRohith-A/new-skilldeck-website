@@ -15,7 +15,7 @@ export const getPartnerLogos = cache(async (limit = 50): Promise<PartnerLogo[]> 
         const res = await fetchFromBackend("/tenants", {
             queryParams: new URLSearchParams({ fields: "logo,legalName", limit: String(limit) }),
             prefix: "/api/v1/skilldeck",
-            next: { revalidate: 3600, tags: ["tenants"] },
+            next: { tags: ["tenants"] },
         });
 
         if (!res.ok) return [];

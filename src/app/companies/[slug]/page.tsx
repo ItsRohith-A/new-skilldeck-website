@@ -15,7 +15,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 
-export const revalidate = 3600;
+export const revalidate = false; // Pure On-Demand ISR: cached permanently on Edge CDN until webhook purge
 export const dynamicParams = true;
 
 // URL: /companies/[slug]?id=<tenantId>

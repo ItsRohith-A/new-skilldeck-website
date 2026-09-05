@@ -39,7 +39,7 @@ export const getServicesCategories = cache(async (): Promise<CategoryWithService
                 limit: "100",
             }),
             cache: "force-cache",
-            next: { revalidate: 3600, tags: ['service-categories', 'services'] },
+            next: { tags: ['service-categories', 'services'] },
         });
 
         if (!catRes.ok) return [];
@@ -53,7 +53,7 @@ export const getServicesCategories = cache(async (): Promise<CategoryWithService
                 select: "name,slug,servicecard,order,service_category_slug,serviceCategory"
             }),
             cache: "force-cache",
-            next: { revalidate: 3600, tags: ['service-categories', 'services'] },
+            next: { tags: ['service-categories', 'services'] },
         });
 
         const servicesData = servicesRes.ok ? await servicesRes.json() : { data: [] };
