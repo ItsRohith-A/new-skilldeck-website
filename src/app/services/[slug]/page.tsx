@@ -7,7 +7,7 @@ import Footer from "@/components/shared/Footer";
 import CourseRelatedLinks from "@/components/category/courses/overview/CourseRelatedLinks";
 import CourseAccordionSection from "@/components/category/courses/overview/CourseAccordionSection";
 import { fetchPlans } from "@/lib/plans";
-import { getServicesCategories } from "@/lib/services";
+import { getAllServices, getServicesCategories } from "@/lib/services";
 
 // Import modular components
 import { ServiceData } from "@/components/services/types";
@@ -22,6 +22,7 @@ import ServiceStrategyComponent from "@/components/services/ServiceStrategy";
 import ServiceWhyOpt from "@/components/services/ServiceWhyOpt";
 import ServiceBusiness from "@/components/services/ServiceBusiness";
 import ServiceFaq from "@/components/services/ServiceFaq";
+import ServiceMoreServices from "@/components/services/ServiceMoreServices";
 import ServiceChapterDots, { ServiceChapterItem } from "@/components/services/ServiceChapterDots";
 import ServiceMobileCta from "@/components/services/ServiceMobileCta";
 import PricingSection from "@/components/Pricing/PricingSection";
@@ -131,9 +132,12 @@ export default async function ServicePage({ params }: { params: Promise<ServiceP
     const siteUrl = env.NEXT_PUBLIC_SITE_URL || 'https://skilldeck.net';
     const pageUrl = `${siteUrl.replace(/\/$/, '')}/services/${slug}`;
 
-    const [service, plans] = await Promise.all([
+    const [service, plans, allServices] = await Promise.all([
         getServiceData(slug, pageUrl),
-        fetchPlans("USD")
+        fetchPlans("USD"),
+        // Cross-sell list. A failure here must not take the page down, so it
+        // degrades to an empty catalogue and the band simply does not render.
+        getAllServices().catch(() => [])
     ]);
 
     if (!service) {
@@ -210,6 +214,7 @@ export default async function ServicePage({ params }: { params: Promise<ServiceP
         (service.addons?.content?.points || []).length > 0 ||
         (service.addons?.highlight?.points || []).length > 0;
     const hasFaq = (service.faqs?.accordions || []).some((f) => f?.title);
+    const otherServices = allServices.filter((s) => s.slug && s.slug !== slug);
 
     const chapters: ServiceChapterItem[] = [
         ...(hasWhy ? [{ id: "why", label: "The Reality" }] : []),
@@ -219,6 +224,7 @@ export default async function ServicePage({ params }: { params: Promise<ServiceP
         ...(hasWhyOpt ? [{ id: "credentials", label: "Why SkillDeck" }] : []),
         ...(hasBusiness ? [{ id: "expertise", label: "Our Expertise" }] : []),
         ...(hasAddons ? [{ id: "addons", label: "Add-Ons" }] : []),
+        ...(otherServices.length > 0 ? [{ id: "more-services", label: "One Platform" }] : []),
         { id: "plans", label: "Plans" },
         ...(hasFaq ? [{ id: "faq", label: "FAQ" }] : []),
     ];
@@ -317,6 +323,13 @@ export default async function ServicePage({ params }: { params: Promise<ServiceP
 
                 {/* 07 — Highlight & Addons Section */}
                 <ServiceAddons addons={service.addons} />
+
+                {/* 09 — Everything else the platform runs */}
+                <ServiceMoreServices
+                    services={allServices}
+                    currentSlug={slug}
+                    currentName={service.name}
+                />
 
                 {/* 08 — FAQ Accordion Section */}
                 <ServiceFaq faqs={service.faqs} serviceName={service.name} />
