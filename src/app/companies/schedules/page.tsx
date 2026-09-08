@@ -15,7 +15,7 @@ import Link from "next/link";
 export const dynamic = "force-dynamic"; // URL-driven filters — always fresh SSR
 
 export const metadata: Metadata = {
-    title: "Training Schedules",
+    title: "Training Schedules | SkillDeck",
     description: "Browse training schedules from top providers. Filter by delivery type, batch, timing and month.",
     robots: { index: true, follow: true },
     alternates: { canonical: "/companies/schedules" },

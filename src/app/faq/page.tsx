@@ -4,7 +4,7 @@ import FaqClient from "@/components/Faq/FaqClient";
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-    title: "Frequently Asked Questions",
+    title: "Frequently Asked Questions | SkillDeck",
     description: "Get answers to your questions about SkillDeck products and services.",
     robots: {
         index: true,

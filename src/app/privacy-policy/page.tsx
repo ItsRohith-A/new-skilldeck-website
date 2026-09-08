@@ -4,7 +4,7 @@ import { Shield } from "lucide-react";
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-    title: "Privacy Policy",
+    title: "Privacy Policy | SkillDeck",
     description: "Read our privacy policy to understand how we collect, use, and protect your personal data.",
     robots: {
         index: true,

@@ -4,7 +4,7 @@ import { FileText } from "lucide-react";
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-    title: "Terms of Service",
+    title: "Terms of Service | SkillDeck",
     description: "Read our terms of service and conditions for using SkillDeck products and services.",
     robots: {
         index: true,

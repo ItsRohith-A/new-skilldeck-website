@@ -13,7 +13,7 @@ import { Suspense } from "react";
 export const dynamic = 'force-dynamic';
 
 export const metadata = {
-    title: "Training Companies Directory",
+    title: "Training Companies Directory | SkillDeck",
     description: "Discover top-tier training companies, explore their professional courses, and find the perfect training provider on SkillDeck.",
     robots: {
         index: true,
