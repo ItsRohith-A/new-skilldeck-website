@@ -65,7 +65,7 @@ export const getServicesCategories = cache(async (): Promise<CategoryWithService
         const categoriesWithServices = categories.map((cat: any) => {
             const services = allServices
                 .filter((s: any) => {
-                    const catSlug = s.service_category_slug || s.serviceCategory?.slug;
+                    const catSlug = s.serviceCategory?.slug || s.service_category_slug;
                     return catSlug === cat.slug;
                 })
                 .map((s: any) => ({

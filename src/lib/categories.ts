@@ -53,7 +53,7 @@ export const getCategories = cache(async () => {
 
     const categoriesWithCourses = categories.map((cat: any) => {
       const courses = allCoursesGlobal
-        .filter((course: any) => course.category_slug === cat.slug || course.category?.slug === cat.slug)
+        .filter((course: any) => (course.category?.slug || course.category_slug) === cat.slug)
         .map((course: any) => ({
           slug: course.slug,
           course_name: course.course_name,
@@ -110,7 +110,7 @@ export const getCategoryPageCourses = cache(async (categorySlug: string) => {
         }
 
         const filtered = allCourses
-            .filter((c: any) => c.category_slug === categorySlug || c.category?.slug === categorySlug)
+            .filter((c: any) => (c.category?.slug || c.category_slug) === categorySlug)
             .sort((a: any, b: any) => (a.order || 0) - (b.order || 0));
 
         return {

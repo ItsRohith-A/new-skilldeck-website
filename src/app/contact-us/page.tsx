@@ -6,7 +6,7 @@ import ContactFormSection from "@/components/ContactUs/elements/ContactFormSecti
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-    title: "Contact Us",
+    title: "Contact Us | SkillDeck",
     description: "Get in touch with SkillDeck team. Sales, support, and office locations.",
     robots: {
         index: true,

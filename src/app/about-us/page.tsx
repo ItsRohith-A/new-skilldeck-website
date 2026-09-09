@@ -10,7 +10,7 @@ import MainNav from "@/components/shared/Navbar";
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-    title: "About Us",
+    title: "About Us | SkillDeck",
     description: "Learn about the SkillDeck journey and mission.",
     robots: {
         index: true,

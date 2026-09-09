@@ -11,10 +11,7 @@ const roboto = Roboto({
 });
 
 export const metadata: Metadata = {
-  title: {
-    default: "Skilldeck — All-in-One Platform for Training Institutes",
-    template: "%s | Skilldeck",
-  },
+  title: "Skilldeck — All-in-One Platform for Training Institutes",
   description: "Automate your marketing, sales, and operations. Skilldeck replaces 10+ tools with one powerful platform for training Institutes.",
   icons: {
     icon: [
