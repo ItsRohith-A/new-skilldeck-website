@@ -1,31 +1,48 @@
 import React from "react";
 import Image from "next/image";
 import { Gauge } from "lucide-react";
-import { ServiceApproachData, ServiceMedia } from "./types";
+import { ServiceApproachData, ServiceMedia, ServiceStrategy } from "./types";
 import ServiceIconWrapper from "./ServiceIconWrapper";
 import ServiceItemIcon from "./ServiceItemIcon";
 import ServiceSectionIntro from "./ServiceSectionIntro";
 import ServiceCtaBanner from "./ServiceCtaBanner";
 import ServiceMediaFrame from "./ServiceMediaFrame";
-import { isImageSrc, resolveMediaUrl } from "./richText";
+import { isImageSrc, isVideoUrl, resolveMediaUrl } from "./richText";
 import { accentAt, TILE_ACCENTS } from "./accents";
 
 interface ServiceApproachProps {
     approach?: ServiceApproachData;
-    /** Optional clip shown beside the section body — sourced from `strategy.media`. */
+    /** Strategy data (including video/media) mapped from ServiceStrategy */
+    strategy?: ServiceStrategy;
+    /** Optional clip shown beside the section body — sourced from `strategy.video` or `strategy.media`. */
     media?: string | ServiceMedia;
 }
 
-/** Shown when the CMS ships no `strategy.media`, so the column is never empty. */
+/** Shown when the CMS ships no video, so the column plays the default video. */
 const FALLBACK_MEDIA =
     "https://skilldeck-s3-storage.s3.ap-south-1.amazonaws.com/fcaaf582-3eb8-4415-a31d-0e951575a9bd/public/skilldeck/skilldeck-logo-intro-64146571-3229-4975-be66-d83457d45a8b.mp4";
 
 /** Vertical connected-step timeline + inline KPI chips + a clean tools row. */
-export default function ServiceApproach({ approach = {}, media }: ServiceApproachProps) {
+export default function ServiceApproach({ approach = {}, strategy, media }: ServiceApproachProps) {
     const steps = (approach.steps || []).filter((s) => s?.title);
     const kpiCategories = (approach.kpis?.kpiCategory || []).filter((c) => (c.content || []).length > 0);
-    const tools = (approach.tools?.content || []).filter((t) => t?.tagline || t?.icon);
-    const mediaSource = resolveMediaUrl(media) ? media : FALLBACK_MEDIA;
+    const tools = (approach.tools?.content || []).filter((t) => t?.value || t?.tagline || t?.icon);
+
+    // Prefer explicit video in strategy, or media if it's a video file;
+    // otherwise fall back to the default platform video (FALLBACK_MEDIA).
+    const explicitVideo = strategy?.video;
+    const explicitVideoUrl = resolveMediaUrl(explicitVideo);
+    const candidateMedia = strategy?.media || media;
+    const candidateUrl = resolveMediaUrl(candidateMedia);
+
+    let mediaSource: string | ServiceMedia = FALLBACK_MEDIA;
+    if (explicitVideoUrl) {
+        mediaSource = explicitVideo!;
+    } else if (candidateUrl && isVideoUrl(candidateUrl)) {
+        mediaSource = candidateMedia!;
+    } else {
+        mediaSource = FALLBACK_MEDIA;
+    }
 
     if (steps.length === 0 && kpiCategories.length === 0 && tools.length === 0) return null;
 
@@ -93,7 +110,7 @@ export default function ServiceApproach({ approach = {}, media }: ServiceApproac
                                                 className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-6 py-4 first:pt-0 last:pb-0"
                                             >
                                                 <p className="sm:w-44 shrink-0 text-[11px] font-bold uppercase tracking-widest text-brand-secondary leading-snug">
-                                                    {category.name}
+                                                    {category.kpiCategory || category.name}
                                                 </p>
                                                 <div className="flex flex-wrap gap-2">
                                                     {(category.content || []).map((kpi, j) => {
@@ -101,14 +118,19 @@ export default function ServiceApproach({ approach = {}, media }: ServiceApproac
                                                         return (
                                                             <span
                                                                 key={j}
-                                                                className="inline-flex items-center gap-2 bg-white border border-slate-200 rounded-xl px-3.5 py-2 text-sm font-bold text-brand-dark shadow-sm hover:-translate-y-0.5 hover:shadow-md transition-all duration-200"
+                                                                className="inline-flex items-center gap-2.5 bg-white border border-slate-200 rounded-xl px-3.5 py-2 shadow-sm hover:-translate-y-0.5 hover:shadow-md transition-all duration-200"
                                                             >
                                                                 <ServiceItemIcon
                                                                     iconString={kpi.icon}
-                                                                    className={`w-4 h-4 ${accent.text}`}
+                                                                    className={`w-4 h-4 shrink-0 ${accent.text}`}
                                                                     defaultIcon="BadgeCheck"
                                                                 />
-                                                                {kpi.value}
+                                                                <span className="leading-tight">
+                                                                    <span className="block text-sm font-bold text-brand-dark">{kpi.value}</span>
+                                                                    {kpi.description && (
+                                                                        <span className="block text-[11px] font-semibold text-slate-500">{kpi.description}</span>
+                                                                    )}
+                                                                </span>
                                                             </span>
                                                         );
                                                     })}
@@ -136,15 +158,15 @@ export default function ServiceApproach({ approach = {}, media }: ServiceApproac
                                     )}
                                 </div>
 
-                                {/* Equal-width cards instead of ragged pills — the taglines are
-                                    long enough that a wrapping flex row left holes in the grid. */}
+                                {/* Equal-width cards instead of ragged pills — the names and
+                                    descriptions left holes in a wrapping flex row. */}
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                     {tools.map((tool, i) => {
                                         const accent = accentAt(TILE_ACCENTS, i);
                                         return (
                                             <div
                                                 key={i}
-                                                className="group relative overflow-hidden flex items-center gap-3 bg-white border border-slate-200/80 rounded-xl p-3.5 shadow-sm hover:-translate-y-0.5 hover:shadow-md transition-all duration-300"
+                                                className="group relative overflow-hidden flex items-start gap-3 bg-white border border-slate-200/80 rounded-xl p-3.5 shadow-sm hover:-translate-y-0.5 hover:shadow-md transition-all duration-300"
                                             >
                                                 <span
                                                     aria-hidden="true"
@@ -155,7 +177,7 @@ export default function ServiceApproach({ approach = {}, media }: ServiceApproac
                                                     <div className="relative w-9 h-9 shrink-0 rounded-lg border border-slate-100 bg-white">
                                                         <Image
                                                             src={tool.icon as string}
-                                                            alt={tool.tagline || "Tool"}
+                                                            alt={tool.value || tool.tagline || "Tool"}
                                                             fill
                                                             sizes="36px"
                                                             className="object-contain p-1.5"
@@ -164,12 +186,17 @@ export default function ServiceApproach({ approach = {}, media }: ServiceApproac
                                                 ) : (
                                                     <ServiceIconWrapper
                                                         iconString={tool.icon}
-                                                        className="w-9 h-9 rounded-lg group-hover:scale-105 transition-transform duration-300"
+                                                        className="w-9 h-9 shrink-0 rounded-lg group-hover:scale-105 transition-transform duration-300"
                                                         iconClassName="w-4.5 h-4.5"
                                                         fallbackBgClass={accent.chip}
                                                     />
                                                 )}
-                                                <span className="text-sm font-bold text-brand-dark leading-snug">{tool.tagline}</span>
+                                                <span className="min-w-0 leading-snug">
+                                                    <span className="block text-sm font-bold text-brand-dark">{tool.value || tool.tagline}</span>
+                                                    {tool.description && (
+                                                        <span className="block mt-0.5 text-xs text-slate-500">{tool.description}</span>
+                                                    )}
+                                                </span>
                                             </div>
                                         );
                                     })}

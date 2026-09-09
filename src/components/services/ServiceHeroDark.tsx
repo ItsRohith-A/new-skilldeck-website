@@ -229,33 +229,6 @@ export default function ServiceHeroDark({
                                     )}
                                 </div>
                             </div>
-
-                            {review?.ratings && (
-                                <div className="absolute top-6 left-6 bg-slate-900/80 backdrop-blur-md rounded-xl border border-white/10 px-3 py-2 shadow-xl flex items-center gap-2">
-                                    <Star className="w-4 h-4 fill-amber-400 text-amber-400" aria-hidden="true" />
-                                    <div className="leading-none">
-                                        <div className="text-sm font-extrabold text-white">{review.ratings}</div>
-                                        {review.count && (
-                                            <div className="text-[10px] text-white/50 font-medium mt-0.5">
-                                                {review.count} reviews
-                                            </div>
-                                        )}
-                                    </div>
-                                </div>
-                            )}
-
-                            {floatingStat && (
-                                <div className="hidden sm:flex absolute -bottom-4 right-4 max-w-[80%] bg-slate-900/85 backdrop-blur-md rounded-xl border border-white/10 px-4 py-3 shadow-xl items-center gap-3">
-                                    <div className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 ${accentAt(DARK_ACCENTS, 0).chip}`}>
-                                        <ServiceItemIcon
-                                            iconString={floatingStat.icon}
-                                            className="w-5 h-5"
-                                            defaultIcon="GraduationCap"
-                                        />
-                                    </div>
-                                    <p className="text-sm font-bold text-white leading-snug">{floatingStat.value}</p>
-                                </div>
-                            )}
                         </div>
                     </div>
                 </div>

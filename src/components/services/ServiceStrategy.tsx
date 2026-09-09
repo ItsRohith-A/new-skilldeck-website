@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import { ArrowUpRight } from "lucide-react";
 import { ServiceStrategy } from "./types";
 import ServiceIconWrapper from "./ServiceIconWrapper";

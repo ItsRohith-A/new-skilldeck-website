@@ -108,13 +108,13 @@ export default function ServiceWhyOpt({ whyopt = {} }: ServiceWhyOptProps) {
                                             {stat.value}
                                         </p>
                                         <p className="text-xs text-white/60 font-semibold mt-1.5 leading-snug">
-                                            {stat.tagline || stat.description}
+                                            {stat.description}
                                         </p>
-                                        {stat.tagline && stat.description && (
+                                        {/* {stat.tagline && stat.description && (
                                             <p className="text-[11px] text-white/40 mt-0.5 leading-snug">
-                                                {stat.description}
+                                                {stat.tagline}
                                             </p>
-                                        )}
+                                        )} */}
                                     </div>
                                 </div>
                             ))}

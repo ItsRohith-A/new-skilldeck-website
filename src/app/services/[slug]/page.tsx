@@ -22,7 +22,7 @@ import ServiceStrategyComponent from "@/components/services/ServiceStrategy";
 import ServiceWhyOpt from "@/components/services/ServiceWhyOpt";
 import ServiceBusiness from "@/components/services/ServiceBusiness";
 import ServiceFaq from "@/components/services/ServiceFaq";
-import ServiceMoreServices from "@/components/services/ServiceMoreServices";
+import ServiceMoreServicesCards from "@/components/services/ServiceMoreServicesCards";
 import ServiceChapterDots, { ServiceChapterItem } from "@/components/services/ServiceChapterDots";
 import ServiceMobileCta from "@/components/services/ServiceMobileCta";
 import PricingSection from "@/components/Pricing/PricingSection";
@@ -208,7 +208,7 @@ export default async function ServicePage({ params }: { params: Promise<ServiceP
         (service.approach?.tools?.content || []).length > 0;
     const hasStrategy = (service.strategy?.points || []).length > 0 || (service.strategy?.stats || []).length > 0;
     const hasWhyOpt = (service.whyopt?.points || []).length > 0 || (service.whyopt?.stats || []).length > 0;
-    const hasBusiness = (service.business?.points || []).length > 0 || (service.business?.stats || []).length > 0;
+    const hasBusiness = (service.business?.points || []).length > 0;
     const hasAddons =
         (service.addons?.cards || []).length > 0 ||
         (service.addons?.content?.points || []).length > 0 ||
@@ -220,12 +220,12 @@ export default async function ServicePage({ params }: { params: Promise<ServiceP
         ...(hasWhy ? [{ id: "why", label: "The Reality" }] : []),
         ...(hasBenefits ? [{ id: "benefits", label: "The Outcome" }] : []),
         ...(hasApproach ? [{ id: "approach", label: "How We Work" }] : []),
+        { id: "plans", label: "Plans" },
         ...(hasStrategy ? [{ id: "strategy", label: "Strategy" }] : []),
         ...(hasWhyOpt ? [{ id: "credentials", label: "Why SkillDeck" }] : []),
         ...(hasBusiness ? [{ id: "expertise", label: "Our Expertise" }] : []),
         ...(hasAddons ? [{ id: "addons", label: "Add-Ons" }] : []),
-        ...(otherServices.length > 0 ? [{ id: "more-services", label: "One Platform" }] : []),
-        { id: "plans", label: "Plans" },
+        ...(otherServices.length > 0 ? [{ id: "other-services", label: "Other Services" }] : []),
         ...(hasFaq ? [{ id: "faq", label: "FAQ" }] : []),
     ];
 
@@ -262,37 +262,7 @@ export default async function ServicePage({ params }: { params: Promise<ServiceP
                     clientsCount={service.servicecard?.clients}
                 />
 
-                {/* ── Hero variants under client review ────────────────────────────
-                    Two alternative layouts render below the live hero so the client
-                    can compare them on real content. Delete these three blocks and
-                    the two imports once a direction is picked. */}
-                <HeroVariantLabel index="02" name="Centered spotlight" note="Message-first, product shot as a wide stage" />
-                <ServiceHeroCentered
-                    banner={service.banner}
-                    servicestats={service.servicestats}
-                    serviceName={service.name}
-                    servicecard={service.servicecard}
-                    serviceCategory={service.serviceCategory}
-                    fallbackTagline={service.servicecard?.tagline}
-                    description={service.description}
-                    highlights={service.whyservice?.points}
-                    brochureUrl={service.leadmagnet?.[0]?.broucher?.url}
-                    clientsCount={service.servicecard?.clients}
-                />
-
                 <HeroVariantLabel index="03" name="Dark immersive" note="Inverted stage, glass proof strip" />
-                <ServiceHeroDark
-                    banner={service.banner}
-                    servicestats={service.servicestats}
-                    serviceName={service.name}
-                    servicecard={service.servicecard}
-                    serviceCategory={service.serviceCategory}
-                    fallbackTagline={service.servicecard?.tagline}
-                    description={service.description}
-                    highlights={service.whyservice?.points}
-                    brochureUrl={service.leadmagnet?.[0]?.broucher?.url}
-                    clientsCount={service.servicecard?.clients}
-                />
 
                 {/* Chapter rail */}
                 <ServiceChapterDots items={chapters} />
@@ -307,7 +277,11 @@ export default async function ServicePage({ params }: { params: Promise<ServiceP
                 <ServiceBenefits benefits={service.benefits} />
 
                 {/* 03 — Our Approach / Framework */}
-                <ServiceApproach approach={service.approach} media={service.strategy?.media} />
+                <ServiceApproach
+                    approach={service.approach}
+                    strategy={service.strategy}
+                    media={service.strategy?.video || service.strategy?.media}
+                />
 
                 {/* Pricing Plans Section */}
                 <PricingSection plans={plans} />
@@ -324,8 +298,8 @@ export default async function ServicePage({ params }: { params: Promise<ServiceP
                 {/* 07 — Highlight & Addons Section */}
                 <ServiceAddons addons={service.addons} />
 
-                {/* 09 — Everything else the platform runs */}
-                <ServiceMoreServices
+                {/* 09 — Other Services / More Services Cards */}
+                <ServiceMoreServicesCards
                     services={allServices}
                     currentSlug={slug}
                     currentName={service.name}
@@ -365,11 +339,11 @@ function HeroVariantLabel({ index, name, note }: { index: string; name: string; 
     return (
         <div className="border-y border-dashed border-slate-300 bg-slate-100/70">
             <div className="container mx-auto px-2 lg:px-0 py-3 flex flex-wrap items-baseline gap-x-3 gap-y-1">
-                <span className="text-[11px] font-black uppercase tracking-[0.25em] text-brand-primary">
+                {/* <span className="text-[11px] font-black uppercase tracking-[0.25em] text-brand-primary">
                     Hero option {index}
                 </span>
                 <span className="text-sm font-bold text-brand-dark">{name}</span>
-                <span className="text-xs text-brand-muted">{note}</span>
+                <span className="text-xs text-brand-muted">{note}</span> */}
             </div>
         </div>
     );

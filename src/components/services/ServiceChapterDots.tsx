@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export interface ServiceChapterItem {
     id: string;
@@ -15,10 +15,22 @@ interface ServiceChapterDotsProps {
 export default function ServiceChapterDots({ items }: ServiceChapterDotsProps) {
     const [active, setActive] = useState(items[0]?.id || "");
     const [visible, setVisible] = useState(false);
+    const isManualScrollingRef = useRef(false);
+    const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
     useEffect(() => {
         const handleScroll = () => {
             setVisible(window.scrollY > 400);
+            if (isManualScrollingRef.current) return;
+
+            // Handle bottom of page edge case so the last section is highlighted
+            const isBottom =
+                window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 80;
+            if (isBottom && items.length > 0) {
+                setActive(items[items.length - 1].id);
+                return;
+            }
+
             const offset = 200;
             let current = items[0]?.id || "";
             for (const item of items) {
@@ -29,12 +41,22 @@ export default function ServiceChapterDots({ items }: ServiceChapterDotsProps) {
         };
         window.addEventListener("scroll", handleScroll, { passive: true });
         handleScroll();
-        return () => window.removeEventListener("scroll", handleScroll);
+        return () => {
+            window.removeEventListener("scroll", handleScroll);
+            if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current);
+        };
     }, [items]);
 
     const scrollTo = (id: string) => {
         const el = document.getElementById(id);
         if (el) {
+            setActive(id);
+            isManualScrollingRef.current = true;
+            if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current);
+            scrollTimeoutRef.current = setTimeout(() => {
+                isManualScrollingRef.current = false;
+            }, 800);
+
             const top = el.getBoundingClientRect().top + window.scrollY - 100;
             window.scrollTo({ top, behavior: "smooth" });
         }

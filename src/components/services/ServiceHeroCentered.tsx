@@ -196,34 +196,6 @@ export default function ServiceHeroCentered({
                             )}
                         </div>
                     </div>
-
-                    {/* Floating proof, pinned to the stage corners */}
-                    {review?.ratings && (
-                        <div className="hidden sm:flex absolute -top-5 -left-4 lg:-left-8 bg-white rounded-xl border border-slate-200/80 px-4 py-3 shadow-xl items-center gap-2.5">
-                            <Star className="w-5 h-5 fill-amber-500 text-amber-500" aria-hidden="true" />
-                            <div className="leading-none">
-                                <div className="text-base font-extrabold text-brand-dark">{review.ratings}</div>
-                                {review.count && (
-                                    <div className="text-[10px] text-brand-muted font-medium mt-0.5">
-                                        {review.count} reviews
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-                    )}
-
-                    {floatingStat && (
-                        <div className="hidden sm:flex absolute -bottom-5 -right-4 lg:-right-8 max-w-[70%] bg-white rounded-xl border border-slate-200/80 px-4 py-3 shadow-xl items-center gap-3">
-                            <ServiceIconWrapper
-                                iconString={floatingStat.icon}
-                                className="w-10 h-10 rounded-lg"
-                                iconClassName="w-5 h-5"
-                                defaultIcon="GraduationCap"
-                                fallbackBgClass={accentAt(TILE_ACCENTS, 0).chip}
-                            />
-                            <p className="text-sm font-bold text-brand-dark leading-snug">{floatingStat.value}</p>
-                        </div>
-                    )}
                 </div>
 
                 {/* ── Capability strip ── */}
