@@ -5,7 +5,7 @@ import Footer from "@/components/shared/Footer";
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-    title: "Pricing Plans",
+    title: "Pricing Plans | SkillDeck",
     description: "Choose the perfect plan for your training business. Start with a 14-day free trial.",
     robots: {
         index: true,

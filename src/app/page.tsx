@@ -7,7 +7,7 @@ import { getAllServices } from "@/lib/services";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-    title: "World's 1st Fully Automated Plug & Play Platform For Training Institutes",
+    title: "World's 1st Fully Automated Plug & Play Platform For Training Institutes | SkillDeck",
     description: "Automate your marketing, sales, operations and various other functional departments at 5X times lesser cost and Skyrocket your leads and sales. 4X times faster growth & 6X higher conversions.",
     robots: {
         index: true,

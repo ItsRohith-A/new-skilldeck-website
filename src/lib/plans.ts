@@ -19,12 +19,15 @@ const enrichPlan = (plan: IPlan, index?: number): PricingPlan => {
     let isHighlighted = false;
     let badge: string | undefined = undefined;
 
-    if (index === 1) {
+    const isGrowth = name.includes("growth");
+    const isBusiness = name.includes("business");
+
+    if (index === 1 || isGrowth) {
         isHighlighted = true;
         badge = "Most Popular";
         colorTheme = "blue"; // brand gradient — only Growth gets this
         icon = "building";
-    } else if (index === 2) {
+    } else if (index === 2 || isBusiness) {
         // Business / 3rd plan — plain white, same as Starter
         colorTheme = "default";
         icon = "building";
@@ -35,15 +38,44 @@ const enrichPlan = (plan: IPlan, index?: number): PricingPlan => {
         if (!isHighlighted) {
             colorTheme = "blue";
         }
-    } else if (isStarter) {
+    } else if (isStarter && !isGrowth && !isBusiness) {
         if (!isHighlighted) {
             colorTheme = "default";
             icon = "rocket";
         }
     }
 
+    // Ensure displayFeatures has Marketing & Growth perks
+    const displayFeatures = [...(plan.displayFeatures || [])];
+    const marketingPerks: string[] = [];
+    if (isGrowth || index === 1) {
+        marketingPerks.push("Free SEO For Courses");
+    } else if (isBusiness || isEnterprise || index === 2) {
+        marketingPerks.push("Free SEO For Courses");
+        marketingPerks.push("Free Google Ads Up to 1 Lakh Budget");
+    }
+
+    const existingMarketingIndex = displayFeatures.findIndex(
+        (g: any) => g.category?.toLowerCase().includes("marketing") || g.category?.toLowerCase().includes("growth")
+    );
+
+    if (existingMarketingIndex >= 0) {
+        const existing = displayFeatures[existingMarketingIndex];
+        const mergedItems = Array.from(new Set([...(existing.items || []), ...marketingPerks]));
+        displayFeatures[existingMarketingIndex] = {
+            ...existing,
+            items: mergedItems
+        };
+    } else if (marketingPerks.length > 0) {
+        displayFeatures.push({
+            category: "Marketing & Growth",
+            items: marketingPerks
+        });
+    }
+
     return {
         ...plan,
+        displayFeatures,
         uiMetadata: {
             isHighlighted,
             colorTheme,

@@ -8,7 +8,7 @@ import CareersCta from "@/components/Careers/elements/CareersCta";
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-    title: "Careers",
+    title: "Careers | SkillDeck",
     description: "Join the SkillDeck team and help build the future of Ed-Tech.",
     robots: {
         index: true,

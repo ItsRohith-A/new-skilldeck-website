@@ -4,7 +4,7 @@ import { Cookie } from "lucide-react";
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-    title: "Cookie Policy",
+    title: "Cookie Policy | SkillDeck",
     description: "Learn about how SkillDeck uses cookies and tracking technologies.",
     robots: {
         index: true,
