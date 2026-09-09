@@ -1,8 +1,9 @@
 import React, { useState, useMemo } from 'react';
-import { groupFeatures, formatPrice, BillingInterval, computePlanAmount, getPlanFeatureValue, formatOveragePrice, groupDisplayFeatures, displayFeatureStatus } from './utils';
+import { groupFeatures, formatPrice, BillingInterval, computePlanAmount, getPlanFeatureValue, formatOveragePrice, groupDisplayFeatures, displayFeatureStatus, isSpecialPerk } from './utils';
 import { IPlanLimits } from './types';
 import { RenderValue } from './TableCommon';
 import { IPlan } from '@/types/interface-lib';
+import { Sparkles, Check, X } from 'lucide-react';
 
 type Props = {
     plans: IPlan[];
@@ -92,7 +93,7 @@ const PlansComparisonTableMobile: React.FC<Props> = ({
                                             )}
                                             <button
                                                 onClick={() => onOpenPurchase?.(plan.id)}
-                                                className="absolute bottom-2 left-2 right-2 py-1.5 rounded-md text-xs font-bold bg-[linear-gradient(125deg,rgba(92,63,250,1)_0%,rgba(203,59,149,1)_48%,rgba(254,106,27,1)_100%)] hover:brightness-110 text-white transition-colors hover:-translate-y-[1px]"
+                                                className="absolute bottom-2 left-2 right-2 py-1.5 rounded-md text-xs font-bold bg-[#5c3ffa] hover:bg-[#4e32e8] text-white transition-colors hover:-translate-y-[1px]"
                                             >
                                                 Get Started
                                             </button>
@@ -205,32 +206,90 @@ const PlansComparisonTableMobile: React.FC<Props> = ({
                                 )}
 
                             {Object.entries(displayGroups)
-                                .map(([category, items]) => (
-                                    <React.Fragment key={category}>
-                                        <tr className="bg-gray-50 sticky top-[118px] z-10 ">
-                                            <td colSpan={3} className="px-3 py-2 text-xs font-bold text-gray-700 uppercase tracking-wider bg-gray-50">
-                                                {category}
-                                            </td>
-                                        </tr>
-                                        {items.map((item, idx) => (
-                                            <tr key={item} className={idx % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
-                                                <td className="px-3 py-3 text-xs font-medium text-gray-700 border-r border-gray-200">
-                                                    {item}
+                                .map(([category, items]) => {
+                                    const isMarketing = category.toLowerCase().includes('marketing') || category.toLowerCase().includes('growth');
+                                    return (
+                                        <React.Fragment key={category}>
+                                            <tr className={`sticky top-[118px] z-10 shadow-sm ${isMarketing
+                                                ? 'bg-gradient-to-r from-indigo-50/90 via-purple-50/80 to-pink-50/70 border-y border-indigo-100'
+                                                : 'bg-gray-50'
+                                                }`}>
+                                                <td colSpan={3} className={`px-3 py-2 text-xs font-bold uppercase tracking-wider ${isMarketing ? 'text-indigo-950 flex items-center gap-1.5' : 'text-gray-700 bg-gray-50'
+                                                    }`}>
+                                                    {isMarketing && <Sparkles className="w-3.5 h-3.5 text-[#5c3ffa]" />}
+                                                    <span>{category}</span>
+                                                    {isMarketing && (
+                                                        <span className="text-[8px] font-black px-1.5 py-0.5 rounded-full bg-gradient-to-r from-[#5c3ffa] to-[#cb3b95] text-white normal-case">
+                                                            Special
+                                                        </span>
+                                                    )}
                                                 </td>
-                                                {activePlans.map((plan, planIdx) => {
-                                                    const status = displayFeatureStatus(plan, category, item);
-                                                    const uniqueKey = (plan.id || plan._id || planIdx) + '-' + item;
-
-                                                    return (
-                                                        <td key={uniqueKey} className="px-3 py-3 text-center">
-                                                            <RenderValue value={status} />
-                                                        </td>
-                                                    );
-                                                })}
                                             </tr>
-                                        ))}
-                                    </React.Fragment>
-                                ))}
+                                            {items.map((item, idx) => {
+                                                const isPerk = isSpecialPerk(item);
+                                                const isGoogleAds = item.toLowerCase().includes('google ads');
+
+                                                return (
+                                                    <tr key={item} className={
+                                                        isPerk
+                                                            ? 'bg-indigo-50/20'
+                                                            : (idx % 2 === 0 ? 'bg-white' : 'bg-gray-50')
+                                                    }>
+                                                        <td className="px-3 py-3 text-xs font-medium text-gray-700 border-r border-gray-200">
+                                                            {isPerk ? (
+                                                                <div className="flex flex-col gap-1">
+                                                                    <div className="flex items-center gap-1.5">
+                                                                        <Sparkles className={`w-3.5 h-3.5 shrink-0 ${isGoogleAds ? 'text-amber-500' : 'text-[#5c3ffa]'}`} />
+                                                                        <span className="font-bold text-gray-900 leading-tight">{item}</span>
+                                                                    </div>
+                                                                    <span className={`w-fit text-[8px] font-black uppercase px-1.5 py-0.5 rounded-full shadow-xs ${isGoogleAds ? 'bg-amber-100 text-amber-900 border border-amber-200' : 'bg-indigo-100 text-indigo-900 border border-indigo-200'
+                                                                        }`}>
+                                                                        {isGoogleAds ? '₹1 Lakh Ads' : 'Free Included'}
+                                                                    </span>
+                                                                </div>
+                                                            ) : (
+                                                                item
+                                                            )}
+                                                        </td>
+                                                        {activePlans.map((plan, planIdx) => {
+                                                            const status = displayFeatureStatus(plan, category, item);
+                                                            const uniqueKey = (plan.id || plan._id || planIdx) + '-' + item;
+
+                                                            if (isPerk) {
+                                                                if (status === 'enabled') {
+                                                                    return (
+                                                                        <td key={uniqueKey} className="px-2 py-3 text-center">
+                                                                            <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-[10px] font-bold shadow-xs ${isGoogleAds
+                                                                                ? 'bg-amber-50 text-amber-950 border border-amber-300'
+                                                                                : 'bg-indigo-50 text-indigo-900 border border-indigo-200'
+                                                                                }`}>
+                                                                                <Check className={`w-3 h-3 ${isGoogleAds ? 'text-amber-600' : 'text-indigo-600'} stroke-[3]`} />
+                                                                                <span>{isGoogleAds ? '₹1L Free' : 'Included'}</span>
+                                                                            </span>
+                                                                        </td>
+                                                                    );
+                                                                }
+                                                                return (
+                                                                    <td key={uniqueKey} className="px-2 py-3 text-center">
+                                                                        <div className="w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center mx-auto">
+                                                                            <X className="w-3 h-3 text-gray-400" />
+                                                                        </div>
+                                                                    </td>
+                                                                );
+                                                            }
+
+                                                            return (
+                                                                <td key={uniqueKey} className="px-3 py-3 text-center">
+                                                                    <RenderValue value={status} />
+                                                                </td>
+                                                            );
+                                                        })}
+                                                    </tr>
+                                                );
+                                            })}
+                                        </React.Fragment>
+                                    );
+                                })}
                         </tbody>
                     </table>
                 </div>

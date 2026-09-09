@@ -18,11 +18,49 @@ const PlansComparison: React.FC<Props> = ({
 }) => {
     // Filter out lifetime plan so cards view shows standard 3-column plans (Starter, Growth, Business)
     const filteredPlans = useMemo(() => {
-        return (plans || []).filter(plan =>
-            plan.id !== 'lifetime-plan' &&
-            plan.code !== 'LIFETIME' &&
-            !plan.name?.toLowerCase().includes('lifetime')
-        );
+        return (plans || [])
+            .filter(plan =>
+                plan.id !== 'lifetime-plan' &&
+                plan.code !== 'LIFETIME' &&
+                !plan.name?.toLowerCase().includes('lifetime')
+            )
+            .map((plan, index) => {
+                const planName = (plan.name || '').toLowerCase();
+                const isGrowth = planName.includes('growth') || index === 1;
+                const isBusiness = planName.includes('business') || planName.includes('enterprise') || index === 2;
+
+                const displayFeatures = [...(plan.displayFeatures || [])];
+                const marketingPerks: string[] = [];
+                if (isGrowth) {
+                    marketingPerks.push('Free SEO For Courses');
+                } else if (isBusiness) {
+                    marketingPerks.push('Free SEO For Courses');
+                    marketingPerks.push('Free Google Ads Up to 1 Lakh Budget');
+                }
+
+                const existingMarketingIndex = displayFeatures.findIndex(
+                    (g: any) => g.category?.toLowerCase().includes('marketing') || g.category?.toLowerCase().includes('growth')
+                );
+
+                if (existingMarketingIndex >= 0) {
+                    const existing = displayFeatures[existingMarketingIndex];
+                    const mergedItems = Array.from(new Set([...(existing.items || []), ...marketingPerks]));
+                    displayFeatures[existingMarketingIndex] = {
+                        ...existing,
+                        items: mergedItems
+                    };
+                } else if (marketingPerks.length > 0) {
+                    displayFeatures.push({
+                        category: 'Marketing & Growth',
+                        items: marketingPerks
+                    });
+                }
+
+                return {
+                    ...plan,
+                    displayFeatures
+                };
+            });
     }, [plans]);
 
     const groups = useMemo(() => groupFeatures(filteredPlans || []), [filteredPlans]);

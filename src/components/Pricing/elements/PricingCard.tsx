@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Award, BookOpen, Building2, Check, Crown, HardDrive, Infinity, MapPin, Rocket, ShieldCheck, Sparkles, Users } from 'lucide-react';
-import { BillingInterval, computePlanAmount, formatOveragePrice, formatPrice, GroupedDisplayFeatures } from './utils';
+import { BillingInterval, computePlanAmount, formatCategoryTitle, formatFeatureTitle, formatOveragePrice, formatPrice, GroupedDisplayFeatures, isSpecialPerk } from './utils';
 import { PricingPlan } from '@/lib/plans';
 import DOMPurify from "@/lib/dompurify";
 import { GroupedFeatures } from './types';
@@ -40,7 +40,7 @@ const PricingCard: React.FC<Props> = ({
     let cardBgClass = 'bg-white text-gray-900 border border-gray-200 shadow-sm';
     let textColorClass = 'text-gray-900';
     let subTextColorClass = 'text-gray-500';
-    let buttonClass = 'bg-[linear-gradient(125deg,rgba(92,63,250,1)_0%,rgba(203,59,149,1)_48%,rgba(254,106,27,1)_100%)] text-white hover:brightness-110 hover:-translate-y-[1px] shadow-lg shadow-[#5c3ffa]/20 transition-all duration-300';
+    let buttonClass = 'bg-[#5c3ffa] text-white hover:bg-[#4e32e8] hover:-translate-y-[1px] shadow-md shadow-[#5c3ffa]/25 transition-all duration-300';
     let checkIconClass = 'text-green-500';
     let iconBgClass = 'bg-brand-50 text-brand-600';
 
@@ -49,15 +49,14 @@ const PricingCard: React.FC<Props> = ({
         cardBgClass = 'bg-white text-gray-900 shadow-xl';
         textColorClass = 'text-gray-900';
         subTextColorClass = 'text-gray-500';
-        buttonClass = 'bg-[linear-gradient(125deg,rgba(92,63,250,1)_0%,rgba(203,59,149,1)_48%,rgba(254,106,27,1)_100%)] text-white font-bold hover:brightness-110 hover:-translate-y-[1px] transition-all duration-300 shadow-lg shadow-[#5c3ffa]/20';
+        buttonClass = 'bg-[#5c3ffa] text-white font-bold hover:bg-[#4e32e8] hover:-translate-y-[1px] transition-all duration-300 shadow-md shadow-[#5c3ffa]/25';
         checkIconClass = 'text-[#5c3ffa]';
         iconBgClass = 'bg-[#5c3ffa]/10 text-[#5c3ffa]';
     } else if (colorTheme === 'purple') {
-        // Business — clean white card with indigo accent, visually distinct from plain Starter
         cardBgClass = 'bg-white text-gray-900 border-2 border-indigo-100 shadow-xl shadow-indigo-100/60';
         textColorClass = 'text-gray-900';
         subTextColorClass = 'text-gray-500';
-        buttonClass = 'bg-[linear-gradient(135deg,#3730a3_0%,#4f46e5_50%,#6d28d9_100%)] text-white hover:brightness-110 hover:-translate-y-[1px] transition-all duration-300 shadow-lg shadow-indigo-500/30';
+        buttonClass = 'bg-[#5c3ffa] text-white hover:bg-[#4e32e8] hover:-translate-y-[1px] shadow-md shadow-[#5c3ffa]/25 transition-all duration-300';
         checkIconClass = 'text-indigo-500';
         iconBgClass = 'bg-indigo-50 text-indigo-600';
     }
@@ -161,34 +160,66 @@ const PricingCard: React.FC<Props> = ({
 
                         const parts = plainText.split(splitRegex).map((s: any) => decodeEntities(s.trim())).filter(Boolean);
                         const [intro, ...bullets] = parts;
+
+                        const planNameLower = (plan.name || '').toLowerCase();
+                        const isGrowth = planNameLower.includes('growth');
+                        const isBusiness = planNameLower.includes('business');
+
+                        const finalBullets = [...bullets];
+                        if (isGrowth || isBusiness) {
+                            if (!finalBullets.some((b: string) => b.toLowerCase().includes('seo'))) {
+                                finalBullets.push('Free SEO For Courses');
+                            }
+                        }
+                        if (isBusiness) {
+                            if (!finalBullets.some((b: string) => b.toLowerCase().includes('google ads'))) {
+                                finalBullets.push('Free Google Ads Up to 1 Lakh Budget');
+                            }
+                        }
+
                         return (
-                            <div className={`space-y-1.5 h-42 overflow-hidden ${subTextColorClass}`}>
+                            <div className={`space-y-1.5 md:h-[200px] flex flex-col justify-start ${subTextColorClass}`}>
                                 {intro && (
-                                    <p className="text-[10px] 2xl:text-[11px] leading-relaxed ">{intro}</p>
+                                    <p className="text-[10px] 2xl:text-[11px] leading-snug text-gray-500 line-clamp-2 mb-1">{intro}</p>
                                 )}
-                                <ul className="space-y-1">
-                                    {bullets.map((item: any, i: any) => (
-                                        <li key={i} className="flex items-start gap-1.5">
-                                            <Check className={`w-3 h-3 mt-0.5 shrink-0 ${checkIconClass}`} strokeWidth={3} />
-                                            <span className="text-[11px] 2xl:text-xs leading-snug">{item}</span>
-                                        </li>
-                                    ))}
+                                <ul className="space-y-1.5">
+                                    {finalBullets.map((item: any, i: any) => {
+                                        const itemLower = String(item).toLowerCase();
+                                        const isGoogleAds = itemLower.includes('google ads');
+                                        const isSeo = itemLower.includes('seo');
+
+                                        if (isGoogleAds || isSeo) {
+                                            return (
+                                                <li
+                                                    key={i}
+                                                    className="flex items-center justify-between gap-2 py-1.5 px-2.5 rounded-xl bg-gradient-to-r from-indigo-50/80 via-purple-50/50 to-pink-50/30 border border-indigo-100 shadow-xs"
+                                                >
+                                                    <div className="flex items-center gap-2 min-w-0">
+                                                        <div className="w-4 h-4 rounded-full bg-gradient-to-tr from-[#5c3ffa] to-[#cb3b95] flex items-center justify-center shrink-0 shadow-xs">
+                                                            <Sparkles className="w-2.5 h-2.5 text-white" />
+                                                        </div>
+                                                        <span className="text-[11px] 2xl:text-xs font-bold text-slate-900 truncate">
+                                                            {item}
+                                                        </span>
+                                                    </div>
+                                                    <span className="shrink-0 text-[9px] font-extrabold uppercase tracking-wide px-2 py-0.5 rounded-full bg-gradient-to-r from-[#5c3ffa] to-[#cb3b95] text-white shadow-xs">
+                                                        {isGoogleAds ? '₹1L Budget' : 'Free'}
+                                                    </span>
+                                                </li>
+                                            );
+                                        }
+
+                                        return (
+                                            <li key={i} className="flex items-start gap-1.5">
+                                                <Check className={`w-3.5 h-3.5 mt-0.5 shrink-0 ${checkIconClass}`} strokeWidth={3} />
+                                                <span className="text-[11px] 2xl:text-xs leading-snug">{item}</span>
+                                            </li>
+                                        );
+                                    })}
                                 </ul>
                             </div>
                         );
                     })()}
-
-                    {/* <div className="h-fit flex items-center">
-                        <div
-                            className={`inline-block px-2.5 py-1 rounded-lg text-[11px] 2xl:text-xs font-semibold leading-normal ${isDark
-                                ? 'bg-white/15 text-white shadow-sm'
-                                : 'bg-[linear-gradient(125deg,rgba(92,63,250,0.1)_0%,rgba(203,59,149,0.1)_100%)] text-[#5c3ffa] border border-[#5c3ffa]/20'
-                                }`}
-                            dangerouslySetInnerHTML={{
-                                __html: DOMPurify.sanitize(plan.themeDescription || `${plan.name} Features`)
-                            }}
-                        />
-                    </div> */}
 
                     <div className="h-7 flex items-baseline justify-start">
                         {loading ? (
@@ -245,13 +276,13 @@ const PricingCard: React.FC<Props> = ({
                     className="h-full overflow-y-auto pr-2 pricing-scrollbar"
                 >
                     {/* Limits with Overage Pricing */}
-                    <div className="space-y-4 pb-2 ">
+                    <div className="space-y-4 pb-2">
                         {plan.limits && Object.keys(plan.limits).length > 0 && (
-                            <div className="mb-6">
-                                <h4 className={`text-[10px] font-bold uppercase tracking-widest mb-3 ${isDark ? 'text-white/80' : 'text-gray-500'}`}>
+                            <div className="mb-5">
+                                <h4 className={`text-[10px] font-bold uppercase tracking-wider mb-2.5 ${isDark ? 'text-white/80' : 'text-slate-400'}`}>
                                     Platform Resources
                                 </h4>
-                                <div className="grid grid-cols-1 gap-2 mb-6">
+                                <div className="grid grid-cols-1 gap-1.5 mb-5">
                                     {['seats', 'storage', 'locations', 'courses'].map(key => {
                                         const val = (plan.limits as any)[key] ?? (plan.limits as any)[key === 'storage' ? 'storageGB' : ''];
                                         const config = getResourceConfig(key);
@@ -274,17 +305,17 @@ const PricingCard: React.FC<Props> = ({
                                         const displayValue = isUnlimited ? 'Unlimited' : (key === 'storage' ? `${val} GB` : val);
 
                                         return (
-                                            <div key={key} className={`h-[42px] w-full flex items-center justify-between rounded-xl px-3 border ${isDark ? 'bg-white/10 border-white/20' : 'bg-gray-50/80 border-gray-100/80'}`}>
+                                            <div key={key} className={`h-[38px] w-full flex items-center justify-between rounded-lg px-2.5 border transition-colors ${isDark ? 'bg-white/10 border-white/20' : 'bg-slate-50/70 border-slate-200/60 hover:bg-slate-50'}`}>
                                                 <div className="flex items-center gap-2.5 min-w-0 pr-2">
-                                                    <div className={`shrink-0 p-1.5 rounded-lg shadow-sm ${isDark ? 'bg-white/20 text-white' : 'bg-white text-gray-500'}`}>
+                                                    <div className={`shrink-0 p-1 rounded-md shadow-2xs ${isDark ? 'bg-white/20 text-white' : 'bg-white border border-slate-200/70 text-slate-500'}`}>
                                                         {config.icon}
                                                     </div>
-                                                    <span className={`text-xs font-semibold truncate ${isDark ? 'text-white' : 'text-gray-700'}`}>
-                                                        {displayValue} <span className={`font-medium ${isDark ? 'text-white/70' : 'text-gray-500'}`}>{config.label}</span>
+                                                    <span className={`text-xs font-semibold truncate ${isDark ? 'text-white' : 'text-slate-800'}`}>
+                                                        {displayValue} <span className={`font-medium ${isDark ? 'text-white/70' : 'text-slate-500'}`}>{config.label}</span>
                                                     </span>
                                                 </div>
                                                 {overageText && (
-                                                    <div className={`shrink-0 text-[10px] font-bold tracking-tight ${isDark ? 'text-white/90' : 'text-blue-600'}`}>
+                                                    <div className={`shrink-0 text-[10px] font-semibold tracking-tight px-2 py-0.5 rounded border ${isDark ? 'text-white/90 bg-white/10 border-white/20' : 'text-[#5c3ffa] bg-[#5c3ffa]/5 border-[#5c3ffa]/15'}`}>
                                                         {overageText}
                                                     </div>
                                                 )}
@@ -296,13 +327,13 @@ const PricingCard: React.FC<Props> = ({
                         )}
 
                         <div>
-                            <h4 className={`text-[10px] font-bold uppercase tracking-widest mb-3 ${plan.isLmsEnabled === false
-                                ? 'text-gray-400 opacity-60'
-                                : 'text-blue-500'
+                            <h4 className={`text-[10px] font-bold uppercase tracking-wider mb-2.5 ${plan.isLmsEnabled === false
+                                ? 'text-slate-400 opacity-60'
+                                : isDark ? 'text-white/80' : 'text-slate-400'
                                 }`}>
                                 LMS / Training Resources
                             </h4>
-                            <div className="mb-6 grid grid-cols-1 gap-2">
+                            <div className="mb-5 grid grid-cols-1 gap-1.5">
                                 {['lmsCourses', 'students', 'instructors', 'certificates'].map(key => {
                                     const config = getResourceConfig(key);
                                     const val = plan.isLmsEnabled !== false ? (plan.limits as any)[key] : undefined;
@@ -326,27 +357,27 @@ const PricingCard: React.FC<Props> = ({
                                     const displayValue = isLmsDisabled ? 'Not Included' : (isUnlimited ? 'Unlimited' : val);
 
                                     return (
-                                        <div key={key} className={`h-[42px] w-full flex items-center justify-between rounded-xl px-3 border ${isLmsDisabled
-                                            ? 'bg-gray-50/40 border-gray-100/50 opacity-60'
-                                            : 'bg-blue-50/30 border-blue-100/50'
+                                        <div key={key} className={`h-[38px] w-full flex items-center justify-between rounded-lg px-2.5 border transition-colors ${isLmsDisabled
+                                            ? 'bg-slate-50/30 border-dashed border-slate-200 opacity-60'
+                                            : isDark ? 'bg-white/10 border-white/20' : 'bg-slate-50/70 border-slate-200/60 hover:bg-slate-50'
                                             }`}>
                                             <div className="flex items-center gap-2.5 min-w-0 pr-2">
-                                                <div className={`shrink-0 p-1.5 rounded-lg shadow-sm ${isLmsDisabled
-                                                    ? 'bg-white text-gray-400'
-                                                    : 'bg-white text-blue-500'
+                                                <div className={`shrink-0 p-1 rounded-md shadow-2xs ${isLmsDisabled
+                                                    ? 'bg-white border border-slate-200/70 text-slate-400'
+                                                    : isDark ? 'bg-white/20 text-white' : 'bg-white border border-slate-200/70 text-slate-500'
                                                     }`}>
                                                     {config.icon}
                                                 </div>
-                                                <span className="text-xs font-semibold truncate text-gray-700">
+                                                <span className={`text-xs font-semibold truncate ${isDark ? 'text-white' : 'text-slate-800'}`}>
                                                     {isLmsDisabled ? (
-                                                        <span className="text-gray-400 font-medium">Not Included</span>
+                                                        <span className="text-slate-400 font-medium">Not Included</span>
                                                     ) : (
                                                         <>{displayValue}</>
-                                                    )} <span className="font-medium text-gray-500">{config.label}</span>
+                                                    )} <span className={`font-medium ${isDark ? 'text-white/70' : 'text-slate-500'}`}>{config.label}</span>
                                                 </span>
                                             </div>
                                             {overageText && (
-                                                <div className="shrink-0 text-[10px] font-bold tracking-tight text-blue-600">
+                                                <div className={`shrink-0 text-[10px] font-semibold tracking-tight px-2 py-0.5 rounded border ${isDark ? 'text-white/90 bg-white/10 border-white/20' : 'text-[#5c3ffa] bg-[#5c3ffa]/5 border-[#5c3ffa]/15'}`}>
                                                     {overageText}
                                                 </div>
                                             )}
@@ -356,34 +387,44 @@ const PricingCard: React.FC<Props> = ({
                             </div>
                         </div>
 
-                        {plan.displayFeatures && plan.displayFeatures.length > 0 ? (
-                            plan.displayFeatures.map((group: any, idx: number) => {
-                                const category = group.category;
+                        {(() => {
+                            const filteredGroups = (plan.displayFeatures || [])
+                                .filter((group: any) => {
+                                    const cat = (group.category || '').toLowerCase();
+                                    return !cat.includes('marketing') && !cat.includes('growth');
+                                })
+                                .map((group: any) => ({
+                                    ...group,
+                                    items: (group.items || []).filter((item: string) => !isSpecialPerk(item))
+                                }))
+                                .filter((group: any) => group.items.length > 0);
+
+                            if (filteredGroups.length === 0) {
                                 return (
-                                    <div key={idx} className="mt-6 first:mt-4">
-                                        <h4 className="text-xs font-bold uppercase tracking-wider mb-3 flex items-center gap-1.5 text-gray-600">
-                                            {category}
-                                        </h4>
-                                        <div className="mb-4 last:mb-0 space-y-2.5">
-                                            {group.items && group.items.map((item: string, itemIdx: number) => (
-                                                <div key={itemIdx} className="flex items-start gap-3">
-                                                    <div className="mt-0.5 shrink-0">
-                                                        <Check className={`w-4 h-4 ${checkIconClass}`} strokeWidth={3} />
-                                                    </div>
-                                                    <span className="text-sm font-medium leading-tight pt-0.5 text-gray-600">
-                                                        {item}
-                                                    </span>
-                                                </div>
-                                            ))}
-                                        </div>
+                                    <div className="flex items-center justify-center h-full text-slate-400 text-xs italic py-4">
+                                        All core features included
                                     </div>
                                 );
-                            })
-                        ) : (
-                            <div className="flex items-center justify-center h-full text-gray-400 text-sm italic py-6">
-                                All basic features included
-                            </div>
-                        )}
+                            }
+
+                            return filteredGroups.map((group: any, idx: number) => (
+                                <div key={idx} className="mt-5 first:mt-3">
+                                    <h4 className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2.5">
+                                        {group.category}
+                                    </h4>
+                                    <div className="space-y-2">
+                                        {group.items.map((item: string, itemIdx: number) => (
+                                            <div key={itemIdx} className="flex items-center gap-2">
+                                                <Check className="w-3.5 h-3.5 text-emerald-500 shrink-0" strokeWidth={2.5} />
+                                                <span className="text-xs font-semibold text-slate-800 leading-tight">
+                                                    {item}
+                                                </span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            ));
+                        })()}
                     </div>
                 </div>
             </div>

@@ -117,7 +117,7 @@ export default function PricingSection({ onToggleNavbar, plans: initialPlans, sh
                                     Every Business
                                 </span>
                             </h2>
-                            <p className="text-sm 2xl:text-lg text-gray-500 max-w-2xl mx-auto">
+                            <p className="text-sm 2xl:text-base text-gray-500 max-w-2xl mx-auto">
                                 Skilldeck is made affordable for everyone. No matter the size or stage of your business, Skilldeck fits.
                             </p>
                         </div>
@@ -131,7 +131,7 @@ export default function PricingSection({ onToggleNavbar, plans: initialPlans, sh
                         <button
                             onClick={() => setBillingInterval('MONTHLY')}
                             className={`
-                                relative z-10 px-6 sm:px-8 py-2.5 2xl:px-10 2xl:py-3 text-sm 2xl:text-base font-semibold rounded-full transition-all duration-300 cursor-pointer
+                                relative z-10 px-6 sm:px-8 py-2.5 2xl:px-10 text-sm font-semibold rounded-full transition-all duration-300 cursor-pointer
                                 ${billingInterval === 'MONTHLY'
                                     ? 'bg-[linear-gradient(125deg,rgba(92,63,250,1)_0%,rgba(203,59,149,1)_48%,rgba(254,106,27,1)_100%)] text-white shadow-md'
                                     : 'text-gray-500 hover:text-gray-900'
@@ -143,7 +143,7 @@ export default function PricingSection({ onToggleNavbar, plans: initialPlans, sh
                         <button
                             onClick={() => setBillingInterval('YEARLY')}
                             className={`
-                                relative z-10 px-6 sm:px-8 py-2.5 2xl:px-10 2xl:py-3 text-sm 2xl:text-base font-semibold rounded-full transition-all duration-300 flex items-center gap-1.5 sm:gap-2 cursor-pointer
+                                relative z-10 px-6 sm:px-8 py-2.5 2xl:px-10 text-sm font-semibold rounded-full transition-all duration-300 flex items-center gap-1.5 sm:gap-2 cursor-pointer
                                 ${billingInterval === 'YEARLY'
                                     ? 'bg-[linear-gradient(125deg,rgba(92,63,250,1)_0%,rgba(203,59,149,1)_48%,rgba(254,106,27,1)_100%)] text-white shadow-md'
                                     : 'text-gray-500 hover:text-gray-900'
@@ -166,7 +166,7 @@ export default function PricingSection({ onToggleNavbar, plans: initialPlans, sh
                         <button
                             type="button"
                             onClick={() => setIsLifetimeModalOpen(true)}
-                            className="relative z-10 px-5 sm:px-7 py-2.5 2xl:px-9 2xl:py-3 text-sm 2xl:text-base font-semibold rounded-full transition-all duration-300 flex items-center gap-1.5 text-slate-700 hover:text-purple-600 cursor-pointer group"
+                            className="relative z-10 px-5 sm:px-7 py-2.5 2xl:px-9 text-sm font-semibold rounded-full transition-all duration-300 flex items-center gap-1.5 text-slate-700 hover:text-purple-600 cursor-pointer group"
                         >
                             <span>Lifetime</span>
                             <span className="text-[9px] 2xl:text-[10px] font-bold px-1.5 py-0.5 rounded-full uppercase tracking-wider bg-purple-100 text-purple-700 group-hover:bg-purple-200 transition-colors">

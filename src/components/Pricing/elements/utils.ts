@@ -60,8 +60,20 @@ export const featureStatus = (
 
 export type GroupedDisplayFeatures = Record<string, string[]>;
 
+export const PERK_FREE_SEO = "Free SEO For Courses";
+export const PERK_FREE_GOOGLE_ADS = "Free Google Ads Up to 1 Lakh Budget";
+
+export const isSpecialPerk = (text: string): boolean => {
+    const lower = (text || '').toLowerCase();
+    return lower.includes('seo for courses') || lower.includes('free seo') || lower.includes('google ads');
+};
+
 export const groupDisplayFeatures = (plans: any[]): GroupedDisplayFeatures => {
     const groups: GroupedDisplayFeatures = {};
+
+    // Always ensure Marketing & Growth perks category is present
+    groups["Marketing & Growth"] = [PERK_FREE_SEO, PERK_FREE_GOOGLE_ADS];
+
     for (const plan of plans) {
         if (!plan.displayFeatures) continue;
         for (const group of plan.displayFeatures) {
@@ -78,6 +90,17 @@ export const groupDisplayFeatures = (plans: any[]): GroupedDisplayFeatures => {
 };
 
 export const displayFeatureStatus = (plan: any, category: string, item: string): 'enabled' | 'disabled' => {
+    const planName = (plan.name || '').toLowerCase();
+    const isGrowth = planName.includes('growth');
+    const isBusiness = planName.includes('business') || planName.includes('enterprise');
+
+    if (item === PERK_FREE_SEO || item.toLowerCase().includes('free seo')) {
+        return (isGrowth || isBusiness) ? 'enabled' : 'disabled';
+    }
+    if (item === PERK_FREE_GOOGLE_ADS || item.toLowerCase().includes('google ads')) {
+        return isBusiness ? 'enabled' : 'disabled';
+    }
+
     if (!plan.displayFeatures) return 'disabled';
     const group = plan.displayFeatures.find((g: any) => g.category === category);
     if (!group) return 'disabled';
@@ -94,11 +117,20 @@ export const formatPrice = (
             style: 'currency',
             currencyDisplay: 'narrowSymbol',
             currency,
+            minimumFractionDigits: 0,
             maximumFractionDigits: 2,
         }).format(price);
     } catch {
         return `${currency} ${price}`;
     }
+};
+
+export const formatFeatureTitle = (input: string): string => {
+    return input || '';
+};
+
+export const formatCategoryTitle = (category: string): string => {
+    return category || '';
 };
 
 export type BillingInterval = 'MONTHLY' | 'YEARLY';
