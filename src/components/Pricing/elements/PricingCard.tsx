@@ -258,7 +258,7 @@ const PricingCard: React.FC<Props> = ({
                 </button>
 
                 {/* Divider */}
-                <div className={`w-full h-px mb-4 ${isDark ? 'bg-white/20' : 'bg-gray-100'}`} />
+                <div className={`w-full h-px md:mb-4 ${isDark ? 'bg-white/20' : 'bg-gray-100'}`} />
             </div>
 
             {/* SCROLLABLE FEATURES SECTION */}

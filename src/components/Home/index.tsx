@@ -30,11 +30,6 @@ const HdAudiences = dynamic(() => import("../home-demo/HdAudiences"), {
     ssr: true,
 });
 
-const HdShowcase = dynamic(() => import("../home-demo/HdShowcase"), {
-    loading: () => <div className="h-96 w-full animate-pulse bg-slate-50" />,
-    ssr: true,
-});
-
 const HdPricing = dynamic(() => import("../home-demo/HdPricing"), {
     loading: () => <div className="h-96 w-full animate-pulse bg-white" />,
     ssr: true,
@@ -94,15 +89,8 @@ const Home = ({ plans = [], faqs = [], partnerLogos = [], services = [] }: HomeP
             {/* 11 — Who it's for */}
             <HdAudiences />
 
-            {/* 12 — What you can build */}
-            <HdShowcase />
-
             {/* 13 — Marketplace */}
-            <section className="bg-white">
-                <div className="container mx-auto px-4 lg:px-0">
-                    <MarketplacePromotion />
-                </div>
-            </section>
+            <MarketplacePromotion />
 
             {/* 14 — Convert */}
             <HdCta />
@@ -110,7 +98,7 @@ const Home = ({ plans = [], faqs = [], partnerLogos = [], services = [] }: HomeP
             {/* 15 — Objection handling */}
             {faqs.length > 0 && (
                 <div className=" bg-slate-50" id="faqs">
-                    <div className="container mx-auto px-2 lg:px-0">
+                    <div className="container mx-auto px-4 lg:px-0">
                         <FAQ items={faqs} />
                     </div>
                 </div>

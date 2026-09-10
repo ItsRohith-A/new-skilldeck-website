@@ -32,12 +32,12 @@ export default function HdHero() {
                             <HdGradientText>Zero Chaos.</HdGradientText>
                         </h1>
 
-                        <p className="text-base 2xl:text-lg text-brand-muted max-w-xl leading-relaxed mb-4">
+                        <p className="text-base 2xl:text-lg text-center md:text-start text-brand-muted max-w-xl leading-relaxed mb-4">
                             90% of training institutes overspend on the wrong technology, bloated marketing teams,
                             and fragmented tools.
                         </p>
 
-                        <p className="text-base 2xl:text-lg text-brand-muted max-w-xl leading-relaxed mb-4 lg:mb-8">
+                        <p className="text-base 2xl:text-lg text-center md:text-start text-brand-muted max-w-xl leading-relaxed mb-4 lg:mb-8">
                             <span className="text-brand-dark font-semibold">Skilldeck replaces 10+ tools</span> with
                             one powerful platform — and runs your business at up to{" "}
                             <span className="text-brand-dark font-semibold">90% lower cost</span>.

@@ -60,7 +60,7 @@ export default function CompanyInfoCard({ info }: Props) {
 
     return (
         <section className="py-8 bg-white">
-            <div className="container mx-auto px-2 lg:px-0">
+            <div className="container mx-auto px-4 lg:px-0">
                 {/* Single rounded card — screenshot style */}
                 <div className="rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
                     <div className={`grid grid-cols-2 md:grid-cols-${Math.min(facts.length, 4)} divide-x divide-slate-200`}>

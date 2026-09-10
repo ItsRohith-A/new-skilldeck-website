@@ -6,6 +6,7 @@ import { fetchBlogBySlug, fetchBlogs, fetchCategories } from "@/lib/blogs";
 import { env } from "@/lib/env";
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
+import { redirectOrNotFound } from '@/lib/redirects';
 import { Suspense } from 'react';
 
 export const revalidate = false; // Pure On-Demand ISR: cached permanently on Edge CDN until webhook purge
@@ -113,7 +114,7 @@ export default async function BlogDetailPage({ params }: Props) {
     ]);
 
     if (!singleArticle) {
-        notFound();
+        return await redirectOrNotFound(`/blog/${slug}`);
     }
     // Fetch full course details if IDs are present
     const courseIds = [

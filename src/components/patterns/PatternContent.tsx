@@ -24,7 +24,7 @@ export default function PatternContent({ content }: PatternContentProps) {
         <section className="rounded-2xl">
             <div className="container mx-auto px-0">
                 <div
-                    className="jodit-content text-slate-700 leading-relaxed text-sm md:text-base prose max-w-none prose-purple prose-headings:font-bold prose-a:text-purple-600 prose-a:underline hover:prose-a:text-purple-700"
+                    className="skilldeck-content text-slate-700 leading-relaxed text-sm md:text-base prose max-w-none prose-purple prose-headings:font-bold prose-a:text-purple-600 prose-a:underline hover:prose-a:text-purple-700"
                     dangerouslySetInnerHTML={{ __html: sanitizedAndNofollow }}
                 />
             </div>

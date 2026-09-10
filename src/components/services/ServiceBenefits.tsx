@@ -15,7 +15,7 @@ export default function ServiceBenefits({ benefits = {} }: ServiceBenefitsProps)
 
     return (
         <section id="benefits" className="scroll-mt-24 section-y bg-slate-50/70">
-            <div className="container mx-auto px-2 lg:px-0 space-y-10">
+            <div className="container mx-auto px-4 lg:px-0 space-y-10">
                 <ServiceSectionIntro
                     numeral="02"
                     kicker={benefits.tagline || "The Outcome"}

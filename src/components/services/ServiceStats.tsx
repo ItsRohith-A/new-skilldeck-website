@@ -13,7 +13,7 @@ export default function ServiceStats({ stats = [] }: ServiceStatsProps) {
 
     return (
         <section className="section-y border-b border-slate-100">
-            <div className="container mx-auto px-2 lg:px-0">
+            <div className="container mx-auto px-4 lg:px-0">
                 <div className="grid grid-cols-2 md:grid-cols-4 divide-x divide-y md:divide-y-0 divide-slate-100">
                     {items.map((stat, i) => (
                         <div key={i} className="flex flex-col items-center text-center gap-2 px-4 py-6">

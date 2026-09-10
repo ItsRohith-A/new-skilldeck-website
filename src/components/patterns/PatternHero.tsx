@@ -2,8 +2,9 @@
 
 import Image from 'next/image';
 import { useState } from 'react';
-import { BookOpen, Share2, Check, ArrowRight } from 'lucide-react';
+import { BookOpen, Share2, Check, ArrowUpRight, ArrowRight } from 'lucide-react';
 import { Button } from "@/components/ui/Button";
+import { useLeadModal } from "@/components/Forms/LeadModalContext";
 
 interface PatternHeroProps {
     data: {
@@ -16,14 +17,28 @@ interface PatternHeroProps {
         createdAt?: string;
     };
     courseTitle?: string;
+    patternSlug?: string;
 }
 
-export default function PatternHero({ data, courseTitle }: PatternHeroProps) {
+export default function PatternHero({ data, courseTitle, patternSlug }: PatternHeroProps) {
+    const { openModal } = useLeadModal();
     const [copied, setCopied] = useState(false);
     const [mouseCoords, setMouseCoords] = useState({ x: 0, y: 0 });
 
-    const handleShare = () => {
+    const handleShare = async () => {
         if (typeof window !== 'undefined') {
+            if (navigator.share) {
+                try {
+                    await navigator.share({
+                        title: data.title,
+                        text: data.smallDescription,
+                        url: window.location.href,
+                    });
+                    return;
+                } catch {
+                    // fall back to clipboard
+                }
+            }
             navigator.clipboard.writeText(window.location.href);
             setCopied(true);
             setTimeout(() => setCopied(false), 2000);
@@ -90,29 +105,63 @@ export default function PatternHero({ data, courseTitle }: PatternHeroProps) {
                         </div>
 
                         {/* Interactive Actions Grid */}
-                        <div className="flex flex-wrap items-center gap-4 pt-4">
+                        <div className="flex flex-wrap items-center gap-3 pt-4">
                             <Button
-                                variant="primary"
+                                variant="outline-primary"
+                                size="lg"
+                                className="rounded-full font-bold"
                                 onClick={() => {
                                     const contentEl = document.querySelector('article');
                                     if (contentEl) {
                                         contentEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
                                     }
                                 }}
-                                className="!bg-[#0B0F19] hover:!bg-[#1E293B] text-white !rounded-full shadow-lg hover:shadow-xl px-7 py-3 transition-all duration-200"
                             >
                                 Start reading
                                 <ArrowRight className="w-4 h-4 ml-1" />
                             </Button>
 
                             <Button
-                                variant="secondary"
-                                onClick={handleShare}
-                                className="!bg-transparent hover:!bg-slate-50 text-slate-600 font-bold border-none shadow-none px-4 py-3"
+                                onClick={() =>
+                                    openModal({
+                                        source: "pattern-hero",
+                                        formTitle: courseTitle
+                                            ? `Book a Demo - ${courseTitle}`
+                                            : "Book a Demo with Skilldeck",
+                                        defaultValues: {
+                                            selectedCourse: courseTitle || data.title,
+                                            pagePath: typeof window !== "undefined" ? window.location.pathname : (patternSlug ? `/info/${patternSlug}` : undefined),
+                                        },
+                                    })
+                                }
+                                variant="primary"
+                                size="lg"
+                                className="rounded-full font-bold"
                             >
-                                {copied ? <Check className="w-4 h-4 text-green-500" /> : <Share2 className="w-4 h-4 text-slate-500" />}
-                                {copied ? "Link Copied!" : "Share guide"}
+                                Book My Free Demo
+                                <ArrowUpRight className="w-4 h-4" />
                             </Button>
+
+                            <div className="relative">
+                                <button
+                                    type="button"
+                                    onClick={handleShare}
+                                    title={copied ? "Link Copied!" : "Share guide"}
+                                    aria-label={copied ? "Link Copied!" : "Share guide"}
+                                    className="flex items-center justify-center w-12 h-12 rounded-full border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 hover:text-slate-900 transition-all duration-200 shadow-sm active:scale-95 cursor-pointer"
+                                >
+                                    {copied ? (
+                                        <Check className="w-5 h-5 text-emerald-600" />
+                                    ) : (
+                                        <Share2 className="w-5 h-5 text-slate-600" />
+                                    )}
+                                </button>
+                                {copied && (
+                                    <span className="absolute -bottom-8 left-1/2 -translate-x-1/2 px-2.5 py-1 text-[11px] font-semibold text-white bg-slate-900 rounded-md shadow-lg whitespace-nowrap pointer-events-none z-20">
+                                        Link copied!
+                                    </span>
+                                )}
+                            </div>
                         </div>
                     </div>
 

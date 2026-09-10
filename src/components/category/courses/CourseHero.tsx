@@ -69,7 +69,7 @@ export default function CourseHero({ course, courseSlug, locationSlug }: CourseH
                 className="absolute top-0 right-0 w-1/2 h-full bg-[#F9FAFB] -skew-x-6 translate-x-1/4 -z-10"
             />
 
-            <div className="container mx-auto px-2 lg:px-0 lg:space-y-14">
+            <div className="container mx-auto px-4 lg:px-0 lg:space-y-14">
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
 
                     {/* ───────────── LEFT COLUMN ───────────── */}

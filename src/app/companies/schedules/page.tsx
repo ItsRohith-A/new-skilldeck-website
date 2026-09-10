@@ -145,7 +145,7 @@ export default async function SchedulesPage({ searchParams }: Props) {
                             <div className="absolute -top-1/4 -left-1/4 w-96 h-96 bg-indigo-200/20 rounded-full blur-3xl" />
                             <div className="absolute -bottom-1/4 -right-1/4 w-96 h-96 bg-violet-200/20 rounded-full blur-3xl" />
                         </div>
-                        <div className="relative container mx-auto px-2 lg:px-0 pt-20 md:pt-20 lg:pt-28 lg:pb-6 text-center">
+                        <div className="relative container mx-auto px-4 lg:px-0 pt-20 md:pt-20 lg:pt-28 lg:pb-6 text-center">
                             <h1 className="text-xl md:text-2xl lg:text-3xl font-black text-slate-900 mb-4 leading-tight">
                                 Find Your Perfect{" "}
                                 <span className="bg-[linear-gradient(125deg,rgba(92,63,250,1)_0%,rgba(203,59,149,1)_48%,rgba(254,106,27,1)_100%)] bg-clip-text text-transparent">

@@ -79,7 +79,7 @@ export default function ServiceHeroDark({
                 }}
             />
 
-            <div className="container mx-auto px-2 lg:px-0 relative">
+            <div className="container mx-auto px-4 lg:px-0 relative">
                 <div className="[&_*]:!text-white/45 [&_a:hover]:!text-white">
                     <Breadcrumb items={breadcrumbItems} />
                 </div>
@@ -149,7 +149,7 @@ export default function ServiceHeroDark({
                                 onClick={handleGetQuote}
                                 variant="primary"
                                 size="lg"
-                                className="h-12 px-5 md:px-7 rounded-xl text-sm font-bold gap-2"
+                                className="h-12 px-5 md:px-7 rounded-xl text-sm font-bold gap-2 cursor-pointer"
                             >
                                 {primaryCtaText}
                                 <ArrowRight className="w-4 h-4" aria-hidden="true" />
@@ -159,7 +159,7 @@ export default function ServiceHeroDark({
                                 href={secondaryCtaHref}
                                 variant="outline"
                                 size="lg"
-                                className="h-12 px-4 md:px-6 rounded-xl border border-white/20 bg-white/5 text-white font-semibold text-sm hover:bg-white/10 hover:border-white/40 hover:text-white transition-all gap-2 backdrop-blur-sm"
+                                className="h-12 px-4 md:px-6 rounded-xl border border-white/20 bg-white/5 text-white font-semibold text-sm hover:bg-white/10 hover:border-white/40 hover:text-white transition-all gap-2 backdrop-blur-sm cursor-pointer"
                             >
                                 <PlayCircle className="w-5 h-5 text-brand-secondary" aria-hidden="true" />
                                 {secondaryCtaText}

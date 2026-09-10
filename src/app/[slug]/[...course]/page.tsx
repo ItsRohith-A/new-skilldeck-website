@@ -10,6 +10,7 @@ import { fetchFromBackend } from "@/lib/apiProxy";
 import { env } from "@/lib/env";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { redirectOrNotFound } from "@/lib/redirects";
 
 const STATIC_ASSET_PATTERNS = [
     /^\/_next\//,
@@ -147,11 +148,11 @@ export default async function CoursePage({
     const course = await getCourse(courseSlug, locationSlug, pageUrl);
 
     if (!course) {
-        notFound();
+        return await redirectOrNotFound(`/${categorySlug}/${courseParts.join('/')}`);
     }
 
     if (course.category?.slug && course.category.slug !== categorySlug) {
-        notFound();
+        return await redirectOrNotFound(`/${categorySlug}/${courseParts.join('/')}`);
     }
 
     const courseSchema = {
@@ -266,7 +267,7 @@ export default async function CoursePage({
                         courseSlug={courseSlug}
                         locationSlug={locationSlug}
                     />
-                    <div className="container mx-auto px-2 lg:px-0 md:py-12">
+                    <div className="container mx-auto px-4 lg:px-0 md:py-12">
                         <TopPartnersSection courseSlug={courseSlug} courseTitle={course?.course_name || course?.title} />
                     </div>
                     <CourseOverview
@@ -274,7 +275,7 @@ export default async function CoursePage({
                         courseSlug={courseSlug}
                         courseName={course.course_name}
                     />
-                    <div className="container mx-auto px-2 lg:px-0 pb-16 space-y-12">
+                    <div className="container mx-auto px-4 lg:px-0 pb-16 space-y-12">
                         {(course.bottomSection?.value || course.internalSection?.value) && (
                             <div className="space-y-6">
                                 {course.bottomSection?.value && (

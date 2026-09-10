@@ -18,7 +18,7 @@ export default function CategoryHero({ data }: CategoryHeroProps) {
 
     return (
         <section className="relative overflow-hidden bg-[linear-gradient(135deg,#f5f3ff_0%,#eef2ff_50%,#e0e7ff_100%)] py-10 md:py-24 lg:pt-26 text-slate-800">
-            <div className="container mx-auto px-2 lg:px-0 relative z-10">
+            <div className="container mx-auto px-4 lg:px-0 relative z-10">
                 {/* Breadcrumbs */}
                 <div className="flex justify-start mb-6">
                     <Breadcrumb items={breadcrumbItems} className="text-slate-500 font-semibold" />

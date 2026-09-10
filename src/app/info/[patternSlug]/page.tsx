@@ -1,4 +1,5 @@
 import { notFound } from 'next/navigation';
+import { redirectOrNotFound } from '@/lib/redirects';
 import { env } from '@/lib/env';
 import { Metadata } from 'next';
 import { Suspense } from 'react';
@@ -146,7 +147,7 @@ export default async function PatternPage({ params }: { params: Promise<{ patter
     const data = await getPatternData(patternSlug);
 
     if (!data || !data.pattern) {
-        return notFound();
+        return await redirectOrNotFound(`/info/${patternSlug}`);
     }
 
     const { pattern, course, service, seo } = data;
@@ -184,7 +185,7 @@ export default async function PatternPage({ params }: { params: Promise<{ patter
             <MainNav />
 
             <main className="flex-grow">
-                <PatternHero data={pattern} courseTitle={parentTitle} />
+                <PatternHero data={pattern} courseTitle={parentTitle} patternSlug={patternSlug} />
 
                 {/* Content Layout with Sidebar */}
                 <div className="container mx-auto px-4 lg:px-0 py-8 md:py-12">
@@ -222,7 +223,7 @@ export default async function PatternPage({ params }: { params: Promise<{ patter
                             </div>
                         }>
                             <SchedulesProvider>
-                                <div className="container mx-auto px-2 lg:px-0 md:py-12">
+                                <div className="container mx-auto px-4 lg:px-0 md:py-12">
                                     <TopPartnersSection courseSlug={course.slug} courseTitle={course?.course_title || course?.course_name} />
                                 </div>
 

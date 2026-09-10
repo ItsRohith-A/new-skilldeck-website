@@ -58,7 +58,7 @@ export default function Accordion({ items, className = "" }: AccordionProps) {
                                 >
                                     <div className="px-6 pb-6">
                                         <div
-                                            className="text-slate-600 leading-relaxed border-t border-slate-100 pt-4 prose prose-sm max-w-none jodit-content text-sm"
+                                            className="text-slate-600 leading-relaxed border-t border-slate-100 pt-4 prose prose-sm max-w-none skilldeck-content text-sm"
                                             dangerouslySetInnerHTML={{ __html: item.value }}
                                         />
                                     </div>

@@ -1,11 +1,11 @@
 "use client";
 
+import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { ServiceStrategy } from "./types";
 import ServiceIconWrapper from "./ServiceIconWrapper";
 import ServiceSectionIntro from "./ServiceSectionIntro";
 import { Button } from "@/components/ui/Button";
-import { useLeadModal } from "@/components/Forms/LeadModalContext";
 
 interface ServiceStrategyProps {
     strategy?: ServiceStrategy;
@@ -17,7 +17,6 @@ interface ServiceStrategyProps {
  * as a clean 2-up card grid.
  */
 export default function ServiceStrategyComponent({ strategy = {} }: ServiceStrategyProps) {
-    const { openModal } = useLeadModal();
 
     const points = (strategy.points || []).filter((p) => p?.title);
     const stats = (strategy.stats || []).filter((s) => s?.value);
@@ -32,7 +31,7 @@ export default function ServiceStrategyComponent({ strategy = {} }: ServiceStrat
                 className="absolute -top-32 -right-32 w-80 h-80 rounded-full blur-3xl opacity-10 pointer-events-none"
                 style={{ background: "var(--gradient-brand)" }}
             />
-            <div className="container mx-auto px-2 lg:px-0 relative">
+            <div className="container mx-auto px-4 lg:px-0 relative">
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-start">
                     <div className="lg:col-span-5 space-y-6 lg:sticky lg:top-28 self-start">
                         <ServiceSectionIntro
@@ -62,9 +61,10 @@ export default function ServiceStrategyComponent({ strategy = {} }: ServiceStrat
 
                         {strategy.cta && (
                             <Button
-                                onClick={() => openModal({ source: "service-strategy", formTitle: strategy.cta })}
+                                as={Link}
+                                href="/register"
                                 variant="primary"
-                                className="rounded-full font-bold"
+                                className="rounded-full font-bold cursor-pointer"
                             >
                                 {strategy.cta}
                                 <ArrowUpRight className="w-4 h-4" />

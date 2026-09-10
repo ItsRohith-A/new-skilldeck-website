@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { redirectOrNotFound } from "@/lib/redirects";
 import { Metadata } from "next";
 import { cache } from "react";
 import MainNav from "@/components/shared/Navbar";
@@ -119,7 +120,7 @@ export default async function CategoryPage({ params }: PageProps) {
     const category = categoryVal as CategoryData;
 
     if (!category) {
-        notFound();
+        return await redirectOrNotFound(`/${slug}`);
     }
 
     let faqSchema = null;

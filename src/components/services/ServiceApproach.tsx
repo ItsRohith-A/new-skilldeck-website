@@ -48,7 +48,7 @@ export default function ServiceApproach({ approach = {}, strategy, media }: Serv
 
     return (
         <section id="approach" className="scroll-mt-24 section-y">
-            <div className="container mx-auto px-2 lg:px-0">
+            <div className="container mx-auto px-4 lg:px-0">
                 {/* The intro lives inside the body column so the media frame starts
                     level with the heading rather than with the timeline. */}
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-start">
