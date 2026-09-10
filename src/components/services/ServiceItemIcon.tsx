@@ -1,4 +1,3 @@
-import React from "react";
 import * as Icons from "lucide-react";
 
 interface ServiceItemIconProps {
@@ -7,10 +6,10 @@ interface ServiceItemIconProps {
     defaultIcon?: string;
 }
 
-export default function ServiceItemIcon({ 
-    iconString, 
-    className = "w-5 h-5", 
-    defaultIcon = "Layers" 
+export default function ServiceItemIcon({
+    iconString,
+    className = "w-5 h-5",
+    defaultIcon = "Layers"
 }: ServiceItemIconProps) {
     if (!iconString) {
         const Fallback = (Icons as any)[defaultIcon] || Icons.Layers;
@@ -24,7 +23,7 @@ export default function ServiceItemIcon({
     const IconComponent = (Icons as any)[name] || (Icons as any)[defaultIcon] || Icons.Layers;
 
     return (
-        <div 
+        <div
             style={hexColor && hexColor !== "currentColor" ? { color: hexColor } : undefined}
             className="flex items-center justify-center shrink-0"
         >

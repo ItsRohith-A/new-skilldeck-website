@@ -1,9 +1,10 @@
 "use client";
 
+import { cn } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
-import { ArrowUpRight, ChevronLeft, ChevronRight, Star, Users } from "lucide-react";
+import { ArrowUpRight, ChevronDown, Star, Users } from "lucide-react";
 import ServiceItemIcon from "@/components/services/ServiceItemIcon";
 import type { ServiceItem } from "@/lib/services";
 
@@ -15,13 +16,23 @@ interface ServicesGridProps {
     /** Cap the grid; omit to show everything. */
     limit?: number;
     id?: string;
+    initialDesktopCount?: number;
+    initialMobileCount?: number;
 }
 
 /** CMS icon specs ("LucideTable,currentColor") are not valid image sources. */
 const isImageSrc = (src?: string): src is string =>
     Boolean(src && (src.startsWith("/") || src.startsWith("http://") || src.startsWith("https://")));
 
-function ServiceCard({ service, index }: { service: ServiceItem; index: number }) {
+function ServiceCard({
+    service,
+    index,
+    className,
+}: {
+    service: ServiceItem;
+    index: number;
+    className?: string;
+}) {
     const card = service.servicecard || {};
     const name = card.title || service.service_name || service.name || "Service";
     const href = `/services/${service.slug}`;
@@ -30,7 +41,10 @@ function ServiceCard({ service, index }: { service: ServiceItem; index: number }
     const thumbnail = isImageSrc(card.thumbnail) ? card.thumbnail : undefined;
 
     return (
-        <li className="group relative overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl focus-within:ring-2 focus-within:ring-brand-primary/40">
+        <li className={cn(
+            "group relative overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl focus-within:ring-2 focus-within:ring-brand-primary/40",
+            className
+        )}>
             {/* The whole card is the link, so every part of it is clickable. */}
             <Link
                 href={href}
@@ -126,38 +140,35 @@ export default function ServicesGrid({
     subtitle = "Everything a training business needs to grow — built, run and supported by one team.",
     limit,
     id = "services",
+    initialDesktopCount = 9,
+    initialMobileCount = 6,
 }: ServicesGridProps) {
     const list = limit ? services.slice(0, limit) : services;
-    const [mobileIndex, setMobileIndex] = useState(0);
-    const [desktopPage, setDesktopPage] = useState(0);
+    const [desktopCount, setDesktopCount] = useState(initialDesktopCount);
+    const [mobileCount, setMobileCount] = useState(initialMobileCount);
 
     if (list.length === 0) return null;
 
-    // Mobile navigation (1 card per slide)
-    const handleMobilePrev = () => {
-        setMobileIndex((prev) => (prev === 0 ? list.length - 1 : prev - 1));
+    const maxRenderCount = Math.max(mobileCount, desktopCount);
+    const renderedCards = list.slice(0, maxRenderCount);
+
+    const hasMoreMobile = mobileCount < list.length;
+    const hasMoreDesktop = desktopCount < list.length;
+    const hasMore = hasMoreMobile || hasMoreDesktop;
+
+    const handleLoadMore = () => {
+        setMobileCount((prev) => Math.min(prev + 6, list.length));
+        setDesktopCount((prev) => Math.min(prev + 9, list.length));
     };
 
-    const handleMobileNext = () => {
-        setMobileIndex((prev) => (prev === list.length - 1 ? 0 : prev + 1));
+    const getCardVisibility = (i: number) => {
+        const inMobile = i < mobileCount;
+        const inDesktop = i < desktopCount;
+        if (inMobile && inDesktop) return "";
+        if (inMobile && !inDesktop) return "sm:hidden";
+        if (!inMobile && inDesktop) return "hidden sm:block";
+        return "hidden";
     };
-
-    // Desktop/Tablet navigation (3 cards per page)
-    const DESKTOP_PAGE_SIZE = 3;
-    const totalDesktopPages = Math.ceil(list.length / DESKTOP_PAGE_SIZE);
-
-    const handleDesktopPrev = () => {
-        setDesktopPage((prev) => (prev === 0 ? totalDesktopPages - 1 : prev - 1));
-    };
-
-    const handleDesktopNext = () => {
-        setDesktopPage((prev) => (prev === totalDesktopPages - 1 ? 0 : prev + 1));
-    };
-
-    const desktopVisibleCards = list.slice(
-        desktopPage * DESKTOP_PAGE_SIZE,
-        (desktopPage + 1) * DESKTOP_PAGE_SIZE
-    );
 
     return (
         <section id={id} className="scroll-mt-24 section-y bg-slate-50">
@@ -177,98 +188,48 @@ export default function ServicesGrid({
                     {subtitle && <p className="body-medium">{subtitle}</p>}
                 </div>
 
-                {/* Mobile View: Single card carousel with Next / Previous navigation */}
-                <div className="block sm:hidden max-w-sm mx-auto space-y-4">
-                    <ul className="w-full">
-                        {list.map((service, i) => {
-                            if (i !== mobileIndex) return null;
-                            return <ServiceCard key={service.slug} service={service} index={i} />;
-                        })}
-                    </ul>
+                {/* Cards Grid: Responsive across mobile (6 default), tablet, and desktop (9 default) */}
+                <ul className="mx-auto grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+                    {renderedCards.map((service, i) => (
+                        <ServiceCard
+                            key={service.slug}
+                            service={service}
+                            index={i}
+                            className={getCardVisibility(i)}
+                        />
+                    ))}
+                </ul>
 
-                    {list.length > 1 && (
-                        <div className="flex items-center justify-between px-2 pt-2 bg-white rounded-2xl border border-slate-200 p-3 shadow-sm">
-                            <button
-                                type="button"
-                                onClick={handleMobilePrev}
-                                className="flex items-center justify-center w-10 h-10 rounded-xl border border-slate-200 bg-white text-slate-700 active:scale-95 transition-all cursor-pointer hover:border-brand-primary hover:text-brand-primary"
-                                aria-label="Previous service"
-                            >
-                                <ChevronLeft className="w-5 h-5" />
-                            </button>
-
-                            {/* Indicator dots */}
-                            <div className="flex items-center gap-1.5">
-                                {list.map((_, i) => (
-                                    <button
-                                        key={i}
-                                        onClick={() => setMobileIndex(i)}
-                                        className={`h-2 rounded-full transition-all duration-300 ${i === mobileIndex ? "bg-brand-primary w-5" : "bg-slate-300 w-2"
-                                            }`}
-                                        aria-label={`Go to service ${i + 1}`}
-                                    />
-                                ))}
-                            </div>
-
-                            <button
-                                type="button"
-                                onClick={handleMobileNext}
-                                className="flex items-center justify-center w-10 h-10 rounded-xl border border-slate-200 bg-white text-slate-700 active:scale-95 transition-all cursor-pointer hover:border-brand-primary hover:text-brand-primary"
-                                aria-label="Next service"
-                            >
-                                <ChevronRight className="w-5 h-5" />
-                            </button>
-                        </div>
-                    )}
-                </div>
-
-                {/* Tablet / Desktop View: max 3 cards per page + Next/Prev controls if > 3 */}
-                <div className="hidden sm:block space-y-6">
-                    <ul className="mx-auto grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-                        {desktopVisibleCards.map((service, i) => (
-                            <ServiceCard
-                                key={service.slug}
-                                service={service}
-                                index={desktopPage * DESKTOP_PAGE_SIZE + i}
-                            />
-                        ))}
-                    </ul>
-
-                    {totalDesktopPages > 1 && (
-                        <div className="flex items-center justify-center gap-4 pt-4">
-                            <button
-                                type="button"
-                                onClick={handleDesktopPrev}
-                                className="flex items-center justify-center w-11 h-11 rounded-2xl border border-slate-200 bg-white text-slate-700 hover:border-brand-primary hover:text-brand-primary active:scale-95 transition-all shadow-sm cursor-pointer"
-                                aria-label="Previous page of services"
-                            >
-                                <ChevronLeft className="w-5 h-5" />
-                            </button>
-
-                            {/* Desktop page indicator dots */}
-                            <div className="flex items-center gap-2">
-                                {Array.from({ length: totalDesktopPages }).map((_, pageIdx) => (
-                                    <button
-                                        key={pageIdx}
-                                        onClick={() => setDesktopPage(pageIdx)}
-                                        className={`h-2.5 rounded-full transition-all duration-300 ${pageIdx === desktopPage ? "bg-brand-primary w-7" : "bg-slate-300 w-2.5 hover:bg-slate-400"
-                                            }`}
-                                        aria-label={`Go to page ${pageIdx + 1}`}
-                                    />
-                                ))}
-                            </div>
-
-                            <button
-                                type="button"
-                                onClick={handleDesktopNext}
-                                className="flex items-center justify-center w-11 h-11 rounded-2xl border border-slate-200 bg-white text-slate-700 hover:border-brand-primary hover:text-brand-primary active:scale-95 transition-all shadow-sm cursor-pointer"
-                                aria-label="Next page of services"
-                            >
-                                <ChevronRight className="w-5 h-5" />
-                            </button>
-                        </div>
-                    )}
-                </div>
+                {/* Load More Button */}
+                {hasMore && (
+                    <div
+                        className={cn(
+                            "flex flex-col items-center justify-center pt-10 sm:pt-12",
+                            hasMoreMobile && hasMoreDesktop
+                                ? "flex"
+                                : hasMoreMobile
+                                ? "flex sm:hidden"
+                                : "hidden sm:flex"
+                        )}
+                    >
+                        <button
+                            type="button"
+                            onClick={handleLoadMore}
+                            className="inline-flex items-center justify-center gap-2 rounded-full border border-slate-200 bg-white hover:bg-slate-50 hover:border-brand-primary text-slate-800 hover:text-brand-primary px-8 py-3.5 text-sm font-bold shadow-sm hover:shadow-md active:scale-95 transition-all duration-200 cursor-pointer"
+                        >
+                            <span>Load More Services</span>
+                            <ChevronDown className="w-4 h-4" />
+                        </button>
+                        <p className="mt-3 text-xs font-semibold text-brand-muted">
+                            <span className="sm:hidden">
+                                Showing {Math.min(mobileCount, list.length)} of {list.length} services
+                            </span>
+                            <span className="hidden sm:inline">
+                                Showing {Math.min(desktopCount, list.length)} of {list.length} services
+                            </span>
+                        </p>
+                    </div>
+                )}
 
                 {limit && services.length > limit && (
                     <p className="mt-8 text-center text-sm font-semibold text-brand-muted">

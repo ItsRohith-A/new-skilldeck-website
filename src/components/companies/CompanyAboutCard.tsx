@@ -37,12 +37,11 @@ export default function CompanyAboutCard({ companyName, description }: Props) {
                 How {companyName} works
             </h2>
 
-            {/* Full description — HTML from backend, rendered with jodit-content styles and truncated */}
             {description && (
                 <TruncatedContent
                     content={injectNofollow(DOMPurify.sanitize(description))}
                     maxLines={10}
-                    className="jodit-content text-slate-600"
+                    className="skilldeck-content text-slate-600"
                 />
             )}
         </div>

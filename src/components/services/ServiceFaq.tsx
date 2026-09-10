@@ -23,7 +23,7 @@ export default function ServiceFaq({ faqs, serviceName }: ServiceFaqProps) {
 
     return (
         <section id="faq" className="scroll-mt-24 section-y">
-            <div className="container mx-auto px-2 lg:px-0">
+            <div className="container mx-auto px-4 lg:px-0">
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16">
                     <div className="lg:col-span-4 space-y-6 lg:sticky lg:top-28 self-start">
                         <ServiceSectionIntro
@@ -63,7 +63,7 @@ export default function ServiceFaq({ faqs, serviceName }: ServiceFaqProps) {
                                         formTitle: serviceName ? `Ask Our Team about ${serviceName}` : "Ask Our Team",
                                     })}
                                     variant="primary"
-                                    className="w-full rounded-xl font-bold gap-2"
+                                    className="w-full rounded-xl font-bold gap-2 cursor-pointer"
                                 >
                                     Ask a question
                                     <ArrowUpRight className="w-4 h-4" aria-hidden="true" />

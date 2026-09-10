@@ -26,6 +26,12 @@ export const Button: React.FC<ButtonProps> = ({
     lg: "px-6 py-3 text-base",
   };
 
+  const outlineInnerSizes = {
+    sm: "px-3.5 py-1.5 text-xs",
+    md: "px-5 py-2 text-sm",
+    lg: "px-6 py-2.5 text-base",
+  };
+
   // ── outline-primary: gradient border via wrapper trick ──────────────────────
   // Uses CSS var(--gradient-brand) so the value is never an inline arbitrary class
   // (long arbitrary gradient values with commas can be missed by Tailwind v4 scanner)
@@ -33,25 +39,25 @@ export const Button: React.FC<ButtonProps> = ({
     return (
       <Component
         className={cn(
-          "rounded-xl inline-flex items-center justify-center transition-all duration-200 transform active:scale-95",
-          "hover:-translate-y-1px hover:shadow-lg hover:shadow-[#5c3ffa]/25",
+          "group rounded-xl inline-flex items-center justify-center transition-all duration-200 transform active:scale-95",
+          "hover:-translate-y-[1px] hover:shadow-lg hover:shadow-[#5c3ffa]/25",
           "disabled:opacity-50 disabled:pointer-events-none",
           "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#5c3ffa]",
-          sizes[size],
           className
         )}
-        style={{ padding: "1.5px", background: "var(--gradient-brand)" }}
+        style={{ padding: "2px", background: "var(--gradient-brand)" }}
         disabled={disabled}
         {...props}
       >
         <span
           className={cn(
-            "bg-white hover:bg-transparent",
-            "text-brand-primary hover:text-white",
+            "bg-white group-hover:bg-transparent",
+            "text-slate-900 group-hover:text-white",
             // Follow the wrapper's radius so a caller-supplied rounding
             // (e.g. `rounded-full`) does not leave the gradient ring broken.
             "transition-all duration-200 rounded-[inherit]",
-            "flex items-center justify-center gap-2 w-full h-full font-semibold px-3"
+            "flex items-center justify-center gap-2 w-full h-full font-bold",
+            outlineInnerSizes[size]
           )}
         >
           {children}
@@ -85,7 +91,7 @@ export const Button: React.FC<ButtonProps> = ({
       {variant === "primary" && (
         <span
           aria-hidden="true"
-          className="pointer-events-none absolute inset-0 bg-[#ffffff01] rounded-xl shadow-[0px_8px_24px_-8px_#5c3ffa73]"
+          className="pointer-events-none absolute inset-0 rounded-[inherit] shadow-[0px_8px_24px_-8px_#5c3ffa73]"
         />
       )}
       <span className="relative flex items-center justify-center gap-2">

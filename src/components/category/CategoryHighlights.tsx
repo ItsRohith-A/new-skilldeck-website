@@ -59,7 +59,7 @@ const CategoryHighlights = ({ stats, keyPoints, categoryName }: CategoryHighligh
                                     <span className="w-9 h-9 rounded-xl bg-purple-600 text-white flex items-center justify-center text-sm font-black">!</span>
                                     Key Takeaways of {categoryName}
                                 </h3>
-                                <TruncatedContent content={keyPoints || ''} maxLines={10} className='jodit-content text-slate-600 text-sm leading-relaxed' />
+                                <TruncatedContent content={keyPoints || ''} maxLines={10} className='skilldeck-content text-slate-600 text-sm leading-relaxed' />
                             </div>
                         </div>
 

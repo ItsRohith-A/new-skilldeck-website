@@ -14,7 +14,7 @@ interface ArticleBodyProps {
 const ArticleBody = ({ categories, blogs, selectedCategory, singleArticle }: any) => {
     return (
         <div className="relative blog-padding mt-20 lg:mt-24">
-            <div className="container mx-auto px-2 lg:px-0">
+            <div className="container mx-auto px-4 lg:px-0">
                 <div className="lg:grid grid-cols-12 justify-center gap-8 h-full">
                     {/* Left main content column */}
                     <div className="lg:col-span-9 px-2 lg:px-0">

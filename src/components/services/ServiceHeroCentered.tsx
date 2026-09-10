@@ -82,7 +82,7 @@ export default function ServiceHeroCentered({
                 }}
             />
 
-            <div className="container mx-auto px-2 lg:px-0 relative">
+            <div className="container mx-auto px-4 lg:px-0 relative">
                 <div className="flex justify-center">
                     <Breadcrumb items={breadcrumbItems} />
                 </div>
@@ -123,7 +123,7 @@ export default function ServiceHeroCentered({
                             onClick={handleGetQuote}
                             variant="primary"
                             size="lg"
-                            className="h-12 px-6 md:px-8 rounded-xl text-sm font-bold gap-2"
+                            className="h-12 px-6 md:px-8 rounded-xl text-sm font-bold gap-2 cursor-pointer"
                         >
                             {primaryCtaText}
                             <ArrowRight className="w-4 h-4" aria-hidden="true" />
@@ -133,7 +133,7 @@ export default function ServiceHeroCentered({
                             href={secondaryCtaHref}
                             variant="outline"
                             size="lg"
-                            className="h-12 px-5 md:px-6 rounded-xl border border-gray-300 bg-white text-gray-800 font-semibold text-sm hover:border-gray-500 hover:bg-gray-50 hover:text-gray-900 transition-all gap-2"
+                            className="h-12 px-5 md:px-6 rounded-xl border border-gray-300 bg-white text-gray-800 font-semibold text-sm hover:border-gray-500 hover:bg-gray-50 hover:text-gray-900 transition-all gap-2 cursor-pointer"
                         >
                             <PlayCircle className="w-5 h-5 text-brand-primary" aria-hidden="true" />
                             {secondaryCtaText}
@@ -143,7 +143,7 @@ export default function ServiceHeroCentered({
                                 href={brochureUrl}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="inline-flex items-center gap-1.5 text-sm font-semibold text-brand-primary hover:underline"
+                                className="inline-flex items-center gap-1.5 text-sm font-semibold text-brand-primary hover:underline cursor-pointer"
                             >
                                 <Download className="w-4 h-4" aria-hidden="true" />
                                 Brochure

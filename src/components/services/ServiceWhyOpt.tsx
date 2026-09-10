@@ -28,7 +28,7 @@ export default function ServiceWhyOpt({ whyopt = {} }: ServiceWhyOptProps) {
                 style={{ background: "var(--gradient-brand)" }}
             />
 
-            <div className="container mx-auto px-2 lg:px-0 relative space-y-12">
+            <div className="container mx-auto px-4 lg:px-0 relative space-y-12">
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-start">
                     <div className="lg:col-span-5 space-y-6 lg:sticky lg:top-28 self-start">
                         <ServiceSectionIntro
@@ -87,34 +87,29 @@ export default function ServiceWhyOpt({ whyopt = {} }: ServiceWhyOptProps) {
                 </div>
 
                 {stats.length > 0 && (
-                    <div className="relative overflow-hidden rounded-3xl bg-brand-dark p-6 md:p-8">
+                    <div className="relative overflow-hidden rounded-2xl sm:rounded-3xl bg-brand-dark p-4 sm:p-6 md:p-8">
                         <div
                             aria-hidden="true"
                             className="absolute -top-28 -right-20 w-80 h-80 rounded-full blur-3xl opacity-25 pointer-events-none"
                             style={{ background: "var(--gradient-brand)" }}
                         />
-                        <div className="relative grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-0 lg:divide-x divide-white/10">
+                        <div className="relative grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-0 lg:divide-x divide-white/10">
                             {stats.map((stat, i) => (
-                                <div key={i} className="flex items-center gap-4 lg:px-6 first:lg:pl-0 last:lg:pr-0">
-                                    <div className="w-11 h-11 rounded-xl bg-white/10 flex items-center justify-center shrink-0">
+                                <div key={i} className="flex items-center gap-2.5 sm:gap-4 lg:px-6 first:lg:pl-0 last:lg:pr-0">
+                                    <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-lg sm:rounded-xl bg-white/10 flex items-center justify-center shrink-0">
                                         <ServiceItemIcon
                                             iconString={stat.icon}
-                                            className={`w-5 h-5 ${accentAt(STAT_ACCENTS, i).text}`}
+                                            className={`w-4 h-4 sm:w-5 sm:h-5 ${accentAt(STAT_ACCENTS, i).text}`}
                                             defaultIcon="ShieldAlert"
                                         />
                                     </div>
                                     <div className="min-w-0">
-                                        <p className="text-2xl font-black text-white leading-none tracking-tight">
+                                        <p className="text-lg sm:text-2xl font-black text-white leading-none tracking-tight">
                                             {stat.value}
                                         </p>
-                                        <p className="text-xs text-white/60 font-semibold mt-1.5 leading-snug">
+                                        <p className="text-[11px] sm:text-xs text-white/60 font-semibold mt-1 sm:mt-1.5 leading-tight sm:leading-snug">
                                             {stat.description}
                                         </p>
-                                        {/* {stat.tagline && stat.description && (
-                                            <p className="text-[11px] text-white/40 mt-0.5 leading-snug">
-                                                {stat.tagline}
-                                            </p>
-                                        )} */}
                                     </div>
                                 </div>
                             ))}

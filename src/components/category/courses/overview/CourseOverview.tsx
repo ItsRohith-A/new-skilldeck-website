@@ -78,7 +78,7 @@ export default function CourseOverview({ data, courseSlug, courseName }: Overvie
             {/* Floating Left Sections Navigation */}
             <CourseSectionsNav sections={navSections} />
 
-            <div className="container mx-auto px-2 lg:px-0">
+            <div className="container mx-auto px-4 lg:px-0">
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12 items-start">
                     {/* Left details column */}
                     <div className="lg:col-span-2 space-y-10">

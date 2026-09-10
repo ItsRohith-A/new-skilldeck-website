@@ -75,7 +75,7 @@ const PlansComparison: React.FC<Props> = ({
     }
 
     return (
-        <div className="flex flex-wrap justify-center gap-6 p-4 lg:pt-5 items-stretch max-w-[1280px] mx-auto">
+        <div className="flex flex-wrap justify-center gap-6 lg:pt-5 items-stretch max-w-[1280px] mx-auto">
             {filteredPlans.map((plan: any, index: number) => (
                 <div
                     key={plan.id || plan._id || `plan-${index}`}

@@ -218,7 +218,7 @@ export default function ServiceMoreServicesCards({
 
     return (
         <section id="other-services" className="scroll-mt-24 section-y bg-slate-50/70 border-t border-slate-200/60">
-            <div className="container mx-auto px-2 lg:px-0 space-y-10">
+            <div className="container mx-auto px-4 lg:px-0 space-y-10">
                 {/* Section Header */}
                 <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6">
                     <ServiceSectionIntro

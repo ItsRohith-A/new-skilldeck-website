@@ -65,7 +65,7 @@ export default function CompanyProfileHero({ tenant }: Props) {
     return (
         <section className="bg-linear-to-b from-indigo-50/80 to-white border-b border-slate-200">
             {/* Breadcrumb — using shared Breadcrumb UI component */}
-            <div className="container mx-auto px-2 lg:px-0 pt-20 md:pt-20 lg:pt-28 lg:pb-6">
+            <div className="container mx-auto px-4 lg:px-0 pt-20 md:pt-20 lg:pt-28 lg:pb-6">
                 <Breadcrumb
                     items={[
                         { label: "Home", href: "/" },
@@ -76,7 +76,7 @@ export default function CompanyProfileHero({ tenant }: Props) {
             </div>
 
             {/* Main header */}
-            <div className="container mx-auto px-2 lg:px-0 py-4 lg:py-8">
+            <div className="container mx-auto px-4 lg:px-0 py-4 lg:py-8">
                 <div className="flex flex-col md:flex-row items-start gap-6">
                     {/* Logo */}
                     <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-white shadow border border-slate-200 flex items-center justify-center overflow-hidden shrink-0">
@@ -142,7 +142,7 @@ export default function CompanyProfileHero({ tenant }: Props) {
                         {/* Short description — HTML from backend, rendered under metadata only if full description exists and contains text */}
                         {p.shortDescription && p.description && hasTextContent(p.description) && (
                             <div
-                                className="jodit-content text-slate-600 text-sm max-w-5xl"
+                                className="skilldeck-content text-slate-600 text-sm max-w-5xl"
                                 dangerouslySetInnerHTML={{ __html: injectNofollow(DOMPurify.sanitize(p.shortDescription)) }}
                             />
                         )}

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { revalidatePath, revalidateTag } from 'next/cache';
 import { env } from '@/lib/env';
 import { CDNFactory } from '@/lib/cdn';
+import { invalidateRedirectCache } from '@/lib/redirects';
 
 export const dynamic = 'force-dynamic';
 
@@ -100,6 +101,11 @@ export async function POST(request: NextRequest) {
         } else {
             revalidateTag('courses', 'max');
         }
+    } else if (type === 'redirection' || type === 'redirections') {
+        // A redirect rule has no page of its own to re-render: drop the fetch
+        // cache holding the rule list, then the in-memory map built from it.
+        revalidateTag('redirections', 'max');
+        invalidateRedirectCache();
     } else if (type === 'pattern' || type === 'patterns') {
         if (slug) {
             revalidateTag(`pattern-${slug}`, 'max');

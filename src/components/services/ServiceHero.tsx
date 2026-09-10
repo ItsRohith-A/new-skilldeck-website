@@ -80,7 +80,7 @@ export default function ServiceHero({
                 }}
             />
 
-            <div className="container mx-auto px-2 lg:px-0">
+            <div className="container mx-auto px-4 lg:px-0">
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center">
                     {/* ───────────── LEFT COLUMN ───────────── */}
                     <div className="lg:col-span-6 space-y-5">
@@ -147,7 +147,7 @@ export default function ServiceHero({
                                 onClick={handleGetQuote}
                                 variant="primary"
                                 size="lg"
-                                className="h-12 px-5 md:px-7 rounded-xl text-sm font-bold gap-2"
+                                className="h-12 px-5 md:px-7 rounded-xl text-sm font-bold gap-2 cursor-pointer"
                             >
                                 {primaryCtaText}
                                 <ArrowRight className="w-4 h-4" aria-hidden="true" />
@@ -157,7 +157,7 @@ export default function ServiceHero({
                                 href={secondaryCtaHref}
                                 variant="outline"
                                 size="lg"
-                                className="h-12 px-4 md:px-6 rounded-xl border border-gray-300 bg-white text-gray-800 font-semibold text-sm hover:border-gray-500 hover:bg-gray-50 hover:text-gray-900 transition-all gap-2"
+                                className="h-12 px-4 md:px-6 rounded-xl border border-gray-300 bg-white text-gray-800 font-semibold text-sm hover:border-gray-500 hover:bg-gray-50 hover:text-gray-900 transition-all gap-2 cursor-pointer"
                             >
                                 <PlayCircle className="w-5 h-5 text-brand-primary" aria-hidden="true" />
                                 {secondaryCtaText}

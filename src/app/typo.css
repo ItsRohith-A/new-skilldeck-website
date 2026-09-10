@@ -1,165 +1,179 @@
-.jodit-content {
-    font-size: inherit;
+.skilldeck-content {
+    font-size: 15px;
     line-height: 1.6;
     word-break: break-word;
     white-space: normal;
 }
 
-.jodit-content ::selection {
+/* --- Skilldeck Editor Utility Classes --- */
+.text-foreground {
+    color: #1e293b !important;
+}
+
+.leading-relaxed {
+    line-height: 1.625 !important;
+}
+
+
+@media (max-width: 767px) {
+    .skilldeck-content {
+        font-size: 13px;
+    }
+}
+
+
+.skilldeck-content ::selection {
     background: #bfdbfe;
 }
 
-.jodit-content p:empty {
+.skilldeck-content p:empty {
     min-height: 1em;
 }
 
-.jodit-content a {
+.skilldeck-content a {
     word-break: break-word;
 }
 
 
 /* Headings */
-.jodit-content h1 {
-    font-size: 2em;
+.skilldeck-content h1 {
+    font-size: 32px;
     font-weight: 700;
     margin: 1.25em 0 0.6em;
 }
 
-.jodit-content h2 {
-    font-size: 1.625em;
+.skilldeck-content h2 {
+    font-size: 26px;
     font-weight: 700;
     margin: 1.2em 0 0.6em;
 }
 
-.jodit-content h3 {
-    font-size: 1.375em;
+.skilldeck-content h3 {
+    font-size: 22px;
     font-weight: 700;
     margin: 1.1em 0 0.5em;
 }
 
-.jodit-content h4 {
-    font-size: 1.125em;
+.skilldeck-content h4 {
+    font-size: 18px;
     font-weight: 700;
     margin: 1em 0 0.5em;
 }
 
-.jodit-content h5 {
-    font-size: 1em;
+.skilldeck-content h5 {
+    font-size: 16px;
     font-weight: 600;
     margin: 0.9em 0 0.4em;
 }
 
-.jodit-content h6 {
-    font-size: 0.875em;
+.skilldeck-content h6 {
+    font-size: 14px;
     font-weight: 600;
     margin: 0.8em 0 0.4em;
 }
 
 /* Paragraphs & Inline Text */
 
-.jodit-content p,
-.jodit-content span,
-.jodit-content strong,
-.jodit-content em,
-.jodit-content b,
-.jodit-content i {
+.skilldeck-content p,
+.skilldeck-content span,
+.skilldeck-content strong,
+.skilldeck-content em,
+.skilldeck-content b,
+.skilldeck-content i {
     color: inherit;
-    font-family: inherit !important;
-    background-color: transparent !important;
-    white-space: normal !important;
+    font-family: inherit;
 }
 
-.jodit-content p {
-    margin: 0.6em 0 !important;
+.skilldeck-content p {
+    margin: 0.6em 0;
 }
 
-.jodit-content strong,
-.jodit-content b {
+.skilldeck-content strong,
+.skilldeck-content b {
     font-weight: 700;
 }
 
-.jodit-content em,
-.jodit-content i {
+.skilldeck-content em,
+.skilldeck-content i {
     font-style: italic;
 }
 
-.jodit-content u {
+.skilldeck-content u {
     text-decoration: underline;
 }
 
-.jodit-content s {
+.skilldeck-content s {
     text-decoration: line-through;
 }
 
-.jodit-content mark {
+.skilldeck-content mark {
     background: #fde68a;
     padding: 0.1em 0.2em;
 }
 
 /* Sup / Sub */
-.jodit-content sup {
+.skilldeck-content sup {
     font-size: 0.75em;
     vertical-align: super;
 }
 
-.jodit-content sub {
+.skilldeck-content sub {
     font-size: 0.75em;
     vertical-align: sub;
 }
 
 /* Links */
-.jodit-content a {
+.skilldeck-content a {
     color: #2563eb;
     text-decoration: underline;
     cursor: pointer;
 }
 
-.jodit-content a:hover {
+.skilldeck-content a:hover {
     color: #1e40af;
 }
 
-/* Lists */
-.jodit-content ul,
-.jodit-content ol {
-    margin: 0.75em 0 !important;
-    padding-left: 2em !important;
+/* Lists (Standard & Skilldeck Classes) */
+.skilldeck-content ul,
+.skilldeck-list-ul {
+    margin: 1.25rem 0;
+    padding-left: 2rem;
+    list-style-type: disc;
 }
 
-.jodit-content ul {
-    list-style-type: disc !important;
+.skilldeck-content ol {
+    margin: 1.25rem 0;
+    padding-left: 2rem;
+    list-style-type: decimal;
 }
 
-.jodit-content ol {
-    list-style-type: decimal !important;
-}
-
-.jodit-content li {
-    margin: 0.35em 0 !important;
-    color: inherit !important;
-    white-space: normal !important;
-    background-color: transparent !important;
-    font-family: inherit !important;
+.skilldeck-content li,
+.skilldeck-list-li {
+    margin: 0.5rem 0;
+    color: inherit;
+    line-height: 1.6;
 }
 
 /* Nested lists */
-.jodit-content ul ul {
+.skilldeck-content ul ul,
+.skilldeck-list-ul ul {
     list-style-type: circle;
+    margin: 0.5rem 0;
 }
 
-.jodit-content ul ul ul {
+.skilldeck-content ul ul ul,
+.skilldeck-list-ul ul ul {
     list-style-type: square;
 }
 
-.jodit-content ol ol {
+.skilldeck-content ol ol {
     list-style-type: lower-alpha;
+    margin: 0.5rem 0;
 }
 
-.jodit-content ol ol ol {
-    list-style-type: lower-roman;
-}
 
 /* Blockquote */
-.jodit-content blockquote {
+.skilldeck-content blockquote {
     margin: 1em 0;
     padding: 0.75em 1em;
     border-left: 4px solid #d1d5db;
@@ -169,7 +183,7 @@
 }
 
 /* Code & Preformatted */
-.jodit-content code {
+.skilldeck-content code {
     background: #f3f4f6;
     padding: 0.2em 0.4em;
     border-radius: 4px;
@@ -177,7 +191,7 @@
     font-size: 0.95em;
 }
 
-.jodit-content pre {
+.skilldeck-content pre {
     background: #111827;
     color: #e5e7eb;
     padding: 1em;
@@ -188,36 +202,48 @@
     margin: 1em 0;
 }
 
-/* Tables */
-.jodit-content table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 1em 0;
-    display: block;
-    overflow-x: auto;
+/* Tables (Standard & Skilldeck Classes) */
+.skilldeck-content table,
+.skilldeck-table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+    margin: 1.5rem 0;
+    border: 1px solid #cbd5e1 !important;
+    table-layout: auto;
+    box-sizing: border-box;
 }
 
-.jodit-content table tbody {
-    width: 100%;
-    display: block;
-    overflow-x: auto;
-}
-
-.jodit-content th,
-.jodit-content td {
-    border: 1px solid #d1d5db;
-    padding: 8px 10px;
+.skilldeck-content th,
+.skilldeck-content td,
+.skilldeck-table-cell {
+    border: 1px solid #cbd5e1 !important;
+    padding: 1rem 1.25rem;
     text-align: left;
-    vertical-align: top;
+    vertical-align: middle;
+    word-break: normal;
 }
 
-.jodit-content th {
-    background: #f3f4f6;
+/* Target Header Row (Actual th or first row td) */
+.skilldeck-content th,
+.skilldeck-table tr:first-child td,
+.skilldeck-table th {
+    background-color: #f8fafc;
+    font-weight: 700;
+    color: #0f172a;
+    border-bottom: 2px solid #cbd5e1 !important;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    letter-spacing: 0.05em;
+}
+
+.skilldeck-content th {
     font-weight: 700;
 }
 
+
+
 /* Images & Media */
-.jodit-content img {
+.skilldeck-content img {
     max-width: 100%;
     height: auto;
     margin: 0.75em 0;
@@ -225,65 +251,65 @@
 }
 
 /* Float alignment from Jodit */
-.jodit-content img[style*="float:left"] {
+.skilldeck-content img[style*="float:left"] {
     float: left;
     margin-right: 1em;
 }
 
-.jodit-content img[style*="float:right"] {
+.skilldeck-content img[style*="float:right"] {
     float: right;
     margin-left: 1em;
 }
 
 /* Video / iframe */
-.jodit-content iframe,
-.jodit-content video {
+.skilldeck-content iframe,
+.skilldeck-content video {
     max-width: 100%;
     border-radius: 8px;
     margin: 1em 0;
 }
 
 /* Horizontal Rule */
-.jodit-content hr {
+.skilldeck-content hr {
     border: none;
     border-top: 1px solid #e5e7eb;
     margin: 1.5em 0;
 }
 
 /* Text Alignment */
-.jodit-content [style*="text-align:center"] {
+.skilldeck-content [style*="text-align:center"] {
     text-align: center;
 }
 
-.jodit-content [style*="text-align:right"] {
+.skilldeck-content [style*="text-align:right"] {
     text-align: right;
 }
 
-.jodit-content [style*="text-align:justify"] {
+.skilldeck-content [style*="text-align:justify"] {
     text-align: justify;
 }
 
 /* Clear Floats */
-.jodit-content::after {
+.skilldeck-content::after {
     content: "";
     display: block;
     clear: both;
 }
 
-.jodit-content br {
+.skilldeck-content br {
     line-height: inherit;
 }
 
 /* Jodit Specific Elements (Captions, Todo Lists) */
 
 /* Figures & Captions */
-.jodit-content figure {
+.skilldeck-content figure {
     display: table;
     margin: 1em auto;
     max-width: 100%;
 }
 
-.jodit-content figcaption {
+.skilldeck-content figcaption {
     display: table-caption;
     caption-side: bottom;
     text-align: center;
@@ -294,24 +320,66 @@
 }
 
 /* Nested List Spacing Fix */
-.jodit-content li>ul,
-.jodit-content li>ol {
+.skilldeck-content li>ul,
+.skilldeck-content li>ol {
     margin-top: 0;
     margin-bottom: 0;
 }
 
 /* Jodit Todo List */
-.jodit-content ul.jodit_todo_list {
+.blog-body .skilldeck-content ul.jodit_todo_list {
     list-style: none;
     padding-left: 0;
 }
 
-.jodit-content ul.jodit_todo_list li {
+.plan-description ul li {
+    list-style-type: disc !important;
+    margin-left: 1rem;
+}
+
+.skilldeck-content ul.jodit_todo_list li {
     display: flex;
     align-items: flex-start;
     gap: 0.5em;
 }
 
-.jodit-content .jodit_todo_list input[type="checkbox"] {
+.skilldeck-content .jodit_todo_list input[type="checkbox"] {
     margin-top: 0.35em;
+}
+
+/* --- Skilldeck Content System --- */
+.skilldeck-content {
+    font-size: inherit;
+    line-height: inherit;
+}
+
+.skilldeck-content ul.skilldeck-list-ul {
+    list-style-type: disc !important;
+    padding-left: 1.5rem !important;
+    margin-top: 0.5rem !important;
+    margin-bottom: 0.5rem !important;
+}
+
+.skilldeck-content ul.skilldeck-list-ul ul.skilldeck-list-ul {
+    list-style-type: circle !important;
+    margin-top: 0.25rem !important;
+    margin-bottom: 0.25rem !important;
+}
+
+.skilldeck-content ul.skilldeck-list-ul ul.skilldeck-list-ul ul.skilldeck-list-ul {
+    list-style-type: square !important;
+}
+
+.skilldeck-content li.skilldeck-list-li {
+    margin-bottom: 0.25rem !important;
+    display: list-item !important;
+}
+
+.skilldeck-content li.skilldeck-list-nested-item {
+    list-style-type: none !important;
+    display: block !important;
+}
+
+.skilldeck-content p {
+    margin-bottom: 0.75rem !important;
 }

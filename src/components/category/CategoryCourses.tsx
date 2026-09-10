@@ -41,7 +41,7 @@ export default function CategoryCourses({ categoryName, courses: initialCourses,
 
     return (
         <section className="bg-white py-12 lg:py-20" id="course-list">
-            <div className="container mx-auto px-2 lg:px-0">
+            <div className="container mx-auto px-4 lg:px-0">
                 {/* Header */}
                 <div className="mb-5 lg:mb-8 text-center lg:text-left">
                     <div className="inline-flex items-center gap-2 bg-blue-50 rounded-full px-4 py-1.5 border border-blue-100/50 shadow-sm mb-4">

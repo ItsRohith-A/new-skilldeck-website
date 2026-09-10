@@ -14,7 +14,7 @@ export default function ServiceBusiness({ business = {} }: ServiceBusinessProps)
 
     return (
         <section id="expertise" className="scroll-mt-24 section-y bg-slate-50/70">
-            <div className="container mx-auto px-2 lg:px-0 space-y-12">
+            <div className="container mx-auto px-4 lg:px-0 space-y-12">
                 <ServiceSectionIntro
                     numeral="06"
                     kicker={business.tagline || "Our Expertise"}

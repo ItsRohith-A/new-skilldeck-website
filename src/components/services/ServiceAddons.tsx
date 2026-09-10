@@ -27,7 +27,7 @@ export default function ServiceAddons({ addons = {} }: ServiceAddonsProps) {
 
     return (
         <section id="addons" className="scroll-mt-24 section-y bg-brand-dark">
-            <div className="container mx-auto px-2 lg:px-0 space-y-12">
+            <div className="container mx-auto px-4 lg:px-0 space-y-12">
                 {/* Section CTA rides the header instead of closing the section, so it is
                     seen before the reader scrolls the card grid. */}
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10 items-center">
@@ -55,20 +55,20 @@ export default function ServiceAddons({ addons = {} }: ServiceAddonsProps) {
                 </div>
 
                 {cards.length > 0 && (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div className="flex sm:grid sm:grid-cols-2 lg:grid-cols-4 gap-4 overflow-x-auto sm:overflow-visible pb-3 sm:pb-0 -mx-4 px-4 sm:mx-0 sm:px-0 snap-x snap-mandatory [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
                         {cards.map((card, i) => {
                             const accent = accentAt(DARK_ACCENTS, i);
                             return (
-                            <div
-                                key={i}
-                                className="group rounded-2xl bg-white/5 border border-white/10 p-5 space-y-3 hover:bg-white/10 hover:border-white/25 hover:-translate-y-0.5 transition-all duration-300"
-                            >
-                                <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${accent.chip} group-hover:scale-105 transition-transform duration-300`}>
-                                    <ServiceItemIcon iconString={card.icon} className="w-5 h-5" defaultIcon="Plus" />
+                                <div
+                                    key={i}
+                                    className="group rounded-2xl bg-white/5 border border-white/10 p-5 space-y-3 hover:bg-white/10 hover:border-white/25 hover:-translate-y-0.5 transition-all duration-300 shrink-0 w-[78vw] max-w-[280px] sm:w-auto sm:shrink snap-start"
+                                >
+                                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${accent.chip} group-hover:scale-105 transition-transform duration-300`}>
+                                        <ServiceItemIcon iconString={card.icon} className="w-5 h-5" defaultIcon="Plus" />
+                                    </div>
+                                    <h4 className="text-sm font-bold text-white leading-snug">{card.title}</h4>
+                                    {card.description && <p className="text-xs text-white/50 leading-relaxed">{card.description}</p>}
                                 </div>
-                                <h4 className="text-sm font-bold text-white leading-snug">{card.title}</h4>
-                                {card.description && <p className="text-xs text-white/50 leading-relaxed">{card.description}</p>}
-                            </div>
                             );
                         })}
                     </div>
@@ -129,7 +129,7 @@ export default function ServiceAddons({ addons = {} }: ServiceAddonsProps) {
                                     <Button
                                         onClick={() => openModal({ source: "service-addons-highlight", formTitle: highlight.cta })}
                                         variant="primary"
-                                        className="shrink-0 rounded-full font-bold"
+                                        className="shrink-0 rounded-full font-bold cursor-pointer"
                                     >
                                         {highlight.cta}
                                         <ArrowUpRight className="w-4 h-4" />

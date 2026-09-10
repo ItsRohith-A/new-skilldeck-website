@@ -41,7 +41,7 @@ export default function ServiceCtaBanner({
             <Button
                 onClick={() => openModal({ source, formTitle: title })}
                 variant={dark ? "primary" : "outline-primary"}
-                className="shrink-0 rounded-full font-bold text-sm"
+                className="shrink-0 rounded-full font-bold text-sm cursor-pointer"
             >
                 {buttonLabel}
                 <ArrowUpRight className="w-4 h-4" />

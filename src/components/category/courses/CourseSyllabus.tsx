@@ -47,7 +47,7 @@ export default function CourseSyllabus({ data }: CourseSyllabusProps) {
 
     return (
         <section className="py-6 md:py-12 bg-white" id="course-syllabus">
-            <div className="container mx-auto px-2 lg:px-0 max-w-4xl">
+            <div className="container mx-auto px-4 lg:px-0 max-w-4xl">
                 {/* Header */}
                 <div className="space-y-2 mb-4">
                     <SectionTag text="Curriculum" />
@@ -125,7 +125,7 @@ export default function CourseSyllabus({ data }: CourseSyllabusProps) {
                                             <div className="syllabus-jodit-wrapper text-[13px] text-gray-700 leading-relaxed font-bold pt-4">
                                                 <style dangerouslySetInnerHTML={{
                                                     __html: `
-                                                    .syllabus-jodit-wrapper .jodit-content ul {
+                                                    .syllabus-jodit-wrapper .skilldeck-content ul {
                                                         list-style: none !important;
                                                         padding-left: 0 !important;
                                                         margin-top: 0.5rem !important;
@@ -134,14 +134,14 @@ export default function CourseSyllabus({ data }: CourseSyllabusProps) {
                                                         flex-direction: column;
                                                         gap: 0.5rem;
                                                     }
-                                                    .syllabus-jodit-wrapper .jodit-content li {
+                                                    .syllabus-jodit-wrapper .skilldeck-content li {
                                                         position: relative !important;
                                                         padding-left: 1.5rem !important;
                                                         list-style-type: none !important;
                                                         font-weight: 700 !important;
                                                         color: #374151 !important; /* text-gray-700 */
                                                     }
-                                                    .syllabus-jodit-wrapper .jodit-content li::before {
+                                                    .syllabus-jodit-wrapper .skilldeck-content li::before {
                                                         content: '' !important;
                                                         position: absolute !important;
                                                         left: 0 !important;
@@ -156,13 +156,13 @@ export default function CourseSyllabus({ data }: CourseSyllabusProps) {
                                                         background-repeat: no-repeat !important;
                                                         background-position: center !important;
                                                     }
-                                                    .syllabus-jodit-wrapper .jodit-content p {
+                                                    .syllabus-jodit-wrapper .skilldeck-content p {
                                                         margin-bottom: 0.5rem !important;
                                                         color: #4B5563 !important; /* text-gray-600 */
                                                         font-weight: 500 !important;
                                                     }
                                                 ` }} />
-                                                <div className="jodit-content" dangerouslySetInnerHTML={{ __html: module.value }} />
+                                                <div className="skilldeck-content" dangerouslySetInnerHTML={{ __html: module.value }} />
                                             </div>
                                         </div>
                                     )}

@@ -13,6 +13,7 @@ import MainNav from "@/components/shared/Navbar";
 import { getTenantProfile } from "@/lib/platformService";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { redirectOrNotFound } from "@/lib/redirects";
 import { Suspense } from "react";
 
 export const revalidate = false; // Pure On-Demand ISR: cached permanently on Edge CDN until webhook purge
@@ -54,7 +55,7 @@ export default async function CompanyProfilePage({ params, searchParams }: Props
     const { id } = await searchParams;
 
     const tenant = await getTenantProfile(id || slug);
-    if (!tenant) notFound();
+    if (!tenant) return await redirectOrNotFound(`/companies/${slug}`);
 
     const name = tenant.legalName || tenant.name;
     const profile = tenant.platformProfile || {};
@@ -82,7 +83,7 @@ export default async function CompanyProfilePage({ params, searchParams }: Props
                     />
 
                     {/* ── Main 2-column layout ── */}
-                    <div className="container mx-auto px-2 lg:px-0 py-10">
+                    <div className="container mx-auto px-4 lg:px-0 py-10">
                         <div className="flex flex-col lg:flex-row gap-10">
                             {/* Left — main content */}
                             <div className="flex-1 min-w-0 space-y-8">

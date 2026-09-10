@@ -86,63 +86,64 @@ const MarketplaceBiddingVisual = () => {
 
 const MarketplacePromotion = () => {
     return (
-        <div className="mt-20 group relative overflow-hidden">
-            {/* Free Marketplace Signup CTA Banner */}
-            <MarketPlaceCta />
-            <div className="relative z-10 grid lg:grid-cols-2 gap-12 items-center">
-                <div className="space-y-4">
-                    <div className="badge-brand gap-2 border border-blue-100 shadow-sm">
-                        <span className="flex h-2 w-2 rounded-full bg-brand-primary animate-pulse" />
-                        Marketplace Now Live
-                    </div>
-
-                    <h2 className="heading-section">
-                        Reach More Learners with <br />
-                        <span className="bg-[linear-gradient(125deg,rgba(92,63,250,1)_0%,rgba(203,59,149,1)_48%,rgba(254,106,27,1)_100%)] bg-clip-text text-transparent">
-                            Skilldeck Marketplace
-                        </span>
-                    </h2>
-
-                    <p className="body-small">
-                        Join our thriving ecosystem where training providers compete and learners discover.
-                        Prominently list your course schedules and leverage our smart bidding engine to
-                        reach the top of the search results.
-                    </p>
-
-                    <div className="grid grid-cols-2 gap-2 md:gap-4 pt-2">
-                        <div className="flex items-center gap-2 md:gap-3 text-brand-muted">
-                            <div className="h-8 w-8 md:h-10 md:w-10 rounded-xl bg-white flex items-center justify-center border border-slate-100 shadow-sm">
-                                <TrendingUp className="w-5 h-5 text-brand-primary" />
-                            </div>
-                            <span className="body-extrasmall font-semibold text-brand-dark">Bid for Top Placement</span>
+        <section className=" bg-white" id="platform">
+            <div className="container mx-auto px-4 lg:px-0">
+                {/* Free Marketplace Signup CTA Banner */}
+                <MarketPlaceCta />
+                <div className="relative z-10 grid lg:grid-cols-2 gap-12 items-center">
+                    <div className="space-y-4">
+                        <div className="badge-brand gap-2 border border-blue-100 shadow-sm">
+                            <span className="flex h-2 w-2 rounded-full bg-brand-primary animate-pulse" />
+                            Marketplace Now Live
                         </div>
-                        <div className="flex items-center gap-2 md:gap-3 text-brand-muted">
-                            <div className="h-8 w-8 md:h-10 md:w-10 rounded-xl bg-white flex items-center justify-center border border-slate-100 shadow-sm">
-                                <Target className="w-5 h-5 text-brand-secondary" />
+
+                        <h2 className="heading-section">
+                            Reach More Learners with <br />
+                            <span className="bg-[linear-gradient(125deg,rgba(92,63,250,1)_0%,rgba(203,59,149,1)_48%,rgba(254,106,27,1)_100%)] bg-clip-text text-transparent">
+                                Skilldeck Marketplace
+                            </span>
+                        </h2>
+
+                        <p className="body-small">
+                            Join our thriving ecosystem where training providers compete and learners discover.
+                            Prominently list your course schedules and leverage our smart bidding engine to
+                            reach the top of the search results.
+                        </p>
+
+                        <div className="grid grid-cols-2 gap-2 md:gap-4 pt-2">
+                            <div className="flex items-center gap-2 md:gap-3 text-brand-muted">
+                                <div className="h-8 w-8 md:h-10 md:w-10 rounded-xl bg-white flex items-center justify-center border border-slate-100 shadow-sm">
+                                    <TrendingUp className="w-5 h-5 text-brand-primary" />
+                                </div>
+                                <span className="body-extrasmall font-semibold text-brand-dark">Bid for Top Placement</span>
                             </div>
-                            <span className="body-extrasmall font-semibold text-brand-dark">Direct CRM Lead Sync</span>
+                            <div className="flex items-center gap-2 md:gap-3 text-brand-muted">
+                                <div className="h-8 w-8 md:h-10 md:w-10 rounded-xl bg-white flex items-center justify-center border border-slate-100 shadow-sm">
+                                    <Target className="w-5 h-5 text-brand-secondary" />
+                                </div>
+                                <span className="body-extrasmall font-semibold text-brand-dark">Direct CRM Lead Sync</span>
+                            </div>
+                        </div>
+
+                        <div className="flex justify-start md:justify-center lg:justify-start items-start gap-4 pt-0 lg:pt-4">
+                            <Link
+                                href="/register"
+                                className="inline-flex items-center justify-center px-4 md:px-8 py-2 body-small font-semibold text-brand-muted transition-all duration-200 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 hover:border-slate-300 shadow-sm"
+                            >
+                                Register as Provider
+                            </Link>
                         </div>
                     </div>
 
-                    <div className="flex justify-start md:justify-center lg:justify-start items-start gap-4 pt-0 lg:pt-4">
-                        <Link
-                            href="/register"
-                            className="inline-flex items-center justify-center px-4 md:px-8 py-2 body-small font-semibold text-brand-muted transition-all duration-200 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 hover:border-slate-300 shadow-sm"
-                        >
-                            Register as Provider
-                        </Link>
-                    </div>
-                </div>
-
-                <div className="relative">
-                    <div className="absolute -inset-4 bg-gradient-to-r from-brand-primary/10 to-brand-secondary/10 rounded-[2.5rem] blur-2xl opacity-50 group-hover:opacity-100 transition-opacity duration-500" />
-                    <div className="relative bg-white/80 backdrop-blur-xl border border-slate-200 rounded-xl p-4 md:p-6 shadow-2xl overflow-hidden min-h-[400px] flex flex-col items-center justify-between">
-                        <MarketplaceBiddingVisual />
+                    <div className="relative">
+                        <div className="absolute -inset-4 bg-gradient-to-r from-brand-primary/10 to-brand-secondary/10 rounded-[2.5rem] blur-2xl opacity-50 group-hover:opacity-100 transition-opacity duration-500" />
+                        <div className="relative bg-white/80 backdrop-blur-xl border border-slate-200 rounded-xl p-4 md:p-6 shadow-2xl overflow-hidden min-h-[400px] flex flex-col items-center justify-between">
+                            <MarketplaceBiddingVisual />
+                        </div>
                     </div>
                 </div>
             </div>
-
-        </div>
+        </section >
     );
 };
 

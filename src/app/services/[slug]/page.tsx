@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import { notFound } from "next/navigation";
+import { redirectOrNotFound } from "@/lib/redirects";
 import { fetchFromBackend } from "@/lib/apiProxy";
 import { env } from "@/lib/env";
 import MainNav from "@/components/shared/Navbar";
@@ -12,8 +12,6 @@ import { getAllServices, getServicesCategories } from "@/lib/services";
 // Import modular components
 import { ServiceData } from "@/components/services/types";
 import ServiceHero from "@/components/services/ServiceHero";
-import ServiceHeroCentered from "@/components/services/ServiceHeroCentered";
-import ServiceHeroDark from "@/components/services/ServiceHeroDark";
 import ServiceWhyChooseUs from "@/components/services/ServiceWhyChooseUs";
 import ServiceBenefits from "@/components/services/ServiceBenefits";
 import ServiceApproach from "@/components/services/ServiceApproach";
@@ -22,9 +20,8 @@ import ServiceStrategyComponent from "@/components/services/ServiceStrategy";
 import ServiceWhyOpt from "@/components/services/ServiceWhyOpt";
 import ServiceBusiness from "@/components/services/ServiceBusiness";
 import ServiceFaq from "@/components/services/ServiceFaq";
-import ServiceMoreServicesCards from "@/components/services/ServiceMoreServicesCards";
+import ServicesGrid from "@/components/Home/elements/ServicesGrid";
 import ServiceChapterDots, { ServiceChapterItem } from "@/components/services/ServiceChapterDots";
-import ServiceMobileCta from "@/components/services/ServiceMobileCta";
 import PricingSection from "@/components/Pricing/PricingSection";
 
 export const revalidate = false; // Pure On-Demand ISR: cached permanently on Edge CDN until webhook purge
@@ -141,7 +138,7 @@ export default async function ServicePage({ params }: { params: Promise<ServiceP
     ]);
 
     if (!service) {
-        notFound();
+        return await redirectOrNotFound(`/services/${slug}`);
     }
 
     // JSON-LD Schemas
@@ -296,11 +293,10 @@ export default async function ServicePage({ params }: { params: Promise<ServiceP
                 {/* 07 — Highlight & Addons Section */}
                 <ServiceAddons addons={service.addons} />
 
-                {/* 09 — Other Services / More Services Cards */}
-                <ServiceMoreServicesCards
-                    services={allServices}
-                    currentSlug={slug}
-                    currentName={service.name}
+                {/* 09 — Other Services Grid */}
+                <ServicesGrid
+                    services={otherServices.length > 0 ? otherServices : allServices}
+                    id="other-services"
                 />
 
                 {/* 08 — FAQ Accordion Section */}
@@ -308,7 +304,7 @@ export default async function ServicePage({ params }: { params: Promise<ServiceP
 
                 {/* Bottom and Internal Sections */}
                 {(service.bottomSection?.value || service.internalSection?.value) && (
-                    <div className="container mx-auto px-2 lg:px-0 pb-12 md:pb-16 2xl:pb-20 space-y-6">
+                    <div className="container mx-auto px-4 lg:px-0 pb-12 md:pb-16 2xl:pb-20 space-y-6">
                         {service.bottomSection?.value && (
                             <CourseAccordionSection
                                 title={service.bottomSection.title || ""}
@@ -325,7 +321,7 @@ export default async function ServicePage({ params }: { params: Promise<ServiceP
                 )}
             </main>
 
-            <ServiceMobileCta serviceName={service.name} />
+            {/* <ServiceMobileCta serviceName={service.name} /> */}
 
             <Footer />
         </div>

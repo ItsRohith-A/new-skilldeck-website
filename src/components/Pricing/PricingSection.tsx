@@ -107,7 +107,7 @@ export default function PricingSection({ onToggleNavbar, plans: initialPlans, sh
 
     return (
         <section className="section-y bg-white" id="plans">
-            <div className="container mx-auto px-2 lg:px-0">
+            <div className="container mx-auto px-4 lg:px-0">
                 {showHeading && (
                     <>
                         <div className="text-center max-w-3xl mx-auto mb-8 2xl:mb-12">
@@ -125,13 +125,13 @@ export default function PricingSection({ onToggleNavbar, plans: initialPlans, sh
                 )}
 
                 {/* Controls Row - Centered Billing, Right View Mode */}
-                <div className="relative flex flex-col md:flex-row justify-center items-center mb-6 2xl:mb-10 gap-3 md:gap-6">
+                <div className="relative flex flex-col md:flex-row justify-center items-center mb-6 2xl:mb-10 gap-2.5 sm:gap-3 md:gap-6">
                     {/* Billing Interval Toggle */}
-                    <div className="bg-gray-100 p-1.5 rounded-full inline-flex items-center relative flex-wrap sm:flex-nowrap justify-center gap-1">
+                    <div className="bg-gray-100 p-1 sm:p-1.5 rounded-full inline-flex items-center relative flex-nowrap justify-center gap-0.5 sm:gap-1 max-w-full overflow-x-auto no-scrollbar">
                         <button
                             onClick={() => setBillingInterval('MONTHLY')}
                             className={`
-                                relative z-10 px-6 sm:px-8 py-2.5 2xl:px-10 text-sm font-semibold rounded-full transition-all duration-300 cursor-pointer
+                                relative z-10 px-3.5 sm:px-8 py-2 sm:py-2.5 2xl:px-10 text-xs sm:text-sm font-semibold rounded-full transition-all duration-300 cursor-pointer shrink-0 whitespace-nowrap
                                 ${billingInterval === 'MONTHLY'
                                     ? 'bg-[linear-gradient(125deg,rgba(92,63,250,1)_0%,rgba(203,59,149,1)_48%,rgba(254,106,27,1)_100%)] text-white shadow-md'
                                     : 'text-gray-500 hover:text-gray-900'
@@ -143,7 +143,7 @@ export default function PricingSection({ onToggleNavbar, plans: initialPlans, sh
                         <button
                             onClick={() => setBillingInterval('YEARLY')}
                             className={`
-                                relative z-10 px-6 sm:px-8 py-2.5 2xl:px-10 text-sm font-semibold rounded-full transition-all duration-300 flex items-center gap-1.5 sm:gap-2 cursor-pointer
+                                relative z-10 px-3 sm:px-8 py-2 sm:py-2.5 2xl:px-10 text-xs sm:text-sm font-semibold rounded-full transition-all duration-300 flex items-center gap-1 sm:gap-2 cursor-pointer shrink-0 whitespace-nowrap
                                 ${billingInterval === 'YEARLY'
                                     ? 'bg-[linear-gradient(125deg,rgba(92,63,250,1)_0%,rgba(203,59,149,1)_48%,rgba(254,106,27,1)_100%)] text-white shadow-md'
                                     : 'text-gray-500 hover:text-gray-900'
@@ -153,10 +153,10 @@ export default function PricingSection({ onToggleNavbar, plans: initialPlans, sh
                             <span>Annual</span>
                             {maxSavingsPercentage > 0 && (
                                 <span className={`
-                                    text-[10px] 2xl:text-xs font-bold px-2 py-0.5 rounded-full uppercase tracking-wide
+                                    text-[9px] sm:text-[10px] 2xl:text-xs font-bold px-1.5 sm:px-2 py-0.5 rounded-full uppercase tracking-wide
                                     ${billingInterval === 'YEARLY'
                                         ? 'bg-white/25 text-white'
-                                        : 'bg-green-50 text-green-600'
+                                        : 'bg-green-100 text-green-700'
                                     }
                                 `}>
                                     Save ~{maxSavingsPercentage}%
@@ -166,20 +166,20 @@ export default function PricingSection({ onToggleNavbar, plans: initialPlans, sh
                         <button
                             type="button"
                             onClick={() => setIsLifetimeModalOpen(true)}
-                            className="relative z-10 px-5 sm:px-7 py-2.5 2xl:px-9 text-sm font-semibold rounded-full transition-all duration-300 flex items-center gap-1.5 text-slate-700 hover:text-purple-600 cursor-pointer group"
+                            className="relative z-10 px-3 sm:px-7 py-2 sm:py-2.5 2xl:px-9 text-xs sm:text-sm font-semibold rounded-full transition-all duration-300 flex items-center gap-1 sm:gap-1.5 text-slate-700 hover:text-purple-600 cursor-pointer group shrink-0 whitespace-nowrap"
                         >
                             <span>Lifetime</span>
-                            <span className="text-[9px] 2xl:text-[10px] font-bold px-1.5 py-0.5 rounded-full uppercase tracking-wider bg-purple-100 text-purple-700 group-hover:bg-purple-200 transition-colors">
+                            <span className="text-[8px] sm:text-[9px] 2xl:text-[10px] font-bold px-1.5 py-0.5 rounded-full uppercase tracking-wider bg-purple-100 text-purple-700 group-hover:bg-purple-200 transition-colors">
                                 ⚡ Deal
                             </span>
                         </button>
                     </div>
 
                     {/* View Mode Toggle - Absolute Right on Desktop */}
-                    <div className="flex items-center gap-1 bg-white border border-gray-200 rounded-lg p-1 md:absolute md:right-0">
+                    <div className="flex items-center gap-1 bg-white border border-gray-200 rounded-lg p-1 md:absolute md:right-0 shadow-xs">
                         <button
                             onClick={() => setViewMode('cards')}
-                            className={`p-2 rounded-md transition-colors ${viewMode === 'cards'
+                            className={`p-2 rounded-md transition-colors cursor-pointer ${viewMode === 'cards'
                                 ? 'bg-[linear-gradient(125deg,rgba(92,63,250,1)_0%,rgba(203,59,149,1)_48%,rgba(254,106,27,1)_100%)] text-white'
                                 : 'text-gray-500 hover:text-gray-700'}`}
                             title="Cards View"
@@ -188,7 +188,7 @@ export default function PricingSection({ onToggleNavbar, plans: initialPlans, sh
                         </button>
                         <button
                             onClick={() => setViewMode('table')}
-                            className={`p-2 rounded-md transition-colors ${viewMode === 'table'
+                            className={`p-2 rounded-md transition-colors cursor-pointer ${viewMode === 'table'
                                 ? 'bg-[linear-gradient(125deg,rgba(92,63,250,1)_0%,rgba(203,59,149,1)_48%,rgba(254,106,27,1)_100%)] text-white'
                                 : 'text-gray-500 hover:text-gray-700'}`}
                             title="Table View"
