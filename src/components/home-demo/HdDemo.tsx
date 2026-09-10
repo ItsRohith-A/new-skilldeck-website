@@ -33,7 +33,7 @@ export default function HdDemo() {
     const [isPlaying, setIsPlaying] = useState(false);
 
     return (
-        <section className="relative overflow-hidden section-y bg-gradient-to-b from-white via-violet-50/40 to-white">
+        <section id="demo" className="relative overflow-hidden scroll-mt-24 section-y bg-gradient-to-b from-white via-violet-50/40 to-white">
             <div aria-hidden="true" className="absolute inset-0 pointer-events-none">
                 <div className="absolute top-1/4 -left-32 w-96 h-96 rounded-full bg-brand-primary/[0.06] blur-[110px]" />
                 <div className="absolute bottom-0 -right-32 w-96 h-96 rounded-full bg-brand-secondary/[0.06] blur-[110px]" />

@@ -262,8 +262,6 @@ export default async function ServicePage({ params }: { params: Promise<ServiceP
                     clientsCount={service.servicecard?.clients}
                 />
 
-                <HeroVariantLabel index="03" name="Dark immersive" note="Inverted stage, glass proof strip" />
-
                 {/* Chapter rail */}
                 <ServiceChapterDots items={chapters} />
 
@@ -330,21 +328,6 @@ export default async function ServicePage({ params }: { params: Promise<ServiceP
             <ServiceMobileCta serviceName={service.name} />
 
             <Footer />
-        </div>
-    );
-}
-
-/** Review-only separator between the hero variants; remove with the variants. */
-function HeroVariantLabel({ index, name, note }: { index: string; name: string; note: string }) {
-    return (
-        <div className="border-y border-dashed border-slate-300 bg-slate-100/70">
-            <div className="container mx-auto px-2 lg:px-0 py-3 flex flex-wrap items-baseline gap-x-3 gap-y-1">
-                {/* <span className="text-[11px] font-black uppercase tracking-[0.25em] text-brand-primary">
-                    Hero option {index}
-                </span>
-                <span className="text-sm font-bold text-brand-dark">{name}</span>
-                <span className="text-xs text-brand-muted">{note}</span> */}
-            </div>
         </div>
     );
 }

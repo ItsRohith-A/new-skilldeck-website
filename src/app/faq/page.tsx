@@ -10,6 +10,9 @@ export const metadata: Metadata = {
         index: true,
         follow: true,
     },
+    alternates: {
+        canonical: "/faq",
+    },
 };
 
 export default function FaqPage() {

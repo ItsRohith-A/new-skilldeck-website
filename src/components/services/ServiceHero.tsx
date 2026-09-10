@@ -243,9 +243,9 @@ export default function ServiceHero({
                                     />
                                     <p className="text-2xl lg:text-3xl font-black text-brand-dark leading-none">{stat.value}</p>
                                     <p className="text-xs font-bold text-brand-dark">{stat.description}</p>
-                                    {stat.tagline && (
+                                    {/* {stat.tagline && (
                                         <p className="text-[11px] text-brand-muted/80 leading-snug max-w-[180px]">{stat.tagline}</p>
-                                    )}
+                                    )} */}
                                 </div>
                             ))}
                         </div>

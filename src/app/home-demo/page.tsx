@@ -1,4 +1,5 @@
 import { Metadata } from "next";
+import { notFound } from "next/navigation";
 import MainNav from "@/components/shared/Navbar";
 import Footer from "@/components/shared/Footer";
 import HdRoot from "@/components/home-demo/HdRoot";
@@ -18,7 +19,16 @@ export const revalidate = false;
 
 // Internal-only design reference — a redesign of the homepage against the real
 // content set. Does not touch or replace the production "/" route.
+//
+// The route is built but answers 404 in production, so the reference stays in
+// the repo without ever being reachable on the live site. Set
+// NEXT_PUBLIC_ENABLE_DEMO_PAGES=true (preview deploys, local) to open it again.
+const DEMO_PAGES_ENABLED =
+    process.env.NODE_ENV !== "production" || process.env.NEXT_PUBLIC_ENABLE_DEMO_PAGES === "true";
+
 export default async function HomeDemoPage() {
+    if (!DEMO_PAGES_ENABLED) notFound();
+
     const plans = await fetchPlans("INR");
 
     return (

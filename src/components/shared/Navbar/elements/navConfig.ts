@@ -1,7 +1,7 @@
 export const mobileNavLinks = [
     { name: "Companies", href: "/companies", sectionId: "companies" },
     { name: "Features", href: "/#features", sectionId: "features" },
-    { name: "Plans", href: "/#plans", sectionId: "plans" },
+    { name: "Plans", href: "/#pricing", sectionId: "pricing" },
     { name: "Platform", href: "/#platform", sectionId: "platform" },
 ];
 

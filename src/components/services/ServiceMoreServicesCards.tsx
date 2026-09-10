@@ -260,7 +260,7 @@ export default function ServiceMoreServicesCards({
                         </span>
                     </p>
                     <Link
-                        href="/contact"
+                        href="/contact-us"
                         className="inline-flex items-center justify-center shrink-0 rounded-xl bg-brand-dark px-4 py-2 text-xs font-bold text-white hover:bg-brand-primary transition-colors shadow-sm"
                     >
                         Talk to Platform Architect
