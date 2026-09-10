@@ -19,7 +19,7 @@ interface TurnstileWidgetProps {
     className?: string; // Optional custom className
 }
 
-const SITE_KEY = env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
+const SITE_KEY = env.NEXT_TURNSTILE_SITE_KEY;
 
 const TurnstileWidget: React.FC<TurnstileWidgetProps> = ({
     onVerify,
