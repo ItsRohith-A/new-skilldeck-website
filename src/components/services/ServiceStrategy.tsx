@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import { ArrowUpRight } from "lucide-react";
 import { ServiceStrategy } from "./types";
 import ServiceIconWrapper from "./ServiceIconWrapper";
@@ -49,13 +48,13 @@ export default function ServiceStrategyComponent({ strategy = {} }: ServiceStrat
                                     <div key={i} className={`max-w-[200px] ${i > 0 ? "sm:pl-6 sm:border-l border-slate-200" : ""}`}>
                                         <p className="text-xl lg:text-2xl font-black text-brand-primary leading-none">{stat.value}</p>
                                         <p className="text-xs font-semibold text-brand-muted mt-1.5">
-                                            {stat.tagline || stat.description}
+                                            {stat.description}
                                         </p>
-                                        {stat.tagline && stat.description && (
+                                        {/* {stat.tagline && stat.description && (
                                             <p className="text-[11px] text-brand-muted/70 mt-0.5 leading-snug">
                                                 {stat.description}
                                             </p>
-                                        )}
+                                        )} */}
                                     </div>
                                 ))}
                             </div>

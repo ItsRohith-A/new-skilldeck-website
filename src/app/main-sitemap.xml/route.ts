@@ -1,3 +1,5 @@
+import { getAllServices } from "@/lib/services";
+
 export const dynamic = "force-dynamic";
 
 export async function GET(): Promise<Response> {
@@ -17,11 +19,27 @@ export async function GET(): Promise<Response> {
     "/privacy-policy",
     "/register",
     "/terms-of-service",
+    "/sitemap-html",
   ];
+
+  // Service pages are CMS-driven, so their list has to come from the API rather
+  // than a hardcoded array — a newly published service was otherwise invisible
+  // to search engines.
+  let serviceRoutes: string[] = [];
+  try {
+    const services = await getAllServices();
+    serviceRoutes = services
+      .filter((service) => service.slug)
+      .map((service) => "/services/" + service.slug);
+  } catch (error) {
+    console.error("Error fetching services for main sitemap", error);
+  }
+
+  const allRoutes = [...routes, ...serviceRoutes];
 
   const body = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${routes
+${allRoutes
       .map(
         (route) => `
   <url>

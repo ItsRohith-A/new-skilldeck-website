@@ -82,10 +82,14 @@ export interface ServiceApproachStep {
 export interface ServiceKPIItem {
     icon?: string;
     value: string;
+    description?: string;
+    tagline?: string;
 }
 
 export interface ServiceKPICategory {
     name: string;
+    /** Group label shipped alongside `name`; preferred for the row heading when present. */
+    kpiCategory?: string;
     content: ServiceKPIItem[];
 }
 
@@ -96,7 +100,11 @@ export interface ServiceKPIs {
 
 export interface ServiceTool {
     icon?: string;
-    tagline: string;
+    /** Card heading. */
+    value?: string;
+    description?: string;
+    /** Category label repeated on every item; only a heading fallback. */
+    tagline?: string;
 }
 
 export interface ServiceTools {
@@ -231,6 +239,7 @@ export interface ServiceStrategy {
     cta?: string;
     /** Either a bare URL string or a media object; may point at an image or a video. */
     media?: string | ServiceMedia;
+    video?: string | ServiceMedia;
 }
 
 export interface ServiceLeadMagnet {

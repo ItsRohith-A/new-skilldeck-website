@@ -36,7 +36,7 @@ export async function generateMetadata(
 
     if (!singleArticle) {
         return {
-            title: 'Article Not Found',
+            title: 'Article Not Found | SkillDeck',
         };
     }
 
@@ -46,7 +46,7 @@ export async function generateMetadata(
     const canonicalPath = blogBase;
 
     return {
-        title: `${singleArticle.title}`,
+        title: `${singleArticle.title} | SkillDeck Blog`,
         description: singleArticle.shortDescription || singleArticle.title,
         robots: {
             index: true,

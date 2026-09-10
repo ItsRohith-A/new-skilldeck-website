@@ -1,5 +1,6 @@
 import { fetchFromBackend } from "./apiProxy";
 import { cache } from "react";
+import { ServiceBanner } from "@/components/services/types";
 
 export interface ServiceCardSummary {
     tagline?: string;
@@ -19,6 +20,7 @@ export interface ServiceItem {
     order?: number;
     category_slug: string;
     servicecard?: ServiceCardSummary;
+    banner?: ServiceBanner;
 }
 
 export interface CategoryWithServices {
@@ -50,7 +52,7 @@ export const getServicesCategories = cache(async (): Promise<CategoryWithService
         const servicesRes = await fetchFromBackend("/services", {
             queryParams: new URLSearchParams({
                 limit: "100",
-                select: "name,slug,servicecard,order,service_category_slug,serviceCategory"
+                select: "name,slug,servicecard,banner,order,service_category_slug,serviceCategory"
             }),
             cache: "force-cache",
             next: { tags: ['service-categories', 'services'] },
@@ -72,7 +74,8 @@ export const getServicesCategories = cache(async (): Promise<CategoryWithService
                     name: s.name,
                     order: s.order || 0,
                     category_slug: cat.slug,
-                    servicecard: s.servicecard
+                    servicecard: s.servicecard,
+                    banner: s.banner
                 }))
                 .sort((a: any, b: any) => (a.order || 0) - (b.order || 0));
 

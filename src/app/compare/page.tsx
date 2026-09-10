@@ -13,6 +13,9 @@ export const metadata: Metadata = {
         index: false,
         follow: true,
     },
+    alternates: {
+        canonical: "/compare",
+    },
 };
 
 export default function ComparePage() {

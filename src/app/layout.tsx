@@ -11,6 +11,9 @@ const roboto = Roboto({
 });
 
 export const metadata: Metadata = {
+  // Every page-level canonical and OG image below is written relative to this;
+  // without it Next resolves them against localhost.
+  metadataBase: new URL("https://skilldeck.net"),
   title: "Skilldeck — All-in-One Platform for Training Institutes",
   description: "Automate your marketing, sales, and operations. Skilldeck replaces 10+ tools with one powerful platform for training Institutes.",
   icons: {

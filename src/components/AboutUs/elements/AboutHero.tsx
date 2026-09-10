@@ -31,7 +31,7 @@ export default function AboutHero() {
                         Explore Features
                     </Link>
                     <Link
-                        href="#demo"
+                        href="/#demo"
                         className="inline-flex items-center justify-center border border-gray-300 hover:bg-gray-50 text-brand-dark px-8 py-3 lg:py-4 rounded-lg text-base font-semibold transition"
                     >
                         <Play className="w-5 h-5 mr-2" />

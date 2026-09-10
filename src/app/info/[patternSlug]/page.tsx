@@ -18,6 +18,20 @@ import { SchedulesProvider } from "@/context/SchedulesContext";
 import DOMPurify from "@/lib/dompurify";
 
 import { fetchFromBackend } from "@/lib/apiProxy";
+import { fetchPlans } from "@/lib/plans";
+import { getAllServices } from "@/lib/services";
+
+// Service detail sections, reused below the pattern content the same way the
+// course sections are — a service pattern is a page about a service.
+import { ServiceData } from "@/components/services/types";
+import ServiceBenefits from "@/components/services/ServiceBenefits";
+import ServiceApproach from "@/components/services/ServiceApproach";
+import ServiceStrategyComponent from "@/components/services/ServiceStrategy";
+import ServiceWhyOpt from "@/components/services/ServiceWhyOpt";
+import ServiceBusiness from "@/components/services/ServiceBusiness";
+import ServiceAddons from "@/components/services/ServiceAddons";
+import ServiceMoreServicesCards from "@/components/services/ServiceMoreServicesCards";
+import PricingSection from "@/components/Pricing/PricingSection";
 
 /** Force rel="nofollow noreferrer" on every <a> tag in raw HTML */
 function injectNofollow(html: string): string {
@@ -48,12 +62,13 @@ async function getPatternData(patternSlug: string) {
     }
 }
 
-async function getRelatedPatterns(courseSlug: string) {
-    if (!courseSlug) return [];
+async function getRelatedPatterns(parentSlug: string, patternFor: 'course' | 'service' = 'course') {
+    if (!parentSlug) return [];
     try {
         const queryParams = new URLSearchParams({
             select: 'title,slug',
-            courseSlug: courseSlug
+            patternFor,
+            ...(patternFor === 'service' ? { serviceSlug: parentSlug } : { courseSlug: parentSlug }),
         });
 
         const res = await fetchFromBackend(`/patterns`, { queryParams });
@@ -64,6 +79,26 @@ async function getRelatedPatterns(courseSlug: string) {
     } catch (e) {
         console.error("Failed to fetch related patterns", e);
         return [];
+    }
+}
+
+/**
+ * The pattern payload carries only enough of the service to identify it, so the
+ * full document is fetched from the service endpoint that already serves the
+ * service page — same shape, same cache tags, no second projection to maintain.
+ */
+async function getServiceDetail(slug: string): Promise<ServiceData | null> {
+    if (!slug) return null;
+    try {
+        const res = await fetchFromBackend(`/services/${slug}`, {
+            next: { tags: [`service-${slug}`, 'services'] }
+        });
+        if (!res.ok) return null;
+        const json = await res.json();
+        return json.data || json;
+    } catch (error) {
+        console.error("Failed to fetch service detail for pattern", error);
+        return null;
     }
 }
 
@@ -114,10 +149,28 @@ export default async function PatternPage({ params }: { params: Promise<{ patter
         return notFound();
     }
 
-    const { pattern, course, seo } = data;
+    const { pattern, course, service, seo } = data;
 
-    // Fetch related patterns if course exists
-    const relatedPatterns = course?.slug ? await getRelatedPatterns(course.slug) : [];
+    // A pattern hangs off either a course or a service; only one is ever present.
+    const parentTitle = course?.course_title || service?.name;
+
+    // Fetch related patterns from whichever parent this pattern belongs to
+    const relatedPatterns = service?.slug
+        ? await getRelatedPatterns(service.slug, 'service')
+        : course?.slug
+            ? await getRelatedPatterns(course.slug, 'course')
+            : [];
+
+    // A service pattern shows the full service below its own content, mirroring
+    // the course sections. Each of these degrades to nothing on failure so the
+    // pattern content still renders.
+    const [serviceDetail, plans, allServices] = service?.slug
+        ? await Promise.all([
+            getServiceDetail(service.slug),
+            fetchPlans("USD").catch(() => []),
+            getAllServices().catch(() => []),
+        ])
+        : [null, [], []];
 
     // Resolve internal sections
     const internalSection = seo?.internalSection || course?.internalSection;
@@ -131,7 +184,7 @@ export default async function PatternPage({ params }: { params: Promise<{ patter
             <MainNav />
 
             <main className="flex-grow">
-                <PatternHero data={pattern} courseTitle={course?.course_title} />
+                <PatternHero data={pattern} courseTitle={parentTitle} />
 
                 {/* Content Layout with Sidebar */}
                 <div className="container mx-auto px-4 lg:px-0 py-8 md:py-12">
@@ -142,7 +195,7 @@ export default async function PatternPage({ params }: { params: Promise<{ patter
                                 <PatternSidebar
                                     patterns={relatedPatterns}
                                     currentSlug={patternSlug}
-                                    courseTitle={course?.course_title}
+                                    courseTitle={parentTitle}
                                 />
                             </aside>
                         )}
@@ -155,23 +208,7 @@ export default async function PatternPage({ params }: { params: Promise<{ patter
                                 </article>
                             )}
 
-                            {/* Bottom & Internal Link Sections */}
-                            {(internalSection?.value || bottomSection?.value) && (
-                                <div className="space-y-6">
-                                    {bottomSection?.value && (
-                                        <CourseAccordionSection
-                                            title={bottomSection.title}
-                                            value={injectNofollow(DOMPurify.sanitize(bottomSection.value))}
-                                        />
-                                    )}
-                                    {internalSection?.value && (
-                                        <CourseRelatedLinks
-                                            title={internalSection.title}
-                                            value={injectNofollow(DOMPurify.sanitize(internalSection.value))}
-                                        />
-                                    )}
-                                </div>
-                            )}
+
                         </div>
                     </div>
                 </div>
@@ -199,11 +236,64 @@ export default async function PatternPage({ params }: { params: Promise<{ patter
                     </div>
                 )}
 
+                {/* Reuse the service sections, minus the hero and FAQ the
+                    pattern page already provides of its own. */}
+                {serviceDetail && (
+                    <div className="border-t border-slate-200/60 bg-white">
+                        <Suspense fallback={
+                            <div className="py-20 flex items-center justify-center">
+                                <div className="w-10 h-10 border-4 border-purple-500/20 border-t-purple-500 rounded-full animate-spin" />
+                            </div>
+                        }>
+                            <ServiceBenefits benefits={serviceDetail.benefits} />
+
+                            <ServiceApproach
+                                approach={serviceDetail.approach}
+                                strategy={serviceDetail.strategy}
+                                media={serviceDetail.strategy?.video || serviceDetail.strategy?.media}
+                            />
+
+                            <PricingSection plans={plans} />
+
+                            <ServiceStrategyComponent strategy={serviceDetail.strategy} />
+
+                            <ServiceWhyOpt whyopt={serviceDetail.whyopt} />
+
+                            <ServiceBusiness business={serviceDetail.business} />
+
+                            <ServiceAddons addons={serviceDetail.addons} />
+
+                            <ServiceMoreServicesCards
+                                services={allServices}
+                                currentSlug={serviceDetail.slug || service.slug}
+                                currentName={serviceDetail.name}
+                            />
+                        </Suspense>
+                    </div>
+                )}
+
 
                 {/* FAQs Section */}
                 {faqItems.length > 0 && (
                     <div className="container mx-auto px-4 py-8 border-t border-slate-200/60">
                         <CourseFAQ items={faqItems} />
+                    </div>
+                )}
+                {/* Bottom & Internal Link Sections */}
+                {(internalSection?.value || bottomSection?.value) && (
+                    <div className="space-y-6 container mx-auto px-4 py-8">
+                        {bottomSection?.value && (
+                            <CourseAccordionSection
+                                title={bottomSection.title}
+                                value={injectNofollow(DOMPurify.sanitize(bottomSection.value))}
+                            />
+                        )}
+                        {internalSection?.value && (
+                            <CourseRelatedLinks
+                                title={internalSection.title}
+                                value={injectNofollow(DOMPurify.sanitize(internalSection.value))}
+                            />
+                        )}
                     </div>
                 )}
             </main>

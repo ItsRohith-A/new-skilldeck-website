@@ -225,37 +225,7 @@ export default function ServiceHero({
                                     </div>
                                 )}
 
-                                {/* Rating pill overlay */}
-                                {review?.ratings && (
-                                    <div className="absolute top-4 left-4 bg-white/95 backdrop-blur-sm rounded-xl px-3 py-2 shadow-lg flex items-center gap-2">
-                                        {review.icon ? (
-                                            <ServiceItemIcon iconString={review.icon} className="w-4 h-4 text-amber-500" defaultIcon="Star" />
-                                        ) : (
-                                            <Star className="w-4 h-4 fill-amber-500 text-amber-500" />
-                                        )}
-                                        <div className="leading-none">
-                                            <div className="text-sm font-extrabold text-brand-dark">{review.ratings}</div>
-                                            {review.count && (
-                                                <div className="text-[10px] text-brand-muted font-medium">{review.count} reviews</div>
-                                            )}
-                                        </div>
-                                    </div>
-                                )}
                             </div>
-
-                            {/* Floating claim card, overlapping the frame's bottom-right corner */}
-                            {floatingStat && (
-                                <div className="absolute -bottom-5 right-4 sm:right-6 max-w-[85%] bg-white rounded-xl border border-slate-200/80 shadow-xl px-4 py-3 flex items-center gap-3">
-                                    <ServiceIconWrapper
-                                        iconString={floatingStat.icon}
-                                        className="w-10 h-10 rounded-lg"
-                                        iconClassName="w-5 h-5"
-                                        defaultIcon="GraduationCap"
-                                        fallbackBgClass="bg-brand-primary/10 text-brand-primary"
-                                    />
-                                    <p className="text-sm font-bold text-brand-dark leading-snug">{floatingStat.value}</p>
-                                </div>
-                            )}
                         </div>
                     </div>
                 </div>
@@ -273,9 +243,9 @@ export default function ServiceHero({
                                     />
                                     <p className="text-2xl lg:text-3xl font-black text-brand-dark leading-none">{stat.value}</p>
                                     <p className="text-xs font-bold text-brand-dark">{stat.description}</p>
-                                    {stat.tagline && (
+                                    {/* {stat.tagline && (
                                         <p className="text-[11px] text-brand-muted/80 leading-snug max-w-[180px]">{stat.tagline}</p>
-                                    )}
+                                    )} */}
                                 </div>
                             ))}
                         </div>

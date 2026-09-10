@@ -2,10 +2,12 @@ import Link from "next/link";
 import MainNav from "@/components/shared/Navbar";
 import Footer from "@/components/shared/Footer";
 import type { Metadata } from "next";
+import { getAllServices } from "@/lib/services";
 
 export const metadata: Metadata = {
     title: "HTML Sitemap | SkillDeck",
     robots: { index: true, follow: true },
+    alternates: { canonical: "/sitemap-html" },
 };
 
 const categories = [
@@ -19,7 +21,8 @@ const categories = [
             { name: "companies", href: "/companies" },
             { name: "faq", href: "/faq" },
             { name: "pricing", href: "/pricing" },
-            { name: "platform", href: "/platform" },
+            { name: "about us", href: "/about-us" },
+            { name: "register", href: "/register" },
         ]
     },
     {
@@ -32,7 +35,26 @@ const categories = [
     }
 ];
 
-export default function SitemapPage() {
+export default async function SitemapPage() {
+    // Service pages exist only in the CMS, so this page — the one crawlers use to
+    // reach everything — has to read them at request time.
+    let serviceLinks: { name: string; href: string }[] = [];
+    try {
+        const services = await getAllServices();
+        serviceLinks = services
+            .filter((service) => service.slug)
+            .map((service) => ({
+                name: service.service_name || service.slug,
+                href: `/services/${service.slug}`,
+            }));
+    } catch (error) {
+        console.error("Error fetching services for the HTML sitemap", error);
+    }
+
+    const sections = serviceLinks.length > 0
+        ? [categories[0], { title: "SERVICES", links: serviceLinks }, ...categories.slice(1)]
+        : categories;
+
     return (
         <div className="min-h-screen bg-gray-50 flex flex-col">
             <MainNav />
@@ -41,7 +63,7 @@ export default function SitemapPage() {
                     <h1 className="heading-section mb-8">HTML Sitemap</h1>
                     <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-10 mb-10">
                         <div className="space-y-10">
-                            {categories.map((category, idx) => (
+                            {sections.map((category, idx) => (
                                 <div key={idx}>
                                     <div className="bg-gray-100 border-l-4 border-brand-primary py-2 px-4 mb-4 rounded-r-lg">
                                         <h2 className="body-small font-bold text-brand-dark tracking-wider uppercase">
