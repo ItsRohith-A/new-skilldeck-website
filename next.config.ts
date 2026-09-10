@@ -6,7 +6,7 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
   compress: true,
-  assetPrefix: isVercelProd ? "https://skilldeck-website.vercel.app" : undefined,
+  assetPrefix: isVercelProd ? "https://skilldeck.net" : undefined,
   images: {
     remotePatterns: [
       { protocol: "https", hostname: "api.skilldeck.net" },
