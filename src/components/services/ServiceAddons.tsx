@@ -1,12 +1,12 @@
 "use client";
 
-import React from "react";
 import { ArrowUpRight } from "lucide-react";
 import { ServiceAddonsData } from "./types";
 import ServiceItemIcon from "./ServiceItemIcon";
 import ServiceSectionIntro from "./ServiceSectionIntro";
 import { accentAt, DARK_ACCENTS } from "./accents";
 import ServiceCtaBanner from "./ServiceCtaBanner";
+import { useServiceIdentity } from "./ServiceIdentityContext";
 import { Button } from "@/components/ui/Button";
 import { useLeadModal } from "@/components/Forms/LeadModalContext";
 
@@ -17,6 +17,7 @@ interface ServiceAddonsProps {
 /** Premium dark upsell showcase — visually set apart from the rest of the page for contrast. */
 export default function ServiceAddons({ addons = {} }: ServiceAddonsProps) {
     const { openModal } = useLeadModal();
+    const service = useServiceIdentity();
 
     const cards = (addons.cards || []).filter((c) => c?.title);
     const contentPoints = (addons.content?.points || []).filter((p) => p?.point);
@@ -127,7 +128,12 @@ export default function ServiceAddons({ addons = {} }: ServiceAddonsProps) {
 
                                 {highlight.cta && (
                                     <Button
-                                        onClick={() => openModal({ source: "service-addons-highlight", formTitle: highlight.cta })}
+                                        onClick={() => openModal({
+                                            source: "service-addons-highlight",
+                                            formTitle: highlight.cta,
+                                            serviceSlug: service?.slug,
+                                            defaultValues: service ? { selectedService: service.name } : undefined,
+                                        })}
                                         variant="primary"
                                         className="shrink-0 rounded-full font-bold cursor-pointer"
                                     >

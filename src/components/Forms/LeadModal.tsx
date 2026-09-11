@@ -144,8 +144,13 @@ const LeadModal = () => {
                     <GenericForm
                         formtype={formType}
                         onClose={closeModal}
-                        courseSlug={modalConfig.courseSlug}
-                        selectedCourse={modalConfig.defaultValues?.subject || modalConfig.defaultValues?.selectedCourse}
+                        courseSlug={modalConfig.courseSlug || modalConfig.defaultValues?.courseSlug}
+                        selectedCourse={modalConfig.defaultValues?.selectedCourse}
+                        serviceSlug={modalConfig.serviceSlug || modalConfig.defaultValues?.serviceSlug}
+                        selectedService={modalConfig.defaultValues?.selectedService}
+                        // `subject` is a generic label from the CTA; the form files it
+                        // under the course or the service based on the page it sits on.
+                        contextLabel={modalConfig.defaultValues?.subject}
                         formId={modalConfig.formId ? String(modalConfig.formId) : "modal-lead-form"}
                     />
                 </div>

@@ -47,7 +47,7 @@ export default function ServiceHero({
         openModal({
             source: "service-hero",
             formTitle: `Get a Quote for ${props.serviceName}`,
-            defaultValues: { subject: `Quote request for ${props.serviceName}` },
+            defaultValues: { subject: `Quote request for ${props.serviceName}`, selectedService: props.serviceName },
         });
     };
 

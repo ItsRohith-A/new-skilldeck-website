@@ -18,7 +18,7 @@ export default function ServiceMobileCta({ serviceName }: ServiceMobileCtaProps)
                     openModal({
                         source: "service-mobile-cta",
                         formTitle: `Get a Quote for ${serviceName}`,
-                        defaultValues: { subject: `Quote request for ${serviceName}` },
+                        defaultValues: { subject: `Quote request for ${serviceName}`, selectedService: serviceName },
                     })
                 }
                 className="w-full flex items-center justify-between gap-3 bg-brand-dark text-white rounded-2xl px-5 py-4 shadow-2xl shadow-brand-dark/30"

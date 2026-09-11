@@ -23,15 +23,18 @@ export interface LeadModalConfig {
     defaultValues?: {
         leadSource?: string;
         courseSlug?: string;
+        serviceSlug?: string;
         pagePath?: string;
         hearAboutUs?: string;
         subject?: string;
         selectedCourse?: string;
+        selectedService?: string;
     };
 
     // Backward compatibility / Shortcuts
     source?: string;
     courseSlug?: string;
+    serviceSlug?: string;
     participants?: boolean;
 }
 

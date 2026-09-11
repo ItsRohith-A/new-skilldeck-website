@@ -114,6 +114,11 @@ interface GenericFormProps {
     description?: string;
     courseSlug?: string;
     selectedCourse?: string;
+    serviceSlug?: string;
+    selectedService?: string;
+    /** Human label for whatever the visitor was looking at; filed under the course
+     *  or the service depending on which kind of page the form was opened from. */
+    contextLabel?: string;
 }
 
 const requirementOptions = [
@@ -146,6 +151,8 @@ interface GenericFormData {
     requirements: string[];
     courseSlug?: string;
     selectedCourse?: string;
+    serviceSlug?: string;
+    selectedService?: string;
 }
 
 const getInitialFormData = (country = '', page = '', courseSlug = '', selectedCourse = ''): GenericFormData => ({
@@ -166,6 +173,8 @@ const getInitialFormData = (country = '', page = '', courseSlug = '', selectedCo
     requirements: [],
     courseSlug,
     selectedCourse,
+    serviceSlug: '',
+    selectedService: '',
 });
 
 function extractCourseSlug(pagePath: string): string | undefined {
@@ -173,7 +182,9 @@ function extractCourseSlug(pagePath: string): string | undefined {
     const segments = pagePath.split('/').filter(Boolean);
     if (segments.length === 0) return undefined;
 
-    const nonCourseSections = ['services', 'service', 'checkout', 'trainer', 'trainers', 'corporate', 'info', 'pricing-plans', 'refer-and-earn', 'privacy-policy', 'refund-policy', 'terms-and-condition', 'blog', 'schedules', 'search', 'contact-us', 'courses', 'about-us'];
+    const nonCourseSections = ['services', 'service', 'checkout', 'trainer', 'trainers', 'corporate', 'info', 'pricing-plans', 'refer-and-earn', 'privacy-policy', 'refund-policy', 'terms-and-condition', 'blog', 'schedules', 'search', 'contact-us', 'courses', 'about-us',
+        // Sections of this site that also have a second path segment but hold no course.
+        'companies', 'compare', 'register', 'careers', 'faq', 'pricing', 'sitemap-html', 'web-templates'];
     if (segments.some(seg => nonCourseSections.includes(seg.toLowerCase()))) {
         return undefined;
     }
@@ -184,6 +195,18 @@ function extractCourseSlug(pagePath: string): string | undefined {
     return undefined; // Only category page, no course
 }
 
+/** Service pages live at /services/{slug} — one segment, unlike course URLs. */
+function extractServiceSlug(pagePath: string): string | undefined {
+    const segments = pagePath?.split('/').filter(Boolean) || [];
+    if (segments[0]?.toLowerCase() !== 'services') return undefined;
+    return segments[1]; // undefined on the /services index itself
+}
+
+/** "crm" -> "Crm", "marketing-automation" -> "Marketing Automation". */
+function titleFromSlug(slug: string): string {
+    return slug.split('-').filter(Boolean).map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+}
+
 const GenericForm: React.FC<GenericFormProps> = ({
     onClose,
     formtype: propFormType = 'corporate',
@@ -192,7 +215,10 @@ const GenericForm: React.FC<GenericFormProps> = ({
     title,
     description,
     courseSlug: propCourseSlug = '',
-    selectedCourse: propSelectedCourse = ''
+    selectedCourse: propSelectedCourse = '',
+    serviceSlug: propServiceSlug = '',
+    selectedService: propSelectedService = '',
+    contextLabel = ''
 }) => {
     // Normalize form type
     const formType = propFormType === 1 || propFormType === 'enquiry' ? 'enquiry' :
@@ -259,14 +285,16 @@ const GenericForm: React.FC<GenericFormProps> = ({
     }, []);
 
     useEffect(() => {
-        if (propCourseSlug || propSelectedCourse) {
+        if (propCourseSlug || propSelectedCourse || propServiceSlug || propSelectedService) {
             setFormData(prev => ({
                 ...prev,
                 courseSlug: propCourseSlug || prev.courseSlug,
-                selectedCourse: propSelectedCourse || prev.selectedCourse
+                selectedCourse: propSelectedCourse || prev.selectedCourse,
+                serviceSlug: propServiceSlug || prev.serviceSlug,
+                selectedService: propSelectedService || prev.selectedService
             }));
         }
-    }, [propCourseSlug, propSelectedCourse]);
+    }, [propCourseSlug, propSelectedCourse, propServiceSlug, propSelectedService]);
 
     useEffect(() => {
         // Use pathname to get the actual URL (e.g. /blog/my-post)
@@ -274,20 +302,29 @@ const GenericForm: React.FC<GenericFormProps> = ({
         const slug = segments[segments.length - 1];
         setFormData(prev => ({ ...prev, page: slug || 'homepage' }));
 
-        // Auto-detect courseSlug and selectedCourse from URL path if not explicitly provided as props
-        if (!propCourseSlug && segments.length >= 2) {
-            const detectedSlug = segments[1];
-            const detectedTitle = detectedSlug
-                .replace(/-/g, ' ')
-                .replace(/\b\w/g, l => l.toUpperCase());
+        // Service and course URLs both carry a slug, so the path decides which
+        // field it belongs to. Reading segments[1] blindly is what put "crm" in
+        // the Course Slug row of the lead email for /services/crm.
+        const detectedServiceSlug = extractServiceSlug(pathname || '');
+        const detectedCourseSlug = detectedServiceSlug ? undefined : extractCourseSlug(pathname || '');
 
+        if (!propServiceSlug && detectedServiceSlug) {
             setFormData(prev => ({
                 ...prev,
-                courseSlug: detectedSlug,
-                selectedCourse: prev.selectedCourse || detectedTitle
+                serviceSlug: detectedServiceSlug,
+                selectedService: prev.selectedService || propSelectedService || contextLabel || titleFromSlug(detectedServiceSlug),
+                // A service page is not a course page — do not leave a course behind.
+                courseSlug: propCourseSlug || '',
+                selectedCourse: propSelectedCourse || ''
+            }));
+        } else if (!propCourseSlug && detectedCourseSlug) {
+            setFormData(prev => ({
+                ...prev,
+                courseSlug: detectedCourseSlug,
+                selectedCourse: prev.selectedCourse || propSelectedCourse || contextLabel || titleFromSlug(detectedCourseSlug)
             }));
         }
-    }, [pathname, propCourseSlug]);
+    }, [pathname, propCourseSlug, propSelectedCourse, propServiceSlug, propSelectedService, contextLabel]);
 
     // Update country and phone dial code when location data is available
     useEffect(() => {
@@ -356,10 +393,13 @@ const GenericForm: React.FC<GenericFormProps> = ({
                 fullName: formData.firstname,
                 phone: fullPhone,
                 country: formData.country,
-                courseSlug: formData.courseSlug || '',
+                courseSlug: formData.courseSlug || undefined,
+                selectedCourse: formData.selectedCourse || undefined,
+                serviceSlug: formData.serviceSlug || undefined,
+                selectedService: formData.selectedService || undefined,
                 leadSource: 'website',
                 message: formData.message,
-                pagePath: formData.page || (typeof window !== 'undefined' ? window.location.pathname : ''),
+                pagePath: (typeof window !== 'undefined' ? window.location.pathname : '') || formData.page,
                 formId: formId,
                 referrer: attribution.referrer || (typeof document !== 'undefined' ? (localStorage.getItem('initial_referrer') || document.referrer || '-') : '-'),
                 utmSource: attribution.utmSource || getUTMParam('utm_source'),
@@ -380,7 +420,13 @@ const GenericForm: React.FC<GenericFormProps> = ({
                     requirements: formData.requirements,
                     curriculum: false,
                     formtype: formType,
-                    selectedCourse: formData.selectedCourse
+                    // Some CTAs (compare, pricing) carry a label with no course or
+                    // service behind it — keep it rather than dropping it on the floor.
+                    subject: contextLabel || undefined,
+                    courseSlug: formData.courseSlug || undefined,
+                    selectedCourse: formData.selectedCourse || undefined,
+                    serviceSlug: formData.serviceSlug || undefined,
+                    selectedService: formData.selectedService || undefined
                 },
                 turnstileToken
             };

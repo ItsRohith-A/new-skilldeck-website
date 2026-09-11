@@ -48,7 +48,7 @@ export default function ServiceHeroDark({
         openModal({
             source: "service-hero-dark",
             formTitle: `Get a Quote for ${props.serviceName}`,
-            defaultValues: { subject: `Quote request for ${props.serviceName}` },
+            defaultValues: { subject: `Quote request for ${props.serviceName}`, selectedService: props.serviceName },
         });
     };
 

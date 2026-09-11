@@ -7,6 +7,7 @@ import ServiceSectionIntro from "./ServiceSectionIntro";
 import { normalizeRichText } from "./richText";
 import { Button } from "@/components/ui/Button";
 import { useLeadModal } from "@/components/Forms/LeadModalContext";
+import { useServiceIdentity } from "./ServiceIdentityContext";
 
 interface ServiceFaqProps {
     faqs?: ServiceFAQs;
@@ -16,6 +17,7 @@ interface ServiceFaqProps {
 /** Numbered, minimal-rule FAQ list with an upfront contact card. */
 export default function ServiceFaq({ faqs, serviceName }: ServiceFaqProps) {
     const { openModal } = useLeadModal();
+    const service = useServiceIdentity();
     const [openIndex, setOpenIndex] = useState<number | null>(0);
     const items = (faqs?.accordions || []).filter((f) => f?.title);
 
@@ -61,6 +63,8 @@ export default function ServiceFaq({ faqs, serviceName }: ServiceFaqProps) {
                                     onClick={() => openModal({
                                         source: "service-faq",
                                         formTitle: serviceName ? `Ask Our Team about ${serviceName}` : "Ask Our Team",
+                                        serviceSlug: service?.slug,
+                                        defaultValues: service ? { selectedService: service.name } : undefined,
                                     })}
                                     variant="primary"
                                     className="w-full rounded-xl font-bold gap-2 cursor-pointer"

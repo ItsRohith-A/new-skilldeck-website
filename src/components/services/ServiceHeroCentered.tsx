@@ -50,7 +50,7 @@ export default function ServiceHeroCentered({
         openModal({
             source: "service-hero-centered",
             formTitle: `Get a Quote for ${props.serviceName}`,
-            defaultValues: { subject: `Quote request for ${props.serviceName}` },
+            defaultValues: { subject: `Quote request for ${props.serviceName}`, selectedService: props.serviceName },
         });
     };
 

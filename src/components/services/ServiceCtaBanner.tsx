@@ -3,6 +3,7 @@
 import { ArrowUpRight } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { useLeadModal } from "@/components/Forms/LeadModalContext";
+import { useServiceIdentity } from "./ServiceIdentityContext";
 
 interface ServiceCtaBannerProps {
     title: string;
@@ -21,6 +22,9 @@ export default function ServiceCtaBanner({
     dark
 }: ServiceCtaBannerProps) {
     const { openModal } = useLeadModal();
+    // The banner is rendered deep inside section components, so the service it
+    // belongs to comes from context rather than from a prop on every caller.
+    const service = useServiceIdentity();
 
     return (
         <div
@@ -39,7 +43,12 @@ export default function ServiceCtaBanner({
                 )}
             </div>
             <Button
-                onClick={() => openModal({ source, formTitle: title })}
+                onClick={() => openModal({
+                    source,
+                    formTitle: title,
+                    serviceSlug: service?.slug,
+                    defaultValues: service ? { selectedService: service.name } : undefined,
+                })}
                 variant={dark ? "primary" : "outline-primary"}
                 className="shrink-0 rounded-full font-bold text-sm cursor-pointer"
             >

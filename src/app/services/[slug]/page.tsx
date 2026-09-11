@@ -20,6 +20,7 @@ import ServiceStrategyComponent from "@/components/services/ServiceStrategy";
 import ServiceWhyOpt from "@/components/services/ServiceWhyOpt";
 import ServiceBusiness from "@/components/services/ServiceBusiness";
 import ServiceFaq from "@/components/services/ServiceFaq";
+import { ServiceIdentityProvider } from "@/components/services/ServiceIdentityContext";
 import ServicesGrid from "@/components/Home/elements/ServicesGrid";
 import ServiceChapterDots, { ServiceChapterItem } from "@/components/services/ServiceChapterDots";
 import PricingSection from "@/components/Pricing/PricingSection";
@@ -244,7 +245,10 @@ export default async function ServicePage({ params }: { params: Promise<ServiceP
             )}
             <MainNav />
 
-            <main className="flex-1">
+            {/* Names the service for every CTA nested in the sections below, so a lead
+                carries the service instead of it being guessed from the URL. */}
+            <ServiceIdentityProvider name={service.name} slug={slug}>
+                <main className="flex-1">
                 {/* Hero Section */}
                 <ServiceHero
                     banner={service.banner}
@@ -319,7 +323,8 @@ export default async function ServicePage({ params }: { params: Promise<ServiceP
                         )}
                     </div>
                 )}
-            </main>
+                </main>
+            </ServiceIdentityProvider>
 
             {/* <ServiceMobileCta serviceName={service.name} /> */}
 
