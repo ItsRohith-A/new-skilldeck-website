@@ -1,4 +1,4 @@
-# Skilldeck Website
+# Skilldeck Website..
 
 This is a Next.js project representing the Skilldeck website frontend, designed to be run as a standalone npm project.
 
