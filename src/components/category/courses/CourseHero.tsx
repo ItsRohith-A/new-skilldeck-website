@@ -7,6 +7,7 @@ import { useSchedules } from "@/context/SchedulesContext";
 import type { CourseHeroData } from "@/types/hero";
 import { ArrowRight, Clock, Flame, GraduationCap, Sparkles, Tv } from "lucide-react";
 import { useState } from "react";
+import CourseHeroSeal from "./CourseHeroSeal";
 import HeroLeadForm from "./HeroLeadForm";
 import {
     AttrPill,
@@ -173,19 +174,23 @@ export default function CourseHero({ course, courseSlug, locationSlug }: CourseH
                     </div>
 
                     {/* ───────────── RIGHT COLUMN ───────────── */}
-                    <div className="lg:col-span-4 mt-6 lg:mt-0">
-                        <div className="bg-white rounded-2xl shadow-2xl shadow-gray-200/60 border border-gray-200 overflow-hidden">
-                            {/* Lead form: the enquiry is routed to the institute the
-                                visitor picks, or to the platform when nobody has
-                                listed a batch for this course. */}
-                            <HeroLeadForm
-                                courseSlug={courseSlug}
-                                courseTitle={course.course_title}
-                                schedules={schedules ?? []}
-                                tenants={tenants ?? []}
-                                loading={schedulesLoading}
-                            />
-                        </div>
+                    <div className="lg:col-span-4 mt-6 lg:mt-0 relative">
+                        {/* Trust seal, picked per course, overlapping the card corner */}
+                        <CourseHeroSeal
+                            seed={courseSlug}
+                            className="absolute -top-7 -right-3 md:-top-10 md:-right-6 z-20 animate-seal-bob"
+                        />
+
+                        {/* Lead form: the enquiry is routed to the institute the
+                            visitor picks, or to the platform when nobody has
+                            listed a batch for this course. */}
+                        <HeroLeadForm
+                            courseSlug={courseSlug}
+                            courseTitle={course.course_title}
+                            schedules={schedules ?? []}
+                            tenants={tenants ?? []}
+                            loading={schedulesLoading}
+                        />
                     </div>
 
                 </div>

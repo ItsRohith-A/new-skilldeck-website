@@ -74,21 +74,40 @@ export default function CourseCheckoutCard({
     // Map schedules to include resolved company details from tenants list
     const mappedSchedules = useMemo(() => {
         if (!schedules) return [];
-        return schedules.map((sch) => {
-            if (sch.company && sch.company.name && sch.company.logo) return sch;
-            const tenant = tenants?.find((t) => (t.id === sch.tenantId || t._id === sch.tenantId));
-            return {
-                ...sch,
-                company: {
-                    id: tenant?.id || tenant?._id || sch.tenantId || "",
-                    name: tenant?.legalName || tenant?.name || tenant?.companyName || sch.company?.name || "this company",
-                    logo: tenant?.logo || sch.company?.logo || "",
-                    isVerified: tenant?.isVerified || sch.company?.isVerified || false,
-                    rating: tenant?.rating || sch.company?.rating || 0,
-                    slug: tenant?.slug || sch.company?.slug || ""
-                }
-            };
-        });
+
+        // The schedules endpoint can return a batch whose tenant is not in this
+        // page's tenants list (another marketplace tenant, an unpublished one).
+        // Those surfaced as a nameless "$0" card, so they are dropped. The set is
+        // empty while tenants load, and nothing is filtered in that window.
+        const knownTenantIds = new Set(
+            (tenants ?? [])
+                .map((t: any) => t?.id || t?._id)
+                .filter(Boolean)
+        );
+
+        return schedules
+            .filter((sch) => {
+                if (!sch.tenantId) return Boolean(sch.company?.name);
+                if (knownTenantIds.size === 0) return true;
+                return knownTenantIds.has(sch.tenantId);
+            })
+            .map((sch) => {
+                if (sch.company && sch.company.name && sch.company.logo) return sch;
+                const tenant = tenants?.find((t) => (t.id === sch.tenantId || t._id === sch.tenantId));
+                return {
+                    ...sch,
+                    company: {
+                        id: tenant?.id || tenant?._id || sch.tenantId || "",
+                        name: tenant?.legalName || tenant?.name || tenant?.companyName || sch.company?.name || "",
+                        logo: tenant?.logo || sch.company?.logo || "",
+                        isVerified: tenant?.isVerified || sch.company?.isVerified || false,
+                        rating: tenant?.rating || sch.company?.rating || 0,
+                        slug: tenant?.slug || sch.company?.slug || ""
+                    }
+                };
+            })
+            // A row with no company name cannot be presented or attributed.
+            .filter((sch) => Boolean(sch.company?.name));
     }, [schedules, tenants]);
 
     // One entry per provider that actually has a batch on this course, so the
@@ -260,9 +279,9 @@ export default function CourseCheckoutCard({
 
     const activeCompanyName = useMemo(() => {
         const tId = activeScheduleInfo.matchedSchedule?.tenantId || activeScheduleInfo.matchedSchedule?.company?.id;
-        if (!tId) return "this company";
+        if (!tId) return "";
         const matchedTenant = tenants.find((t: any) => (t.id === tId || t._id === tId));
-        return matchedTenant?.legalName || matchedTenant?.name || matchedTenant?.companyName || activeScheduleInfo.matchedSchedule?.company?.name || "this company";
+        return matchedTenant?.legalName || matchedTenant?.name || matchedTenant?.companyName || activeScheduleInfo.matchedSchedule?.company?.name || "";
     }, [activeScheduleInfo.matchedSchedule, tenants]);
 
     if (!isMounted) {

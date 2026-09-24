@@ -2,11 +2,12 @@
 
 import { useMemo, useState } from "react";
 import Image from "next/image";
-import { BadgeCheck, CalendarDays, ChevronDown } from "lucide-react";
+import { BadgeCheck, CalendarDays, GitCompare } from "lucide-react";
 import CompanyForm from "@/components/Forms/CompanyForm";
 import { formatDate } from "@/lib/courseCardHelpers";
 import type { PlatformSchedule } from "@/types/hero";
 import NoScheduleEnquiry from "./NoScheduleEnquiry";
+import ProviderSelect from "./ProviderSelect";
 
 /** The tenant fields this form needs; the context hands over a looser shape. */
 interface TenantLike {
@@ -28,6 +29,7 @@ interface HeroLeadFormProps {
 
 interface Provider {
     tenantId: string;
+    /** Always resolved: a schedule with no nameable tenant is filtered out. */
     name: string;
     logo?: string;
     /** The schedule the lead is filed against — the one starting soonest. */
@@ -67,9 +69,21 @@ export default function HeroLeadForm({
     const providers = useMemo<Provider[]>(() => {
         const byTenant = new Map<string, Provider>();
 
+        // The schedules endpoint can return a batch whose tenant is not in this
+        // page's tenants list (another marketplace tenant, an unpublished one).
+        // Those rendered as a blank row and would have filed the lead against a
+        // company we cannot name, so they are dropped. While tenants are still
+        // loading the set is empty and nothing is filtered.
+        const knownTenantIds = new Set(
+            (tenants ?? [])
+                .map((t) => t?.id || t?._id)
+                .filter((id): id is string => Boolean(id))
+        );
+
         for (const schedule of schedules ?? []) {
             const tenantId = schedule.tenantId || schedule.tenant?.id;
             if (!tenantId) continue;
+            if (knownTenantIds.size > 0 && !knownTenantIds.has(tenantId)) continue;
 
             const tenant = (tenants ?? []).find(
                 (t) => t?.id === tenantId || t?._id === tenantId
@@ -79,8 +93,11 @@ export default function HeroLeadForm({
                 tenant?.legalName ||
                 tenant?.name ||
                 tenant?.companyName ||
-                schedule.tenant?.name ||
-                "Training provider";
+                schedule.tenant?.name;
+
+            // No name means no tenant record behind it; showing "undefined" or a
+            // generic placeholder in the picker helps nobody.
+            if (!name) continue;
 
             const existing = byTenant.get(tenantId);
             // Keep the batch starting soonest — that is the one a visitor asks about.
@@ -106,22 +123,29 @@ export default function HeroLeadForm({
     // No tenant to route the lead to — fall back to the platform enquiry form.
     if (providers.length === 0) {
         return (
-            <NoScheduleEnquiry
-                courseSlug={courseSlug}
-                courseTitle={courseTitle}
-                className="border-0"
-            />
+            <NoScheduleEnquiry courseSlug={courseSlug} courseTitle={courseTitle} />
         );
     }
 
-    // Derived rather than stored, so a schedules refresh cannot leave the form
-    // pointing at a provider that is no longer listed.
-    const active =
-        providers.find((p) => p.tenantId === chosenTenantId) ?? providers[0];
     const hasChoice = providers.length > 1;
 
+    // Derived rather than stored, so a schedules refresh cannot leave the form
+    // pointing at a provider that is no longer listed. With several providers
+    // nothing is preselected: the visitor picks who their enquiry goes to
+    // rather than having the first one chosen for them.
+    const active =
+        providers.find((p) => p.tenantId === chosenTenantId) ?? (hasChoice ? null : providers[0]);
+
+    // The fixed navbar overlaps a plain anchor jump, so scroll with an offset.
+    const scrollToPartners = () => {
+        const element = document.getElementById("training-partners");
+        if (!element) return;
+        const top = element.getBoundingClientRect().top + window.pageYOffset - 100;
+        window.scrollTo({ top, behavior: "smooth" });
+    };
+
     return (
-        <div className="w-full bg-white rounded-2xl p-5 flex flex-col gap-4">
+        <div className="w-full bg-white rounded-2xl border border-gray-200 shadow-2xl shadow-gray-200/60 p-5 flex flex-col gap-4">
             <div className="flex flex-col gap-1">
                 <span className="inline-flex self-start items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-brand-primary bg-brand-primary/10 px-3 py-1 rounded-full">
                     Request a callback
@@ -129,7 +153,7 @@ export default function HeroLeadForm({
                 <h3 className="text-base font-bold text-slate-900 leading-snug mt-1">
                     {hasChoice
                         ? "Choose an institute and we will connect you"
-                        : `Talk to ${active.name}`}
+                        : `Talk to ${active?.name}`}
                 </h3>
                 <p className="text-xs text-slate-500 leading-relaxed">
                     Your details go straight to the institute running this batch. They come back
@@ -139,34 +163,31 @@ export default function HeroLeadForm({
 
             {hasChoice ? (
                 <div className="flex flex-col gap-1.5">
-                    <label
-                        htmlFor="hero-provider"
-                        className="text-[11px] font-semibold text-slate-600 uppercase tracking-wide"
-                    >
-                        Training provider
-                    </label>
-                    <div className="relative">
-                        <select
-                            id="hero-provider"
-                            value={active.tenantId}
-                            onChange={(e) => setChosenTenantId(e.target.value)}
-                            className="w-full appearance-none bg-white border border-slate-200 rounded-xl pl-3.5 pr-9 py-2.5 text-xs 2xl:text-sm font-semibold text-slate-800 outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary cursor-pointer"
+                    <div className="flex items-center justify-between gap-2">
+                        <label
+                            htmlFor="hero-provider"
+                            className="text-[11px] font-semibold text-slate-600 uppercase tracking-wide"
                         >
-                            {providers.map((provider) => (
-                                <option key={provider.tenantId} value={provider.tenantId}>
-                                    {provider.name}
-                                    {provider.schedule.startsAt
-                                        ? ` — starts ${formatDate(provider.schedule.startsAt)}`
-                                        : ""}
-                                </option>
-                            ))}
-                        </select>
-                        <ChevronDown className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                            Training provider
+                        </label>
+                        <button
+                            type="button"
+                            onClick={scrollToPartners}
+                            className="inline-flex items-center gap-1 text-[11px] font-bold text-brand-primary hover:underline cursor-pointer"
+                        >
+                            <GitCompare className="w-3 h-3" />
+                            Compare institutes
+                        </button>
                     </div>
+                    <ProviderSelect
+                        providers={providers}
+                        value={active?.tenantId}
+                        onChange={setChosenTenantId}
+                    />
                 </div>
             ) : (
                 <div className="flex items-center gap-3 p-3 rounded-xl bg-slate-50 border border-slate-100">
-                    {active.logo ? (
+                    {active?.logo ? (
                         <div className="w-10 h-10 rounded-lg bg-white border border-slate-100 flex items-center justify-center p-1 shrink-0">
                             <Image
                                 src={active.logo}
@@ -182,29 +203,42 @@ export default function HeroLeadForm({
                             <BadgeCheck className="w-5 h-5 text-brand-primary" />
                         </span>
                     )}
-                    <div className="min-w-0">
-                        <div className="text-sm font-bold text-slate-900 truncate">{active.name}</div>
-                        {active.schedule.startsAt && (
+                    <div className="min-w-0 flex-1">
+                        <div className="text-sm font-bold text-slate-900 truncate">{active?.name}</div>
+                        {active?.schedule.startsAt && (
                             <div className="flex items-center gap-1.5 text-[11px] text-slate-500">
                                 <CalendarDays className="w-3 h-3" />
                                 Next batch {formatDate(active.schedule.startsAt)}
                             </div>
                         )}
                     </div>
+
+                    <button
+                        type="button"
+                        onClick={scrollToPartners}
+                        className="shrink-0 inline-flex items-center gap-1 text-[11px] font-bold text-brand-primary hover:underline cursor-pointer"
+                    >
+                        <GitCompare className="w-3 h-3" />
+                        Compare
+                    </button>
                 </div>
             )}
 
-            {/* Remount on provider change so half-typed state never files against
-                the wrong tenant. */}
+            {/* The fields stay visible with nothing selected — hiding them behind
+                the choice cost a step. `requireTenantId` blocks submission and
+                surfaces "select a training provider first" instead. No `key`
+                here on purpose: remounting on selection would wipe whatever the
+                visitor had already typed. */}
             <CompanyForm
-                key={active.tenantId}
-                tenantId={active.tenantId}
-                scheduleId={scheduleIdOf(active.schedule)}
+                tenantId={active?.tenantId}
+                scheduleId={active ? scheduleIdOf(active.schedule) : undefined}
                 courseId={courseSlug}
                 courseTitle={courseTitle}
+                requireTenantId={hasChoice}
                 submitText="Request a callback"
                 layout="compact"
             />
+
         </div>
     );
 }

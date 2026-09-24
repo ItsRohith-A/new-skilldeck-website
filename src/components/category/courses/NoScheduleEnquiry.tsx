@@ -15,7 +15,9 @@ interface NoScheduleEnquiryProps {
  *
  * The old empty state was a blurred dummy price card with a "list your
  * institute" CTA — nothing a learner landing here could act on. This captures
- * their enquiry instead, and keeps the provider CTA as a footnote.
+ * their enquiry instead, and keeps the provider CTA as a footnote; the full
+ * pitch to both audiences lives in NoPartnersPromo, down in the partners
+ * section.
  */
 export default function NoScheduleEnquiry({
     courseSlug,
@@ -50,6 +52,7 @@ export default function NoScheduleEnquiry({
                 formId={`no-schedule-${courseSlug}`}
                 courseSlug={courseSlug}
                 selectedCourse={courseTitle}
+                showDemoOption={false}
             />
 
             <p className="text-[11px] text-slate-500 text-center border-t border-slate-100 pt-3">

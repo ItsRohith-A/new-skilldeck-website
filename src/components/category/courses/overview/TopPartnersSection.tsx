@@ -5,6 +5,7 @@ import { getCurrencySymbol } from "@/lib/courseCardHelpers";
 import { courseSubject, titleFromSlug } from "@/lib/courseTitle";
 import { mapToInstitute } from "@/lib/scheduleMapper";
 import { useEffect, useMemo, useRef, useState } from "react";
+import NoPartnersPromo from "./NoPartnersPromo";
 import PartnerCompanyCard from "./PartnerCompanyCard";
 import dynamic from "next/dynamic";
 
@@ -370,6 +371,16 @@ export default function TopPartnersSection({ courseSlug, courseTitle, locationSl
                         </div>
                     )}
                 </>
+            )}
+
+            {/* Nobody has listed this course yet: speak to the learner who still
+                wants it and to the institute that could be running it. */}
+            {isNearViewport && !loading && partnersData.length === 0 && (
+                <NoPartnersPromo
+                    subject={subject}
+                    courseSlug={courseSlug}
+                    courseTitle={courseTitle}
+                />
             )}
 
             {/* Side-by-side comparison — defaults to the top providers, refined by
