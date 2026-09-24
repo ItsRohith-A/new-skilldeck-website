@@ -16,6 +16,9 @@ interface CompanyFormProps {
     courseId?: string;
     courseTitle?: string;
     showPreferredDateTime?: boolean;
+    /** Block submission until `tenantId` is set, for callers that let the
+     *  visitor choose the company the lead is routed to. */
+    requireTenantId?: boolean;
     hideIcons?: boolean;
     submitText?: string;
     layout?: 'default' | 'compact';
@@ -95,7 +98,7 @@ const FormTextarea: React.FC<FormTextareaProps> = ({ name, placeholder, value, o
     </div>
 );
 
-const CompanyForm: React.FC<CompanyFormProps> = ({ onClose, className = '', tenantId, scheduleId, courseId, courseTitle, showPreferredDateTime = false, hideIcons = false, submitText, layout = 'default' }) => {
+const CompanyForm: React.FC<CompanyFormProps> = ({ onClose, className = '', tenantId, scheduleId, courseId, courseTitle, showPreferredDateTime = false, requireTenantId = false, hideIcons = false, submitText, layout = 'default' }) => {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [showThankyou, setShowThankyou] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -185,6 +188,7 @@ const CompanyForm: React.FC<CompanyFormProps> = ({ onClose, className = '', tena
     };
 
     const validateForm = () => {
+        if (requireTenantId && !tenantId) return "Please select a training provider first";
         if (!formData.fullName.trim()) return "Name is required";
         if (!/^[a-zA-Z\s]+$/.test(formData.fullName.trim())) return "Name can only contain letters and spaces";
         if (formData.fullName.trim().length < 2) return "Name must be at least 2 characters";

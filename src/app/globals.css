@@ -120,6 +120,27 @@ html, .custom-scrollbar {
   }
 }
 
+/* Course hero trust seal: a slow bob with a hint of tilt, so it reads as a
+   sticker pinned to the card rather than a static image. */
+@keyframes seal-bob {
+  0%, 100% {
+    transform: translate3d(0, 0, 0) rotate(6deg) scale(1);
+  }
+  50% {
+    transform: translate3d(0, -6px, 0) rotate(2deg) scale(1.03);
+  }
+}
+
+@utility animate-seal-bob {
+  animation: seal-bob 4.5s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-seal-bob {
+    animation: none;
+  }
+}
+
 /* Generic responsive typography design tokens in Tailwind v4 */
 @utility heading-hero {
   @apply text-3xl md:text-6xl 2xl:text-7xl font-extrabold tracking-tight text-brand-dark leading-tight;

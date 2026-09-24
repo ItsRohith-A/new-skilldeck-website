@@ -31,6 +31,10 @@ export interface LeadModalConfig {
         selectedService?: string;
     };
 
+    /** Hides the SkillDeck product-demo opt-in, for CTAs where the visitor is
+     *  after a training institute rather than the platform itself. */
+    showDemoOption?: boolean;
+
     // Backward compatibility / Shortcuts
     source?: string;
     courseSlug?: string;

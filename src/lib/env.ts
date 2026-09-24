@@ -13,6 +13,10 @@ const envSchema = z.object({
     .string()
     .default("https://skilldeck.net"),
   SERVER_URL: z.string().url().default("https://api.skilldeck.net"),
+  // Read through NEXT_PUBLIC_TURNSTILE_SITE_KEY: the widget renders in the
+  // browser, and Next only inlines NEXT_PUBLIC_* vars into the client bundle —
+  // the unprefixed name always fell through to the default below, so local test
+  // keys never reached Turnstile.
   NEXT_TURNSTILE_SITE_KEY: z.string().default("0x4AAAAAACNkMrUWjyN58X4r"),
   TURNSTILE_SECRET_KEY: z.string().default("0x4AAAAAACNkMnwVF8kpgRjexZxMyOBaHZ4"),
   CLOUDFLARE_API_TOKEN: z.string().default("6s37n9S5t0QjSqq-0aytdrjf_XXDY4vd-jobvHRE"),
@@ -26,7 +30,7 @@ const processEnv = {
   API_KEY: process.env.API_KEY || "",
   NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL || "https://skilldeck.net",
   SERVER_URL: process.env.NEXT_SERVER_URL || process.env.SERVER_URL || "https://api.skilldeck.net",
-  NEXT_TURNSTILE_SITE_KEY: process.env.NEXT_TURNSTILE_SITE_KEY || "0x4AAAAAACNkMrUWjyN58X4r",
+  NEXT_TURNSTILE_SITE_KEY: process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || process.env.NEXT_TURNSTILE_SITE_KEY || "0x4AAAAAACNkMrUWjyN58X4r",
   TURNSTILE_SECRET_KEY: process.env.TURNSTILE_SECRET_KEY || "0x4AAAAAACNkMnwVF8kpgRjexZxMyOBaHZ4",
   CLOUDFLARE_API_TOKEN: process.env.CLOUDFLARE_API_TOKEN || "",
   CLOUDFLARE_ZONE_ID: process.env.CLOUDFLARE_ZONE_ID || "",
@@ -43,7 +47,7 @@ try {
     API_KEY: process.env.API_KEY || "",
     NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL || "https://skilldeck.net",
     SERVER_URL: process.env.NEXT_SERVER_URL || process.env.SERVER_URL || "https://api.skilldeck.net",
-    NEXT_TURNSTILE_SITE_KEY: process.env.NEXT_TURNSTILE_SITE_KEY || "0x4AAAAAACNkMrUWjyN58X4r",
+    NEXT_TURNSTILE_SITE_KEY: process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || process.env.NEXT_TURNSTILE_SITE_KEY || "0x4AAAAAACNkMrUWjyN58X4r",
     TURNSTILE_SECRET_KEY: process.env.TURNSTILE_SECRET_KEY || "0x4AAAAAACNkMnwVF8kpgRjexZxMyOBaHZ4",
     CLOUDFLARE_API_TOKEN: process.env.CLOUDFLARE_API_TOKEN || "",
     CLOUDFLARE_ZONE_ID: process.env.CLOUDFLARE_ZONE_ID || "",

@@ -119,6 +119,10 @@ interface GenericFormProps {
     /** Human label for whatever the visitor was looking at; filed under the course
      *  or the service depending on which kind of page the form was opened from. */
     contextLabel?: string;
+    /** The product-demo opt-in only makes sense where SkillDeck itself is the
+     *  product being sold — not on a course page, where the visitor is after a
+     *  training institute. */
+    showDemoOption?: boolean;
 }
 
 const requirementOptions = [
@@ -218,7 +222,8 @@ const GenericForm: React.FC<GenericFormProps> = ({
     selectedCourse: propSelectedCourse = '',
     serviceSlug: propServiceSlug = '',
     selectedService: propSelectedService = '',
-    contextLabel = ''
+    contextLabel = '',
+    showDemoOption = true
 }) => {
     // Normalize form type
     const formType = propFormType === 1 || propFormType === 'enquiry' ? 'enquiry' :
@@ -700,7 +705,7 @@ const GenericForm: React.FC<GenericFormProps> = ({
                                 />
                             </div>
 
-                            {formType === 'enquiry' && (
+                            {formType === 'enquiry' && showDemoOption && (
                                 <div className="p-2 bg-brand-primary/10 rounded-sm border border-brand-primary/20">
                                     <FormCheckbox
                                         checked={formData.demo}

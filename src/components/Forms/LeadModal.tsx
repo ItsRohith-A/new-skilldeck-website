@@ -152,6 +152,7 @@ const LeadModal = () => {
                         // under the course or the service based on the page it sits on.
                         contextLabel={modalConfig.defaultValues?.subject}
                         formId={modalConfig.formId ? String(modalConfig.formId) : "modal-lead-form"}
+                        showDemoOption={modalConfig.showDemoOption ?? true}
                     />
                 </div>
             </div>

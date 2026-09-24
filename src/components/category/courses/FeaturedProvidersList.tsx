@@ -32,19 +32,39 @@ export default function FeaturedProvidersList({
                 )}
             </div>
 
-            {/* Providers list */}
-            <div className="space-y-2">
-                {institutesList.map((inst) => (
+            <p className="text-[10px] text-slate-500 -mt-2">
+                Select a provider to see their fee and batch dates above.
+            </p>
+
+            {/* Providers list, presented as a radio group so the cards read as
+                one choice rather than four separate links. */}
+            <div className="space-y-2" role="radiogroup" aria-label="Featured training providers">
+                {institutesList.map((inst) => {
+                    const isSelected = selectedCompanyId === inst.id;
+                    return (
                     <button
                         key={inst.id}
                         type="button"
+                        role="radio"
+                        aria-checked={isSelected}
                         onClick={() => onCompanySelect(inst.id)}
-                        className={`w-full flex items-center justify-between border rounded-xl p-3 bg-white transition-all text-left ${selectedCompanyId === inst.id
-                                ? "border-brand-primary ring-2 ring-brand-primary/10 bg-blue-50/5"
-                                : "border-slate-100 hover:border-slate-200"
+                        className={`w-full flex items-center justify-between gap-2 border rounded-xl p-3 transition-all text-left cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-primary ${isSelected
+                                ? "border-brand-primary ring-2 ring-brand-primary/10 bg-brand-primary/5"
+                                : "bg-white border-slate-100 hover:border-brand-primary/40 hover:bg-slate-50"
                             }`}
                     >
                         <div className="flex items-center gap-3 min-w-0">
+                            {/* Radio mark — the affordance the plain cards were missing */}
+                            <span
+                                aria-hidden="true"
+                                className={`w-4 h-4 rounded-full border-2 flex items-center justify-center shrink-0 transition-colors ${isSelected
+                                        ? "border-brand-primary"
+                                        : "border-slate-300"
+                                    }`}
+                            >
+                                {isSelected && <span className="w-2 h-2 rounded-full bg-brand-primary" />}
+                            </span>
+
                             <div className="w-10 h-10 rounded-lg bg-slate-50 border border-slate-100 flex items-center justify-center overflow-hidden flex-shrink-0 relative">
                                 {inst.logo ? (
                                     <Image
@@ -77,7 +97,8 @@ export default function FeaturedProvidersList({
                             </div>
                         ) : null}
                     </button>
-                ))}
+                    );
+                })}
             </div>
 
             {/* Pricing disclaimer subtitle */}

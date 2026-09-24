@@ -19,7 +19,7 @@ export default function CompanyContactModal({
     isOpen,
     onClose,
     tenantId,
-    companyName = "this company",
+    companyName = "",
     scheduleId,
     courseId,
     courseTitle,
