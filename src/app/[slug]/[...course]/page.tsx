@@ -101,8 +101,17 @@ async function getCourse(slug: string, location?: string, pageUrl?: string) {
             next: { tags: [`course-${slug}`, 'courses'] }
         });
 
-        if (!response.ok) {
+        // Only a 404/410 means the course is genuinely gone. Any other failure
+        // is the backend being unavailable, and returning null for those made
+        // the page call notFound() — which, with `revalidate = false`, cached a
+        // permanent 404 for a course that exists. Throwing keeps the miss out
+        // of the ISR cache.
+        if (response.status === 404 || response.status === 410) {
             return null;
+        }
+
+        if (!response.ok) {
+            throw new Error(`[course] ${apiPath} responded ${response.status}`);
         }
 
         const cacheStatus = response.headers.get('x-cache');
@@ -119,7 +128,9 @@ async function getCourse(slug: string, location?: string, pageUrl?: string) {
         return await response.json();
     } catch (error) {
         console.error("Error fetching course:", error);
-        return null;
+        // Network failures and the 15s fetch timeout land here. Same reasoning
+        // as above: never turn an outage into a cached 404.
+        throw error;
     }
 }
 

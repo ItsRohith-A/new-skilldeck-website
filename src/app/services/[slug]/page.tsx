@@ -56,8 +56,15 @@ async function getServiceData(slug: string, pageUrl?: string): Promise<ServiceDa
             next: { tags: [`service-${slug}`, 'services'] }
         });
 
-        if (!response.ok) {
+        // Only a 404/410 means the service is genuinely gone; every other
+        // failure is an outage. Returning null for those cached a permanent
+        // 404 for a live page, because `revalidate = false` never retries.
+        if (response.status === 404 || response.status === 410) {
             return null;
+        }
+
+        if (!response.ok) {
+            throw new Error(`[service] /services/${slug} responded ${response.status}`);
         }
 
         const cacheStatus = response.headers.get('x-cache');
@@ -75,7 +82,8 @@ async function getServiceData(slug: string, pageUrl?: string): Promise<ServiceDa
         return json.data || json;
     } catch (error) {
         console.error("Error fetching service:", error);
-        return null;
+        // Network failures and the 15s fetch timeout land here.
+        throw error;
     }
 }
 
