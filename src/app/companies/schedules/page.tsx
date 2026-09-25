@@ -89,7 +89,14 @@ export default async function SchedulesPage({ searchParams }: Props) {
     const courseImages = await getCourseImageMap().catch(() => new Map<string, { url: string; alt?: string }>());
 
     const tenantMap = new Map<string, any>((data.tenants || []).map((t: any) => [t.id, t]));
-    const schedules: Schedule[] = (data.data || []).map((s: any) => {
+
+    // The listing returns every published schedule, but tenants are only
+    // hydrated for tenants holding a plan. A schedule whose tenant is missing
+    // renders as "Unknown" with no price and no profile to open, so it is
+    // dropped. Nothing is filtered while the tenant list is empty.
+    const schedules: Schedule[] = (data.data || [])
+        .filter((s: any) => tenantMap.size === 0 || tenantMap.has(s.tenantId))
+        .map((s: any) => {
         const t = tenantMap.get(s.tenantId) || {};
         const mapped = mapToSchedule(
             s,

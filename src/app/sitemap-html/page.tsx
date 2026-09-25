@@ -31,6 +31,8 @@ const categories = [
         title: "LEGAL",
         links: [
             { name: "privacy policy", href: "/privacy-policy" },
+            { name: "refund policy", href: "/refund-policy" },
+            { name: "grievance redressal", href: "/grievance-redressal" },
             { name: "terms of service", href: "/terms-of-service" },
             { name: "cookie policy", href: "/cookie-policy" },
         ]

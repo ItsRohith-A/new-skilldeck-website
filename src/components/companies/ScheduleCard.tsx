@@ -71,14 +71,14 @@ export default function ScheduleCard({ schedule, allBatches, showCompany = true,
             style={{ animationDelay: `${index * 40}ms` }}
         >
             {/* ── Image Header / Placeholder ── */}
-            <div className="relative w-full h-44 bg-slate-50 overflow-hidden flex-shrink-0">
+            <div className="relative w-full aspect-video bg-slate-50 overflow-hidden flex-shrink-0">
                 {s.image ? (
                     <Image
                         src={s.image}
                         alt={s.course.title}
                         fill
                         sizes="(max-width: 768px) 100vw, 50vw"
-                        className="object-cover"
+                        className="object-contain"
                     />
                 ) : (
                     <div className="w-full h-full flex flex-col items-center justify-center bg-slate-100 text-slate-400 gap-1.5">

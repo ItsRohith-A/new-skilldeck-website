@@ -107,3 +107,46 @@ export const getAllServices = cache(async (): Promise<ServiceItem[]> => {
         .flatMap((cat) => cat.services || [])
         .sort((a, b) => (a.order || 0) - (b.order || 0));
 });
+
+export interface ServiceRef {
+    _id: string;
+    name: string;
+    slug: string;
+}
+
+/**
+ * Resolve service ids to name and slug, in the order given.
+ *
+ * The footer payload stores `popular_services` as bare ids, so nothing can be
+ * linked without this second call; `getAllServices` cannot serve it because its
+ * projection leaves `_id` out.
+ */
+export const getServicesByIds = cache(async (ids: string[]): Promise<ServiceRef[]> => {
+    if (!ids || ids.length === 0) return [];
+
+    try {
+        const res = await fetchFromBackend("/services", {
+            queryParams: new URLSearchParams({
+                limit: "100",
+                select: "_id,name,slug",
+            }),
+            next: { tags: ["services"] },
+        });
+
+        if (!res.ok) {
+            console.error(`[services] id lookup failed: ${res.status}`);
+            return [];
+        }
+
+        const json = await res.json();
+        const all: ServiceRef[] = json.data || json || [];
+        const byId = new Map(all.map((service) => [service._id, service]));
+
+        return ids
+            .map((id) => byId.get(id))
+            .filter((service): service is ServiceRef => Boolean(service?.slug));
+    } catch (error) {
+        console.error("[services] id lookup error:", error);
+        return [];
+    }
+});

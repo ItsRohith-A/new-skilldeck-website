@@ -11,7 +11,7 @@ export default function CompaniesHero({ totalCompanies }: CompaniesHeroProps) {
             <div className="container mx-auto px-4 lg:px-0">
 
                 {/* ── Main hero grid ── */}
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center min-h-[420px] lg:min-h-[480px] py-6 sm:py-10 lg:pb-0">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center  lg:min-h-[480px] py-6 sm:py-10 lg:pb-0">
 
                     {/* ── LEFT: Text content ── */}
                     <div className="lg:col-span-6 flex flex-col justify-center space-y-5 relative z-10">
@@ -107,7 +107,7 @@ export default function CompaniesHero({ totalCompanies }: CompaniesHeroProps) {
                 </div>
 
                 {/* ── Stats strip ── */}
-                <div className="pb-10 pt-0 relative z-10">
+                <div className="md:pb-10 pt-0 relative z-10">
                     <div className="bg-white border border-slate-100 rounded-2xl shadow-md p-4 sm:p-6 grid grid-cols-2 md:grid-cols-4 gap-y-6 md:gap-y-0 divide-slate-100 md:divide-x">
                         {[
                             { icon: <ShieldCheck className="w-6 h-6 sm:w-7 sm:h-7 text-brand-primary" />, bg: "bg-brand-primary/10", value: { totalCompanies }, label: "Verified institutes", underline: "bg-brand-primary" },

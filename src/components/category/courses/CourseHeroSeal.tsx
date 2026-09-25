@@ -2,11 +2,15 @@ import Image from "next/image";
 
 /** Trust seals in `public/course`, converted to webp for weight. */
 const SEALS = [
-    { src: "/course/seal1.webp", alt: "Lowest price from top training institutes" },
-    { src: "/course/seal2.webp", alt: "Verified training institutes" },
-    { src: "/course/seal3.webp", alt: "Trusted training marketplace" },
-    { src: "/course/seal4.webp", alt: "Compare before you enrol" },
+    // Four looks, one claim — the alt text is the same because the badge says
+    // the same thing in each.
+    "/course/seal1.webp",
+    "/course/seal2.webp",
+    "/course/seal3.webp",
+    "/course/seal4.webp",
 ];
+
+const SEAL_ALT = "Lowest price guaranteed";
 
 /**
  * Stable per course rather than `Math.random()`: the server and the client must
@@ -32,8 +36,8 @@ export default function CourseHeroSeal({ seed, className = "" }: CourseHeroSealP
 
     return (
         <Image
-            src={seal.src}
-            alt={seal.alt}
+            src={seal}
+            alt={SEAL_ALT}
             width={256}
             height={256}
             unoptimized={true}

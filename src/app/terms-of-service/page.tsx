@@ -1,5 +1,6 @@
 import Footer from "@/components/shared/Footer";
 import MainNav from "@/components/shared/Navbar";
+import Link from "next/link";
 import { FileText } from "lucide-react";
 import type { Metadata } from 'next';
 
@@ -28,7 +29,7 @@ export default function TermsOfServicePage() {
                             <FileText className="w-8 h-8 text-white" />
                         </div>
                         <h1 className="heading-section mb-4">Terms of Service</h1>
-                        <p className="body-medium text-gray-500">Last updated: January 1, 2026</p>
+                        {/* <p className="body-medium text-gray-500">Last updated: January 1, 2026</p> */}
                     </div>
 
                     {/* Policy Card Wrapper */}
@@ -81,7 +82,10 @@ export default function TermsOfServicePage() {
                             <h2 className="heading-section2 mb-4">5. Payment Terms</h2>
                             <p className="body-medium text-gray-600">
                                 For paid Services, you agree to pay all applicable fees as described on our pricing page.
-                                All fees are non-refundable except as expressly stated in our Refund Policy. We reserve
+                                All fees are non-refundable except as expressly stated in our{' '}
+                                <Link href="/refund-policy" className="text-brand-primary font-semibold hover:underline">
+                                    Refund &amp; Cancellation Policy
+                                </Link>. We reserve
                                 the right to change our prices with 30 days&apos; notice.
                             </p>
                         </div>

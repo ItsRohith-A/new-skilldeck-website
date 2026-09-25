@@ -266,7 +266,7 @@ export default function TopPartnersSection({ courseSlug, courseTitle, locationSl
     };
 
     return (
-        <div ref={sectionRef} className="w-full space-y-8 py-6" id="training-partners">
+        <div ref={sectionRef} className="w-full space-y-8 py-0" id="training-partners">
             {/* Header section — always rendered statically to prevent CLS layout shift */}
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
                 <div className="space-y-2">

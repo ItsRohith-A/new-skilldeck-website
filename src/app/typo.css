@@ -213,6 +213,27 @@
     box-sizing: border-box;
 }
 
+
+/* Mobile: make tables horizontally scrollable */
+@media (max-width: 767px) {
+    .skilldeck-content table,
+    .skilldeck-table {
+        display: block;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        white-space: nowrap;
+    }
+
+    .skilldeck-content table tbody,
+    .skilldeck-content table thead,
+    .skilldeck-content table tfoot {
+        display: table;
+        width: 100%;
+        min-width: 500px;
+    }
+}
+
+
 .skilldeck-content th,
 .skilldeck-content td,
 .skilldeck-table-cell {
@@ -221,6 +242,17 @@
     text-align: left;
     vertical-align: middle;
     word-break: normal;
+}
+
+/* Mobile: reduce table cell padding and allow text wrapping */
+@media (max-width: 767px) {
+    .skilldeck-content th,
+    .skilldeck-content td,
+    .skilldeck-table-cell {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.8rem;
+        white-space: normal;
+    }
 }
 
 /* Target Header Row (Actual th or first row td) */

@@ -11,6 +11,7 @@ import { CompareDrawer } from "@/components/companies/compare/CompareDrawer";
 import Footer from "@/components/shared/Footer";
 import MainNav from "@/components/shared/Navbar";
 import { getTenantProfile } from "@/lib/platformService";
+import { getCourseImageMap } from "@/lib/courses";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { redirectOrNotFound } from "@/lib/redirects";
@@ -55,7 +56,18 @@ export default async function CompanyProfilePage({ params, searchParams }: Props
     const { id } = await searchParams;
 
     const tenant = await getTenantProfile(id || slug);
+
     if (!tenant) return await redirectOrNotFound(`/companies/${slug}`);
+
+    // Schedules have no artwork of their own, so the course thumbnails stand in.
+    // Built here rather than in the client list: it is one shared lookup for the
+    // whole catalogue, and losing it should cost pictures, never the listing.
+    const courseImageMap = await getCourseImageMap().catch(
+        () => new Map<string, { url: string; alt?: string }>()
+    );
+    const courseImages = Object.fromEntries(
+        Array.from(courseImageMap, ([courseSlug, image]) => [courseSlug, image.url])
+    );
 
     const name = tenant.legalName || tenant.name;
     const profile = tenant.platformProfile || {};
@@ -110,7 +122,7 @@ export default async function CompanyProfilePage({ params, searchParams }: Props
                                             ))}
                                         </div>
                                     }>
-                                        <CompanySchedulesList companyId={tenant.id} />
+                                        <CompanySchedulesList companyId={tenant.id} courseImages={courseImages} />
                                     </Suspense>
                                 </div>
                                 {/* Facilities static block */}

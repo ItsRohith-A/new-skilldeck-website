@@ -31,17 +31,15 @@ export default function NoScheduleEnquiry({
             <div className="flex flex-col gap-2">
                 <span className="inline-flex self-start items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-brand-primary bg-brand-primary/10 px-3 py-1 rounded-full">
                     <CalendarClock className="w-3 h-3" />
-                    No upcoming batches
+                    Get the Best Quote
                 </span>
 
                 <h3 className="text-base font-bold text-slate-900 leading-snug">
-                    Tell us when you want to start
+                    Suggest Me The Best Institute!
                 </h3>
 
                 <p className="text-xs text-slate-500 leading-relaxed">
-                    No batches are listed for {courseTitle || "this course"} right now. Share your
-                    details and we will line up a training provider, then come back with dates and
-                    fees.
+                    Get the course fee, Syllabus, Benefits, duration, and Placement records of various training providers.
                 </p>
             </div>
 

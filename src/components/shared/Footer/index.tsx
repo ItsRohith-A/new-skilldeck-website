@@ -6,6 +6,7 @@ import FooterLinks from "./elements/FooterLinks";
 import ScrollToTop from "./elements/ScrollToTop";
 import SocialLinks from "./elements/SocialLinks";
 import { getFooterData } from "@/lib/footer";
+import { getServicesByIds, type ServiceRef } from "@/lib/services";
 import React from "react";
 
 const SUPPORT_EMAIL = "hello@skilldeck.net";
@@ -26,9 +27,22 @@ async function Footer() {
     const brandLogoUrl = brandColumn?.logo?.url;
     const brandLogoAlt = brandColumn?.logo?.alt || "Logo";
 
+    // `popular_services` arrives as bare ids that the footer endpoint does not
+    // populate, so the names and slugs come from a second lookup. Anything the
+    // backend does populate is used as-is.
+    const rawServices = data.popular_services || [];
+    const inlineServices: ServiceRef[] = rawServices
+        .filter((item): item is Exclude<typeof item, string> => typeof item !== "string")
+        .filter((item) => Boolean(item?.slug))
+        .map((item) => ({ _id: item._id || "", name: item.name || "", slug: item.slug! }));
+    const serviceIds = rawServices.filter((item): item is string => typeof item === "string");
+    const resolvedServices = await getServicesByIds(serviceIds);
+    const popularServices = [...inlineServices, ...resolvedServices];
+
     const hasPopularContent =
         (data.popular_categories && data.popular_categories.length > 0) ||
-        (data.popular_courses && data.popular_courses.length > 0);
+        (data.popular_courses && data.popular_courses.length > 0) ||
+        popularServices.length > 0;
 
     return (
         <footer className="bg-white border-t border-slate-200" id="footer">
@@ -115,6 +129,30 @@ async function Footer() {
                                                     {cat.name}
                                                 </Link>
                                                 {idx < data.popular_categories!.length - 1 && (
+                                                    <span className="text-slate-300 mx-2 select-none">|</span>
+                                                )}
+                                            </React.Fragment>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* TOP SERVICES */}
+                            {popularServices.length > 0 && (
+                                <div className="space-y-3">
+                                    <h4 className="text-[11px] uppercase font-bold tracking-[0.15em] text-brand-dark">
+                                        Top Services
+                                    </h4>
+                                    <div className="text-xs leading-loose text-brand-muted">
+                                        {popularServices.map((service, idx) => (
+                                            <React.Fragment key={`${service.slug}-${idx}`}>
+                                                <Link
+                                                    href={`/services/${service.slug}`}
+                                                    className="hover:text-brand-primary transition-colors inline-block"
+                                                >
+                                                    {service.name}
+                                                </Link>
+                                                {idx < popularServices.length - 1 && (
                                                     <span className="text-slate-300 mx-2 select-none">|</span>
                                                 )}
                                             </React.Fragment>

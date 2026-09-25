@@ -34,7 +34,6 @@ export const MobileMenu: React.FC<MobileMenuProps> = ({
     const [mobileCoursesOpen, setMobileCoursesOpen] = useState(false);
     const [mobileServicesOpen, setMobileServicesOpen] = useState(false);
     const [openCategoryIndex, setOpenCategoryIndex] = useState<number | null>(null);
-    const [openServiceCategoryIndex, setOpenServiceCategoryIndex] = useState<number | null>(null);
     const [mobileAboutOpen, setMobileAboutOpen] = useState(false);
 
     const sortedCategories = [...categories]
@@ -44,13 +43,10 @@ export const MobileMenu: React.FC<MobileMenuProps> = ({
             courses: [...(cat.courses || [])].sort((a, b) => (a.order || 0) - (b.order || 0))
         }));
 
-    const sortedServicesCategories = [...servicesCategories]
-        .filter(cat => cat.services && cat.services.length > 0)
+    // Flat list, same as the desktop Services dropdown: no category layer.
+    const allServices = [...servicesCategories]
         .sort((a, b) => (a.order || 0) - (b.order || 0))
-        .map(cat => ({
-            ...cat,
-            services: [...(cat.services || [])].sort((a, b) => (a.order || 0) - (b.order || 0))
-        }));
+        .flatMap(cat => [...(cat.services || [])].sort((a, b) => (a.order || 0) - (b.order || 0)));
 
     return (
         <div
@@ -80,7 +76,7 @@ export const MobileMenu: React.FC<MobileMenuProps> = ({
                 {/* Header */}
                 <div className="flex items-center justify-between px-4 py-4 border-b border-gray-200 bg-white">
                     <Link href="/" onClick={closeMenu}>
-                        <Image src={mainLogo} alt="Logo" width={100} height={32} className="h-7 w-auto" style={{ width: 'auto', height: 'auto' }} />
+                        <Image src={mainLogo} alt="Logo" width={100} height={28} className="h-7 w-auto" style={{ height: '28px', width: 'auto' }} />
                     </Link>
                     <button
                         type="button"
@@ -190,44 +186,23 @@ export const MobileMenu: React.FC<MobileMenuProps> = ({
 
                             {mobileServicesOpen && (
                                 <div className="mt-1 pl-3 border-l-2 border-blue-100 space-y-1">
-                                    {sortedServicesCategories.map((category, catIdx) => (
-                                        <div key={category._id} className="flex flex-col">
-                                            <button
-                                                type="button"
-                                                data-no-loader="true"
-                                                onClick={() => setOpenServiceCategoryIndex(openServiceCategoryIndex === catIdx ? null : catIdx)}
-                                                className="flex items-start justify-between w-full py-2 text-gray-600 text-sm hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                                    {allServices.length > 0 ? (
+                                        allServices.map((service: any) => (
+                                            <Link
+                                                key={service.slug}
+                                                href={`/services/${service.slug}`}
+                                                onClick={closeMenu}
+                                                className="flex items-center gap-3 py-2 text-xs pl-1 text-slate-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors text-start"
                                             >
-                                                <span className="text-start font-semibold">{category.name}</span>
-                                                <ChevronDown className={cn(
-                                                    "w-3 h-3 transition-transform duration-200",
-                                                    openServiceCategoryIndex === catIdx && "rotate-180"
-                                                )} />
-                                            </button>
-
-                                            {openServiceCategoryIndex === catIdx && (
-                                                <div className="mt-1 space-y-1 border-l border-slate-100">
-                                                    {category.services && category.services.length > 0 ? (
-                                                        category.services.map((service: any) => (
-                                                            <Link
-                                                                key={service.slug}
-                                                                href={`/services/${service.slug}`}
-                                                                onClick={closeMenu}
-                                                                className="flex items-center gap-3 py-2 text-xs pl-1 text-slate-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors text-start"
-                                                            >
-                                                                <div className="relative w-7 h-7 shrink-0 flex items-center justify-center bg-slate-50 rounded-lg">
-                                                                    <Layers className="w-3.5 h-3.5 text-slate-400" />
-                                                                </div>
-                                                                {service.service_name}
-                                                            </Link>
-                                                        ))
-                                                    ) : (
-                                                        <span className="block px-4 py-2 text-xs text-slate-400 italic">Coming Soon</span>
-                                                    )}
+                                                <div className="relative w-7 h-7 shrink-0 flex items-center justify-center bg-slate-50 rounded-lg">
+                                                    <Layers className="w-3.5 h-3.5 text-slate-400" />
                                                 </div>
-                                            )}
-                                        </div>
-                                    ))}
+                                                {service.service_name}
+                                            </Link>
+                                        ))
+                                    ) : (
+                                        <span className="block px-4 py-2 text-xs text-slate-400 italic">Coming Soon</span>
+                                    )}
                                 </div>
                             )}
                         </div>

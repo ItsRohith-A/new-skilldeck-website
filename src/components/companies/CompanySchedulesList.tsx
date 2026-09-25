@@ -8,14 +8,22 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import ScheduleCard from "./ScheduleCard";
 
-interface Props { companyId: string }
+interface Props {
+    companyId: string;
+    /**
+     * courseSlug -> card thumbnail. Schedules carry no artwork of their own, so
+     * without this every card here fell back to the "No Preview" tile while the
+     * same cards on /companies/schedules showed pictures.
+     */
+    courseImages?: Record<string, string>;
+}
 
 interface CourseScheduleGroup {
     primarySchedule: Schedule;
     allBatches: Schedule[];
 }
 
-export default function CompanySchedulesList({ companyId }: Props) {
+export default function CompanySchedulesList({ companyId, courseImages = {} }: Props) {
     const { data: location, loading: locationLoading } = useIpLocation();
     const [groupedCourses, setGroupedCourses] = useState<CourseScheduleGroup[]>([]);
     const [totalCount, setTotalCount] = useState<number>(0);
@@ -38,9 +46,18 @@ export default function CompanySchedulesList({ companyId }: Props) {
                 const data = await res.json();
 
                 const tenantMap = new Map((data.tenants || []).map((t: any) => [t.id, t]));
-                const mapped = (data.data || []).map((s: any) => {
+                // Tenants are only hydrated for tenants holding a plan, while the
+                // listing returns every published schedule. One whose tenant is
+                // missing renders as "Unknown" with no price, so it is dropped.
+                const mapped = (data.data || [])
+                    .filter((s: any) => tenantMap.size === 0 || tenantMap.has(s.tenantId))
+                    .map((s: any) => {
                     const t: any = tenantMap.get(s.tenantId) || {};
-                    return mapToSchedule(s, { id: t.id || s.tenantId, name: t.name || t.legalName || "Unknown", logo: t.logo, isVerified: t.isVerified, slug: t.slug }, location);
+                    const mapped = mapToSchedule(s, { id: t.id || s.tenantId, name: t.name || t.legalName || "Unknown", logo: t.logo, isVerified: t.isVerified, slug: t.slug }, location);
+                    if (!mapped.image && mapped.course?.slug) {
+                        mapped.image = courseImages[mapped.course.slug];
+                    }
+                    return mapped;
                 });
 
                 // Group batches by unique course
@@ -95,7 +112,7 @@ export default function CompanySchedulesList({ companyId }: Props) {
             }
         })();
         return () => ctrl.abort();
-    }, [companyId, location, locationLoading]);
+    }, [companyId, location, locationLoading, courseImages]);
 
     return (
         <div id="schedules" className="space-y-6">

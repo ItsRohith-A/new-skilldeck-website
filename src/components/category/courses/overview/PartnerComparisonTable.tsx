@@ -612,20 +612,20 @@ export default function PartnerComparisonTable({
                         onClick={() => setShowAllRows((v) => !v)}
                         aria-expanded={showAllRows}
                         aria-controls="compare-partners-table"
-                        className="flex-1 flex items-center justify-center gap-2 h-11 rounded-2xl border border-brand-primary/30 bg-white text-xs md:text-sm font-bold text-brand-primary hover:bg-brand-primary hover:text-white transition-colors"
+                        className="w-full sm:flex-1 min-w-0 flex items-center justify-center gap-2 h-9 rounded-xl border border-brand-primary/30 bg-white text-xs md:text-sm font-bold text-brand-primary hover:bg-brand-primary hover:text-white transition-colors"
                     >
                         {showAllRows ? "Show fewer details" : "Show detailed comparison report"}
-                        <ChevronDown className={`w-4 h-4 transition-transform ${showAllRows ? "rotate-180" : ""}`} />
+                        <ChevronDown className={`w-4 h-4 shrink-0 transition-transform ${showAllRows ? "rotate-180" : ""}`} />
                     </button>
 
                     {fullComparisonHref && (
                         <Link
                             href={fullComparisonHref}
                             rel="nofollow"
-                            className="flex-1 flex items-center justify-center gap-2 h-11 rounded-2xl text-xs md:text-sm font-bold text-white bg-[linear-gradient(125deg,rgba(92,63,250,1)_0%,rgba(203,59,149,1)_48%,rgba(254,106,27,1)_100%)] hover:brightness-110 transition-all"
+                            className="w-full sm:flex-1 min-w-0 flex items-center justify-center gap-2 h-9 rounded-xl text-xs md:text-sm font-bold text-white bg-[linear-gradient(125deg,rgba(92,63,250,1)_0%,rgba(203,59,149,1)_48%,rgba(254,106,27,1)_100%)] hover:brightness-110 transition-all"
                         >
                             Open full comparison page
-                            <ArrowRight className="w-4 h-4" />
+                            <ArrowRight className="w-4 h-4 shrink-0" />
                         </Link>
                     )}
                 </div>

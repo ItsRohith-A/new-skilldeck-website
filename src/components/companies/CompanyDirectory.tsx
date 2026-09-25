@@ -82,7 +82,7 @@ export default function CompanyDirectory({
     return (
         <div id="all-providers" className="mt-6">
             {/* Heading Group Panel */}
-            <div className="flex flex-col md:flex-row md:items-end md:justify-between mb-2 gap-4">
+            <div className="flex flex-col md:flex-row md:items-end md:justify-between mb-2 md:gap-4">
                 <div>
                     <span className="text-[10px] font-extrabold text-brand-primary uppercase tracking-widest bg-brand-primary/5 px-3 py-1 rounded-full">
                         All Institutes

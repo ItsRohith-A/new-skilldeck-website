@@ -11,20 +11,60 @@ export interface SectionLink {
 
 interface CourseSectionsNavProps {
     sections: SectionLink[];
+    /** Element whose on-screen span decides when the nav shows. Defaults to the course overview block. */
+    regionId?: string;
 }
 
-export default function CourseSectionsNav({ sections }: CourseSectionsNavProps) {
+export default function CourseSectionsNav({ sections, regionId }: CourseSectionsNavProps) {
     const [isVisible, setIsVisible] = useState(false);
     const [isExpanded, setIsExpanded] = useState(false); // For < 2xl screens
     const [isDismissed, setIsDismissed] = useState(false); // User closed completely
     const [activeSection, setActiveSection] = useState<string>(sections[0]?.id || "overview");
     const containerRef = useRef<HTMLDivElement>(null);
 
-    const validSections = useMemo(() => sections.filter((s) => Boolean(s.id)), [sections]);
+    // Ids whose section rendered nothing. A wrapper can sit in the DOM with no
+    // content — reviews is mounted unconditionally and its client component
+    // returns null when the course has no testimonials — so presence alone is
+    // not enough to say the section exists; it has to occupy space.
+    const [emptyIds, setEmptyIds] = useState<string[]>([]);
+
+    const validSections = useMemo(
+        () => sections.filter((s) => Boolean(s.id) && !emptyIds.includes(s.id)),
+        [sections, emptyIds]
+    );
+
+    // Sections load and collapse after mount, so this is re-checked whenever one
+    // of them changes size rather than once on mount.
+    useEffect(() => {
+        const ids = sections.map((s) => s.id).filter(Boolean);
+
+        const recompute = () => {
+            const empty = ids.filter((id) => {
+                const el = document.getElementById(id);
+                return !el || el.offsetHeight === 0;
+            });
+            setEmptyIds((prev) =>
+                prev.length === empty.length && prev.every((v, i) => v === empty[i]) ? prev : empty
+            );
+        };
+
+        recompute();
+
+        if (typeof ResizeObserver === "undefined") return;
+
+        const observer = new ResizeObserver(recompute);
+        for (const id of ids) {
+            const el = document.getElementById(id);
+            if (el) observer.observe(el);
+        }
+        return () => observer.disconnect();
+    }, [sections]);
 
     useEffect(() => {
         const handleScroll = () => {
-            const overviewEl = document.getElementById("course-overview") || document.getElementById("overview");
+            const overviewEl = regionId
+                ? document.getElementById(regionId)
+                : document.getElementById("course-overview") || document.getElementById("overview");
             if (!overviewEl) return;
 
             const overviewRect = overviewEl.getBoundingClientRect();
@@ -54,7 +94,7 @@ export default function CourseSectionsNav({ sections }: CourseSectionsNavProps) 
         return () => {
             window.removeEventListener("scroll", handleScroll);
         };
-    }, [validSections]);
+    }, [validSections, regionId]);
 
     // Close flyout menu on outside click on < 2xl screens
     useEffect(() => {
@@ -145,8 +185,10 @@ export default function CourseSectionsNav({ sections }: CourseSectionsNavProps) 
                 </div>
             </aside>
 
-            {/* 2. Standard Laptops, Tablets & Mobile (< 2xl): Floating Pill Trigger with Flyout */}
-            <div className="block 2xl:hidden fixed left-1.5 sm:left-2 top-1/2 -translate-y-1/2 z-50 pointer-events-auto">
+            {/* 2. Standard Laptops, Tablets & Mobile (< 2xl): Floating Pill Trigger with Flyout.
+                On mobile it sits bottom-left so it doesn't cover the reading column;
+                from md up it docks to the left edge, vertically centred. */}
+            <div className="block 2xl:hidden fixed z-50 pointer-events-auto left-1.5 sm:left-2 bottom-[100px] md:bottom-auto md:top-1/2 md:-translate-y-1/2">
                 {!isExpanded ? (
                     <button
                         type="button"

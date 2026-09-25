@@ -117,7 +117,7 @@ export default function NoPartnersPromo({
 
                     <div className="flex flex-col gap-2">
                         <h3 className="text-lg md:text-xl font-bold text-white leading-snug">
-                            Run {label}training? Be the first to list your batches
+                            Runing a training institute ? Be the first to list your batches
                         </h3>
                         <p className="text-sm text-white/70 leading-relaxed">
                             Publish your schedules on the SkillDeck marketplace and put them in

@@ -53,21 +53,23 @@ export default function CompanyFacilitiesCard() {
                 Facilities and what they are actually for
             </h2>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-6">
                 {facilities.map((f, i) => (
                     <div
                         key={i}
-                        className={`bg-white rounded-2xl border-t-4 border-x border-b border-slate-200/80 p-5 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col ${f.colorClass}`}
+                        className={`bg-white rounded-xl sm:rounded-2xl border-l-4 sm:border-l-0 sm:border-t-4 border-r sm:border-x border-b border-slate-200/80 p-3 sm:p-5 shadow-sm hover:shadow-md transition-all duration-300 flex flex-row sm:flex-col items-center sm:items-start gap-3 sm:gap-0 ${f.colorClass}`}
                     >
-                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center mb-4 ${f.iconBgClass}`}>
+                        <div className={`w-9 h-9 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl flex items-center justify-center shrink-0 sm:mb-4 ${f.iconBgClass}`}>
                             {f.icon}
                         </div>
-                        <h3 className="font-bold text-slate-900 text-sm sm:text-base mb-1.5">
-                            {f.title}
-                        </h3>
-                        <p className="text-xs text-slate-500 leading-relaxed">
-                            {f.description}
-                        </p>
+                        <div className="flex flex-col min-w-0">
+                            <h3 className="font-bold text-slate-900 text-sm sm:text-base mb-0.5 sm:mb-1.5">
+                                {f.title}
+                            </h3>
+                            <p className="text-[11px] sm:text-xs text-slate-500 leading-relaxed">
+                                {f.description}
+                            </p>
+                        </div>
                     </div>
                 ))}
             </div>

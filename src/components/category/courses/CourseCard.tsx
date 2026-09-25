@@ -23,7 +23,9 @@ export default function CourseCard({ course, title, slug, categorySlug }: Course
                         alt={course.courseThumbnail?.alt || title}
                         fill
                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                        className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                        // Thumbnails are mostly square badges/logos; cover cropped them
+                        // into a zoomed-in strip, so fit the whole image instead.
+                        className="object-contain p-4 group-hover:scale-105 transition-transform duration-700 ease-out"
                     />
                 ) : (
                     <div className="w-full h-full flex items-center justify-center text-slate-300 bg-slate-100">

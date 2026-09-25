@@ -151,13 +151,10 @@ export default function HeroLeadForm({
                     Request a callback
                 </span>
                 <h3 className="text-base font-bold text-slate-900 leading-snug mt-1">
-                    {hasChoice
-                        ? "Choose an institute and we will connect you"
-                        : `Talk to ${active?.name}`}
+                    Get course details from your preferred<br /> institute
                 </h3>
                 <p className="text-xs text-slate-500 leading-relaxed">
-                    Your details go straight to the institute running this batch. They come back
-                    with fees, schedule and seat availability.
+                    Get detailed information on course curriculum, duration, batch timings, and placement support.
                 </p>
             </div>
 

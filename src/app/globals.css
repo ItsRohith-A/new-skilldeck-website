@@ -59,6 +59,15 @@ html, .custom-scrollbar {
   max-width: 1152px !important; /* max-w-6xl */
 }
 
+/* Sections drop their px-4 gutter at lg (lg:px-0), but between 1024px and
+   ~1200px the viewport is narrower than the 1152px cap, so content would sit
+   flush against the screen edges. Keep a 24px gutter until the cap kicks in. */
+@media (min-width: 1024px) {
+  .container {
+    max-width: min(1152px, calc(100% - 3rem)) !important;
+  }
+}
+
 @keyframes loadingBar {
   0% {
     transform: translateX(-100%);

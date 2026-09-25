@@ -145,10 +145,10 @@ export default async function CompaniesPage({ searchParams }: CompaniesPageProps
                 {/* Visual Companies Banner Hero */}
                 <CompaniesHero totalCompanies={totalRegular} />
                 <div className="container mx-auto px-4 lg:px-0">
-                    <BrandLogos className="mt-10 mb-15" />
+                    <BrandLogos className="my-6 md:mt-10 md:mb-15" />
                 </div>
 
-                <div className="container mx-auto px-4 lg:px-0 pb-16">
+                <div className="container mx-auto px-4 lg:px-0 md:pb-16">
                     <Suspense fallback={
                         <div className="flex items-center justify-center py-20">
                             <Loader2 className="w-10 h-10 text-blue-600 animate-spin" />

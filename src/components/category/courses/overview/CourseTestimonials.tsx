@@ -43,6 +43,9 @@ export default function CourseTestimonials({ courseSlug }: CourseTestimonialsPro
     const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
     const [stats, setStats] = useState({ avg: 0, totalCount: 0, distribution: [0, 0, 0, 0, 0] });
     const [loading, setLoading] = useState(true);
+    // Separate from `loading`, which also covers paging. Until the first fetch
+    // answers we do not know whether this course has reviews at all.
+    const [initialLoaded, setInitialLoaded] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
 
@@ -122,12 +125,22 @@ export default function CourseTestimonials({ courseSlug }: CourseTestimonialsPro
                 console.error("Error loading testimonials or stats:", error);
             } finally {
                 setLoading(false);
+                setInitialLoaded(true);
             }
         };
         loadTestimonialsAndStats();
     }, [courseSlug, isVisible]);
 
-    if (isVisible && !loading && testimonials.length === 0) return null;
+    // Render nothing but the observer target until the first fetch answers: the
+    // full header plus skeletons used to appear and then vanish on courses with
+    // no reviews, taking the section's nav entry with it. The element has to
+    // stay in the DOM because IntersectionObserver watches it to trigger that
+    // fetch in the first place.
+    if (!initialLoaded) {
+        return <div ref={containerRef} aria-hidden="true" className="h-0" />;
+    }
+
+    if (testimonials.length === 0) return null;
 
     return (
         <div ref={containerRef} className="space-y-6 md:pt-6">

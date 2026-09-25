@@ -28,7 +28,7 @@ export default function CookiePolicyPage() {
                             <Cookie className="w-8 h-8 text-white" />
                         </div>
                         <h1 className="heading-section mb-4">Cookie Policy</h1>
-                        <p className="body-medium text-gray-500">Last updated: January 1, 2026</p>
+                        {/* <p className="body-medium text-gray-500">Last updated: January 1, 2026</p> */}
                     </div>
 
                     {/* Policy Card Wrapper */}
