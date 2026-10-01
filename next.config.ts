@@ -29,6 +29,18 @@ const nextConfig: NextConfig = {
       "@radix-ui/react-dialog",
     ],
   },
+  async redirects() {
+    return [
+      // The conventional WordPress/Yoast index name, which crawlers and SEO
+      // tools probe. Without this it fell through to the category rewrite below
+      // and 404ed as a category called "sitemap_index".
+      {
+        source: '/sitemap_index.xml',
+        destination: '/sitemap.xml',
+        permanent: true,
+      },
+    ];
+  },
   async rewrites() {
     return [
       {

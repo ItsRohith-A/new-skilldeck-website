@@ -1,4 +1,5 @@
 import { fetchFromBackend } from "@/lib/apiProxy";
+import { SITE_URL } from "@/lib/sitemap";
 import { MetadataRoute } from "next";
 
 
@@ -89,7 +90,12 @@ export default async function robots(): Promise<MetadataRoute.Robots> {
                             }
                             currentDisallows.push(value);
                         } else if (key === "sitemap") {
-                            sitemaps.push(value);
+                            // Only XML/text sitemaps are valid here. The CMS
+                            // script listed /sitemap-html, an HTML page, which
+                            // Search Console reports as a broken sitemap.
+                            if (/\.(xml|txt)(\.gz)?$/i.test(value.split(/[?#]/)[0])) {
+                                sitemaps.push(value);
+                            }
                         }
                     }
                     // Flush any remaining rules at the end
@@ -113,9 +119,7 @@ export default async function robots(): Promise<MetadataRoute.Robots> {
         rules: rules,
     };
 
-    if (sitemaps.length > 0) {
-        result.sitemap = sitemaps;
-    }
+    result.sitemap = sitemaps.length > 0 ? sitemaps : [`${SITE_URL}/sitemap.xml`];
 
     return result;
 }

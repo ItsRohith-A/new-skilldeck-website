@@ -44,6 +44,8 @@ export async function POST(request: NextRequest) {
                 revalidatePath(`/${categorySlug}/${slug}`);
                 revalidatePath(`/${categorySlug}`);
                 purgeUrls.push(`${SITE_URL}/${categorySlug}/${slug}`, `${SITE_URL}/${categorySlug}`);
+                // Course and location URLs are listed in the category sitemap.
+                purgeUrls.push(`${SITE_URL}/${categorySlug}.xml`);
             }
             revalidatePath(`/schedules/${slug}`);
             purgeUrls.push(`${SITE_URL}/schedules/${slug}`);
@@ -58,8 +60,10 @@ export async function POST(request: NextRequest) {
         if (slug) {
             revalidateTag(`category-${slug}`, 'max');
             revalidatePath(`/${slug}`);
-            purgeUrls.push(`${SITE_URL}/${slug}`);
+            purgeUrls.push(`${SITE_URL}/${slug}`, `${SITE_URL}/${slug}.xml`);
         }
+        // The sitemap index lists one sitemap per category.
+        purgeUrls.push(`${SITE_URL}/sitemap.xml`);
         revalidateTag('categories', 'max');
         revalidateTag('courses', 'max');
         revalidatePath('/', 'layout');
@@ -74,7 +78,8 @@ export async function POST(request: NextRequest) {
         revalidateTag('services', 'max');
         revalidateTag('service-categories', 'max');
         revalidatePath('/', 'layout');
-        purgeUrls.push(`${SITE_URL}/`, `${SITE_URL}/services`);
+        // Service pages are listed in the main and HTML sitemaps.
+        purgeUrls.push(`${SITE_URL}/`, `${SITE_URL}/services`, `${SITE_URL}/main-sitemap.xml`, `${SITE_URL}/sitemap-html`);
     } else if (type === 'service-category' || type === 'service-categories') {
         if (slug) {
             revalidateTag(`service-category-${slug}`, 'max');
@@ -94,6 +99,7 @@ export async function POST(request: NextRequest) {
             revalidateTag('blogs', 'max');
             revalidatePath('/blog');
         }
+        purgeUrls.push(`${SITE_URL}/blogs-sitemap.xml`);
     } else if (type === 'trainer' || type === 'trainers') {
         if (slug) {
             revalidateTag(`course-${slug}`, 'max');
@@ -127,7 +133,7 @@ export async function POST(request: NextRequest) {
         // it has to drop on every pattern change, not only on a list-wide purge.
         revalidateTag('patterns', 'max');
         revalidatePath('/main-sitemap.xml');
-        purgeUrls.push(`${SITE_URL}/main-sitemap.xml`);
+        purgeUrls.push(`${SITE_URL}/main-sitemap.xml`, `${SITE_URL}/sitemap-html`);
     } else if (type === 'plan' || type === 'plans' || type === 'pricing') {
         // SkillDeck SaaS Subscription Plans (/pricing & homepage)
         revalidateTag('plans', 'max');
