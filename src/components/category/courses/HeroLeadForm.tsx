@@ -154,7 +154,7 @@ export default function HeroLeadForm({
                     Get course details from your preferred<br /> institute
                 </h3>
                 <p className="text-xs text-slate-500 leading-relaxed">
-                    Get detailed information on course curriculum, duration, batch timings, and placement support.
+                    Suggest Me The Best Institute! Get the course fee, Syllabus, Benefits, duration, and Placement records of various training providers.
                 </p>
             </div>
 
