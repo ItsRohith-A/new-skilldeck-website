@@ -20,6 +20,11 @@ const nextConfig: NextConfig = {
     imageSizes: [16, 32, 48, 64, 96, 128, 256],
   },
   experimental: {
+    // The build prerenders every course page against a rate-limited backend.
+    // Fewer pages in flight per worker keeps it under the limit, and a page
+    // that still fails gets retried instead of failing the whole build.
+    staticGenerationMaxConcurrency: 4,
+    staticGenerationRetryCount: 2,
     optimizePackageImports: [
       "lucide-react",
       "framer-motion",

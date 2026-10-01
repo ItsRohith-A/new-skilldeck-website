@@ -4,6 +4,21 @@ import { env } from "./env";
 
 const inFlightRequests = new Map<string, Promise<Response>>();
 
+const RETRYABLE_STATUSES = new Set([429, 503]);
+const RATE_LIMIT_RETRIES = 4;
+const MAX_RETRY_DELAY_MS = 10000;
+
+/** Retry-After (seconds or HTTP date) when sent, else exponential backoff with jitter. */
+function retryDelayMs(response: Response, attempt: number): number {
+  const retryAfter = response.headers.get("retry-after");
+  if (retryAfter) {
+    const seconds = Number(retryAfter);
+    const ms = Number.isFinite(seconds) ? seconds * 1000 : Date.parse(retryAfter) - Date.now();
+    if (Number.isFinite(ms) && ms > 0) return Math.min(ms, MAX_RETRY_DELAY_MS);
+  }
+  return Math.min(500 * 2 ** (attempt - 1) + Math.random() * 250, MAX_RETRY_DELAY_MS);
+}
+
 interface FetchOptions {
   request?: NextRequest;
   queryParams?: URLSearchParams;
@@ -80,18 +95,35 @@ export async function fetchFromBackend(endpoint: string, options?: FetchOptions)
 
     const fetchPromise = (async () => {
       try {
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 15000);
+        const doFetch = async () => {
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), 15000);
+          try {
+            return await fetch(backendUrl, {
+              method,
+              headers,
+              body: body ? JSON.stringify(body) : undefined,
+              cache,
+              next: next || (isGET ? { tags: ['default'] } : undefined),
+              signal: controller.signal,
+            });
+          } finally {
+            clearTimeout(timeoutId);
+          }
+        };
 
-        let response = await fetch(backendUrl, {
-          method,
-          headers,
-          body: body ? JSON.stringify(body) : undefined,
-          cache,
-          next: next || (isGET ? { tags: ['default'] } : undefined),
-          signal: controller.signal,
-        });
-        clearTimeout(timeoutId);
+        let response = await doFetch();
+
+        // The backend rate-limits. A build prerenders every course in parallel,
+        // and since the course page throws on any non-404 (so an outage never
+        // caches as a permanent 404), a single 429 used to fail the whole
+        // build. Back off and retry GETs, honouring Retry-After within a cap.
+        if (isGET) {
+          for (let attempt = 1; attempt <= RATE_LIMIT_RETRIES && RETRYABLE_STATUSES.has(response.status); attempt++) {
+            await new Promise((resolve) => setTimeout(resolve, retryDelayMs(response, attempt)));
+            response = await doFetch();
+          }
+        }
 
         const isRetry = options && (options as any)._isRetry;
         if (response.status === 401 && !isRetry) {
