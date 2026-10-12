@@ -19,7 +19,7 @@ import {
     type LucideIcon,
 } from "lucide-react";
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, startTransition } from "react";
 import skilldeckLogo from "../../../public/logos/mainlogo.svg";
 
 /**
@@ -51,46 +51,68 @@ const FEATURES: { icon: LucideIcon; label: string; tint: string }[] = [
 ];
 
 const SLOTS = 8;
-const SWAP_MS = 1600;
+const SWAP_MS = 2200;
 
 export default function HdToolsConverge() {
     // Which feature each slot currently shows. Starts as the first 8, then slots
     // rotate one at a time so every feature gets surfaced without ever showing
     // the same one twice on screen.
     const [slots, setSlots] = useState<number[]>(() => Array.from({ length: SLOTS }, (_, i) => i));
+    const containerRef = useRef<HTMLDivElement>(null);
     const tick = useRef(0);
     const cursor = useRef(SLOTS);
+    const isVisibleRef = useRef(true);
 
     useEffect(() => {
         // Respect the OS-level motion preference — no timer at all if reduced.
         const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
         if (mq.matches) return;
 
+        // Pause animation when element is off-screen to keep the main thread idle (lowers INP)
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                isVisibleRef.current = entry.isIntersecting;
+            },
+            { threshold: 0.1 }
+        );
+
+        if (containerRef.current) {
+            observer.observe(containerRef.current);
+        }
+
         const id = setInterval(() => {
-            setSlots((prev) => {
-                const next = [...prev];
-                const slot = tick.current % SLOTS;
+            // Don't execute work if tab is inactive or element is scrolled out of view
+            if (document.hidden || !isVisibleRef.current) return;
 
-                // Advance to the next feature that isn't already on screen.
-                let candidate = cursor.current % FEATURES.length;
-                let guard = 0;
-                while (next.includes(candidate) && guard < FEATURES.length) {
-                    candidate = (candidate + 1) % FEATURES.length;
-                    guard += 1;
-                }
+            // Use startTransition so this non-critical cosmetic update never blocks user interactions
+            startTransition(() => {
+                setSlots((prev) => {
+                    const next = [...prev];
+                    const slot = tick.current % SLOTS;
 
-                next[slot] = candidate;
-                cursor.current = candidate + 1;
-                tick.current += 1;
-                return next;
+                    let candidate = cursor.current % FEATURES.length;
+                    let guard = 0;
+                    while (next.includes(candidate) && guard < FEATURES.length) {
+                        candidate = (candidate + 1) % FEATURES.length;
+                        guard += 1;
+                    }
+
+                    next[slot] = candidate;
+                    cursor.current = candidate + 1;
+                    tick.current += 1;
+                    return next;
+                });
             });
         }, SWAP_MS);
 
-        return () => clearInterval(id);
+        return () => {
+            clearInterval(id);
+            observer.disconnect();
+        };
     }, []);
 
     return (
-        <div className="relative overflow-hidden rounded-3xl border border-slate-200 bg-gradient-to-br from-violet-50/70 via-white to-orange-50/60 p-4 lg:p-8">
+        <div ref={containerRef} className="relative overflow-hidden rounded-3xl border border-slate-200 bg-gradient-to-br from-violet-50/70 via-white to-orange-50/60 p-4 lg:p-8">
             {/* Colour bleed behind the scattered tools */}
             <div aria-hidden="true" className="absolute inset-0 pointer-events-none">
                 <span className="absolute -top-16 -left-12 w-56 h-56 rounded-full bg-brand-primary/10 blur-[70px]" />

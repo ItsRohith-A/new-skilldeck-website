@@ -40,6 +40,7 @@ import { Suspense } from "react";
 import DynamicScripts from "@/lib/DynamicScripts";
 import UtmTracker from "@/components/shared/UtmTracker";
 import Script from "next/script";
+import WebVitals from "@/components/shared/WebVitals";
 
 const RICH_TEXT_CSS =
   process.env.NEXT_PUBLIC_RICH_TEXT_CSS ||
@@ -126,7 +127,24 @@ export default function RootLayout({
         <link rel="dns-prefetch" href="https://api.skilldeck.net" />
         <link rel="dns-prefetch" href="https://api64.ipify.org" />
         <link rel="preconnect" href={RICH_TEXT_CDN_ORIGIN} crossOrigin="" />
-        <link rel="stylesheet" href={RICH_TEXT_CSS} />
+        <noscript>
+          <link rel="stylesheet" href={RICH_TEXT_CSS} />
+        </noscript>
+        <Script
+          id="skilldeck-rich-text-css"
+          strategy="lazyOnload"
+          dangerouslySetInnerHTML={{
+            __html: `
+              if (!document.getElementById('skilldeck-rich-text-style')) {
+                var l = document.createElement('link');
+                l.id = 'skilldeck-rich-text-style';
+                l.rel = 'stylesheet';
+                l.href = '${RICH_TEXT_CSS}';
+                document.head.appendChild(l);
+              }
+            `,
+          }}
+        />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(webSiteSchema) }}
@@ -137,6 +155,7 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-full flex flex-col" suppressHydrationWarning>
+        <WebVitals />
         {/* Disable native scroll restoration before hydration so back/forward
             navigation does not fight ScrollToTopOnRefresh. */}
         <Script id="scroll-restoration" strategy="beforeInteractive">
