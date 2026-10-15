@@ -12,15 +12,16 @@ import mainLogo from "../../../../../public/logos/mainlogo.svg";
 import { MobileMenu } from "./MobileMenu";
 import NavCategoriesDropdown from "./NavCategoriesDropdown";
 import NavServicesDropdown from "./NavServicesDropdown";
+import { useNavCategories } from "@/hooks/useNavCategories";
 
 interface Props {
     isHidden?: boolean;
-    categories: any[];
     servicesCategories?: any[];
 }
 
-function MainNav({ isHidden, categories, servicesCategories = [] }: Props) {
+function MainNav({ isHidden, servicesCategories = [] }: Props) {
     const pathname = usePathname();
+    const categories = useNavCategories();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isScrolled, setIsScrolled] = useState(false);
     const [active, setActive] = useState<string | null>(null);

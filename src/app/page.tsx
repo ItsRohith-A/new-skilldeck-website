@@ -34,6 +34,10 @@ export default async function Page() {
         getAllServices(),
     ]);
 
+    // The services grid is a client component, so its props are serialised into
+    // the HTML; it never reads `banner`, which was over half of each service.
+    const gridServices = services.map(({ banner: _banner, ...service }) => service);
+
     const HOME_FAQS = [
         {
             title: "Why are training Institutes moving to SkillDeck?",
@@ -135,35 +139,6 @@ export default async function Page() {
         }))
     };
 
-    // Published on the previous site's home page and dropped in the rebuild.
-    // Restored so the entity keeps the same testimonial it always carried; note
-    // a review a business publishes about itself is self-serving, so Google
-    // will not render stars from it.
-    const reviewSchema = {
-        "@context": "https://schema.org",
-        "@type": "Review",
-        "itemReviewed": {
-            "@type": "Organization",
-            "@id": "https://skilldeck.net/#organization",
-            "name": "SkillDeck"
-        },
-        "author": {
-            "@type": "Person",
-            "name": "Ananya Sharma"
-        },
-        "reviewRating": {
-            "@type": "Rating",
-            "ratingValue": "5",
-            "bestRating": "5",
-            "worstRating": "1"
-        },
-        "reviewBody": "SkillDeck has completely transformed how we manage our training institute. The automation is seamless and saved us hundreds of hours.",
-        "publisher": {
-            "@type": "Organization",
-            "name": "SkillDeck"
-        }
-    };
-
     return (
         <>
             <script
@@ -174,14 +149,10 @@ export default async function Page() {
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
             />
-            <script
-                type="application/ld+json"
-                dangerouslySetInnerHTML={{ __html: JSON.stringify(reviewSchema) }}
-            />
             <MainNav />
 
             <main>
-                <HeroSection plans={plans} faqs={HOME_FAQS} partnerLogos={partnerLogos} services={services} />
+                <HeroSection plans={plans} faqs={HOME_FAQS} partnerLogos={partnerLogos} services={gridServices} />
             </main>
 
             <Footer />

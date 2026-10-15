@@ -1,55 +1,33 @@
 import { env } from '@/lib/env';
 import { NextRequest, NextResponse } from 'next/server';
+import { checkTurnstile } from '@/lib/turnstile';
+import { getClientIp, rateLimit } from '@/lib/rateLimit';
 
-// Ensure env variables are properly loaded or provide defaults/checks
 const API_KEY = env.API_KEY;
-const TURNSTILE_SECRET_KEY = env.TURNSTILE_SECRET_KEY || '';
+// Per IP: generous for a person retrying a form, tight for a script.
+const LEAD_LIMIT = 5;
+const LEAD_WINDOW_SEC = 10 * 60;
 const LEADS_ENDPOINT = `${env.SERVER_URL || 'https://api.skilldeck.net'}/api/v1/skilldeck/leads`;
-
-// Verify Turnstile token with Cloudflare
-async function verifyTurnstileToken(token: string): Promise<boolean> {
-    if (!TURNSTILE_SECRET_KEY) {
-        console.warn('[API/CompanyLeads] TURNSTILE_SECRET_KEY is not set, skipping verification');
-        return true;
-    }
-
-    try {
-        const response = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: new URLSearchParams({
-                secret: TURNSTILE_SECRET_KEY,
-                response: token,
-            }),
-        });
-
-        const data = await response.json();
-        return data.success === true;
-    } catch (error) {
-        console.error('[API/CompanyLeads] Turnstile verification error:', error);
-        return false;
-    }
-}
 
 export async function POST(req: NextRequest) {
     const targetUrl = LEADS_ENDPOINT;
 
     try {
+        const clientIp = getClientIp(req);
+        const limited = await rateLimit('company-leads', clientIp, LEAD_LIMIT, LEAD_WINDOW_SEC);
+        if (!limited.ok) {
+            return NextResponse.json(
+                { message: 'Too many submissions. Please try again later.' },
+                { status: 429, headers: { 'Retry-After': String(limited.retryAfter ?? LEAD_WINDOW_SEC) } }
+            );
+        }
+
         const body = await req.json();
 
-        // Verify Turnstile token
-        const turnstileToken = body.turnstileToken;
-        if (turnstileToken) {
-            const isValid = await verifyTurnstileToken(turnstileToken);
-            if (!isValid) {
-                console.warn('[API/CompanyLeads] Turnstile verification failed');
-                return NextResponse.json({ message: 'Captcha verification failed. Please try again.' }, { status: 400 });
-            }
-        } else if (TURNSTILE_SECRET_KEY) {
-            console.warn('[API/CompanyLeads] No Turnstile token provided');
-            return NextResponse.json({ message: 'Captcha verification required.' }, { status: 400 });
+        const captcha = await checkTurnstile(body?.turnstileToken, clientIp);
+        if (!captcha.ok) {
+            console.warn('[API/CompanyLeads] Turnstile verification failed');
+            return NextResponse.json({ message: captcha.message }, { status: 400 });
         }
 
         // Remove turnstileToken from body before forwarding to backend

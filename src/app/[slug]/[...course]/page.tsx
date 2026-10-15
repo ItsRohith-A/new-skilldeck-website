@@ -1,9 +1,6 @@
 import CourseHero from "@/components/category/courses/CourseHero";
 import CourseAccordionSection from "@/components/category/courses/overview/CourseAccordionSection";
 import CourseOverview from "@/components/category/courses/overview/CourseOverview";
-// City URLs render the shared course body client-side, behind a user gesture,
-// so only what is unique to the location lands in their HTML.
-import CourseOverviewGated from "@/components/category/courses/overview/CourseOverviewGated";
 import CourseRelatedLinks from "@/components/category/courses/overview/CourseRelatedLinks";
 import TopPartnersSection from "@/components/category/courses/overview/TopPartnersClientWrapper";
 import Footer from "@/components/shared/Footer";
@@ -218,17 +215,25 @@ export default async function CoursePage({
         }
     };
 
-    const productSchema = {
-        "@context": "https://schema.org",
-        "@type": "Product",
-        "name": course.course_title,
-        "description": course.metaDescription || course.course_title,
-        "aggregateRating": {
-            "@type": "AggregateRating",
-            "ratingValue": course.aggregateRating?.ratingValue || 4.5,
-            "reviewCount": course.aggregateRating?.reviewCount || 2700
+    // Only real ratings from the backend. The old 4.5 / 2700 fallback stamped the
+    // same invented rating on every course and city page — fabricated review
+    // markup, which Google treats as spammy structured data. A Product with no
+    // rating, offer or review is invalid on its own, so it is skipped entirely.
+    const ratingValue = Number(course.aggregateRating?.ratingValue);
+    const reviewCount = Number(course.aggregateRating?.reviewCount);
+    const productSchema = ratingValue > 0 && reviewCount > 0
+        ? {
+            "@context": "https://schema.org",
+            "@type": "Product",
+            "name": course.course_title,
+            "description": course.metaDescription || course.course_title,
+            "aggregateRating": {
+                "@type": "AggregateRating",
+                "ratingValue": ratingValue,
+                "reviewCount": reviewCount
+            }
         }
-    };
+        : null;
 
     let faqSchema = null;
     if (course.faqs && course.faqs.length > 0) {
@@ -304,10 +309,12 @@ export default async function CoursePage({
                     type="application/ld+json"
                     dangerouslySetInnerHTML={{ __html: JSON.stringify(courseSchema) }}
                 />
-                <script
-                    type="application/ld+json"
-                    dangerouslySetInnerHTML={{ __html: JSON.stringify(productSchema) }}
-                />
+                {productSchema && (
+                    <script
+                        type="application/ld+json"
+                        dangerouslySetInnerHTML={{ __html: JSON.stringify(productSchema) }}
+                    />
+                )}
                 <script
                     type="application/ld+json"
                     dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
@@ -328,18 +335,16 @@ export default async function CoursePage({
                     <div className="container mx-auto px-4 lg:px-0 md:py-12">
                         <TopPartnersSection courseSlug={courseSlug} courseTitle={course?.course_name || course?.title} locationSlug={locationSlug} />
                     </div>
-                    {locationSlug ? (
-                        <CourseOverviewGated
-                            courseSlug={courseSlug}
-                            courseTitle={course.course_title}
-                        />
-                    ) : (
-                        <CourseOverview
-                            data={course}
-                            courseSlug={courseSlug}
-                            courseName={course.course_name}
-                        />
-                    )}
+                    {/* Server-rendered on city URLs too. Gating the body behind a
+                        click left each indexable city page as little more than a
+                        hero and a partner list — thin pages at scale — and these
+                        are listed in the sitemaps with self-canonicals. */}
+                    <CourseOverview
+                        data={course}
+                        courseSlug={courseSlug}
+                        courseName={course.course_name}
+                    />
+
                     <div className="container mx-auto px-4 lg:px-0 pb-16 space-y-12">
                         {(course.bottomSection?.value || course.internalSection?.value) && (
                             <div className="space-y-6">

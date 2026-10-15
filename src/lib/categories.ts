@@ -58,9 +58,12 @@ export const getCategories = cache(async () => {
           slug: course.slug,
           course_name: course.course_name,
           order: course.order,
-          courseCard: {
-            courseIcon: course.courseCard?.courseIcon,
-          },
+          // Only the icon URL: the nav is a client component on every page, so
+          // each field here is serialised into every page's HTML. The full icon
+          // object (alt, sizes, a duplicate thumbnail URL) doubled its weight.
+          courseCard: course.courseCard?.courseIcon?.url
+            ? { courseIcon: { url: course.courseCard.courseIcon.url } }
+            : undefined,
         }))
         .sort((a: any, b: any) => (a.order || 0) - (b.order || 0));
 

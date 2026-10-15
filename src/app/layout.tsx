@@ -45,13 +45,28 @@ const RICH_TEXT_CSS =
   process.env.NEXT_PUBLIC_RICH_TEXT_CSS ||
   "https://cloud-storage.skilldeck.net/static/editor/skilldeck-rich-text.min.css";
 
-const RICH_TEXT_CDN_ORIGIN = (() => {
+/**
+ * The editor's rich-text stylesheet, inlined into <head>.
+ *
+ * As a <link> it was a render-blocking request to a second origin on every
+ * page, served with a five-minute max-age. Fetched here it is cached for good
+ * — a time-based revalidate would drag every on-demand ISR page down to that
+ * interval — and picks up a new editor release on the next deploy, or on a
+ * POST to /api/revalidate with tags ["rich-text-css"].
+ * If the fetch fails the plain link is the fallback.
+ */
+async function RichTextStyles() {
   try {
-    return new URL(RICH_TEXT_CSS).origin;
-  } catch {
-    return "https://cloud-storage.skilldeck.net";
+    const res = await fetch(RICH_TEXT_CSS, { cache: "force-cache", next: { tags: ["rich-text-css"] } });
+    if (res.ok) {
+      const css = (await res.text()).replace(/<\/style/gi, "<\\/style");
+      return <style id="skilldeck-rich-text" dangerouslySetInnerHTML={{ __html: css }} />;
+    }
+  } catch (error) {
+    console.error("[layout] rich-text stylesheet fetch failed:", error);
   }
-})();
+  return <link rel="stylesheet" href={RICH_TEXT_CSS} />;
+}
 
 export default function RootLayout({
   children,
@@ -111,9 +126,9 @@ export default function RootLayout({
       "https://twitter.com/skilldeck"
     ]
     // No aggregateRating: a rating a business states about itself is never
-    // eligible for stars, and because this node is also referenced by @id from
-    // the home page's Review, Google merged it into an Organization with two
-    // aggregate ratings — a critical Rich Results error that invalidated it.
+    // eligible for stars, and a second rating merged in through @id references
+    // produced an Organization with two aggregate ratings — a critical Rich
+    // Results error that invalidated it.
   };
 
   return (
@@ -124,9 +139,7 @@ export default function RootLayout({
     >
       <head>
         <link rel="dns-prefetch" href="https://api.skilldeck.net" />
-        <link rel="dns-prefetch" href="https://api64.ipify.org" />
-        <link rel="preconnect" href={RICH_TEXT_CDN_ORIGIN} crossOrigin="" />
-        <link rel="stylesheet" href={RICH_TEXT_CSS} />
+        <RichTextStyles />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(webSiteSchema) }}

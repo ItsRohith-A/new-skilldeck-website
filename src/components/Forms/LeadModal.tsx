@@ -88,7 +88,7 @@ const LeadModal = () => {
                         {/* Contact Items */}
                         <div className="space-y-2 pt-1">
                             <a
-                                href="tel:+919036707847"
+                                href="tel:+918296494941"
                                 className="flex items-center gap-3 group/link hover:opacity-90 transition-opacity"
                             >
                                 <div className="w-8 h-8 bg-white/10 backdrop-blur-sm rounded-lg flex items-center justify-center group-hover/link:bg-white/20 transition-colors flex-shrink-0">
@@ -96,7 +96,7 @@ const LeadModal = () => {
                                 </div>
                                 <div className="min-w-0">
                                     <p className="text-[10px] text-white/50 leading-none mb-0.5">Phone</p>
-                                    <p className="text-xs font-semibold">+91 9036707847</p>
+                                    <p className="text-xs font-semibold">+91 8296494941</p>
                                 </div>
                             </a>
                             <a

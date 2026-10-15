@@ -7,10 +7,10 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
+// Only the icon URL is sent (see getCategories); alt text is the course name.
 interface CourseCardData {
     courseIcon?: {
-        url: string;
-        alt: string;
+        url?: string;
     };
 }
 

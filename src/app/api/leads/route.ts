@@ -1,15 +1,32 @@
 import { env } from "@/lib/env";
 import { NextRequest, NextResponse } from "next/server";
+import { checkTurnstile } from "@/lib/turnstile";
+import { getClientIp, rateLimit } from "@/lib/rateLimit";
 
 const API_KEY = env.API_KEY;
+// Per IP: generous for a person retrying a form, tight for a script.
+const LEAD_LIMIT = 5;
+const LEAD_WINDOW_SEC = 10 * 60;
 const LEADS_ENDPOINT = `${env.SERVER_URL || "https://api.skilldeck.net"}/api/v1/content/leads/submit`;
 
 export async function POST(request: NextRequest) {
   try {
+    const clientIp = getClientIp(request);
+    const limited = await rateLimit("leads", clientIp, LEAD_LIMIT, LEAD_WINDOW_SEC);
+    if (!limited.ok) {
+      return NextResponse.json(
+        { success: false, message: "Too many submissions. Please try again later." },
+        { status: 429, headers: { "Retry-After": String(limited.retryAfter ?? LEAD_WINDOW_SEC) } }
+      );
+    }
+
     const body = await request.json();
 
-    // The token is collected by the form but not verified here yet — see
-    // /api/company-leads for the Turnstile check this route still needs.
+    const captcha = await checkTurnstile(body?.turnstileToken, clientIp);
+    if (!captcha.ok) {
+      return NextResponse.json({ success: false, message: captcha.message }, { status: 400 });
+    }
+
     const cleanBody = { ...body };
     delete cleanBody.turnstileToken;
 

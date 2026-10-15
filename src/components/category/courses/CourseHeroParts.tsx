@@ -100,19 +100,6 @@ export function pickFeaturedSchedule(
     };
 }
 
-// ─── Rating helper ────────────────────────────────────────────────────────────
-
-export function computeAvgRating(
-    trainers?: Array<{ rating?: number }>,
-    aggregateRating?: { ratingValue?: number }
-): number {
-    if (trainers && trainers.length > 0) {
-        const sum = trainers.reduce((acc, t) => acc + (t.rating ?? 0), 0);
-        return +(sum / trainers.length).toFixed(1);
-    }
-    return aggregateRating?.ratingValue ?? 4.8;
-}
-
 // ─── Course-specific UI primitives ───────────────────────────────────────────
 
 /**

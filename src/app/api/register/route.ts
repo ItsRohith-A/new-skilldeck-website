@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { getClientIp, rateLimit } from '@/lib/rateLimit';
 
 export async function POST(req: NextRequest) {
     const apiUrl = process.env.SERVER_URL || 'https://api.skilldeck.net';
@@ -10,6 +11,15 @@ export async function POST(req: NextRequest) {
     const endpoint = `${apiUrl}/api/v1/admin/register/tenant`;
 
     try {
+        // Each registration provisions a tenant, so this is the tightest limit.
+        const limited = await rateLimit('register', getClientIp(req), 5, 60 * 60);
+        if (!limited.ok) {
+            return NextResponse.json(
+                { message: 'Too many registration attempts. Please try again later.' },
+                { status: 429, headers: { 'Retry-After': String(limited.retryAfter ?? 3600) } }
+            );
+        }
+
         const body = await req.json();
 
         const response = await fetch(endpoint, {

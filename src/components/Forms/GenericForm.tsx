@@ -719,8 +719,10 @@ const GenericForm: React.FC<GenericFormProps> = ({
 
                     {/* Action Section (Captcha & Submit) */}
                     <div className="flex flex-col items-center gap-4 mt-4 w-full">
-                        {/* Turnstile Captcha */}
-                        {(formType !== 'list-company' || isInteracted) && (
+                        {/* Turnstile Captcha — mounted on first focus. Loaded with the
+                            page it cost ~550 KB and seconds of main-thread work per
+                            form, on every course page. */}
+                        {isInteracted && (
                             <div className="w-full sm:w-auto flex justify-center sm:justify-start flex-shrink-0">
                                 <TurnstileWidget
                                     onVerify={(token) => setTurnstileToken(token)}
@@ -761,9 +763,9 @@ const GenericForm: React.FC<GenericFormProps> = ({
                     {showContactDetails && (
                         <div className="mt-6 pt-6 border-t border-gray-200">
                             <div className="flex flex-wrap items-center justify-center gap-4 text-sm text-gray-600">
-                                <a href="tel:+919036707847" className="flex items-center gap-2 hover:text-brand-primary transition-colors">
+                                <a href="tel:+918296494941" className="flex items-center gap-2 hover:text-brand-primary transition-colors">
                                     <PhoneCall className="text-brand-primary w-4 h-4" />
-                                    +91 9036707847
+                                    +91 8296494941
                                 </a>
                                 <span className="text-gray-300">|</span>
                                 <a href="mailto:hello@skilldeck.net" className="flex items-center gap-2 hover:text-brand-primary transition-colors">

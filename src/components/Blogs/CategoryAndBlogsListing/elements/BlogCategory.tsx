@@ -1,6 +1,6 @@
 import BlogLoadMoreSkeleton from '@/components/Utils/BlogLoadMoreSkeleton';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import React, { useState } from 'react';
+import React, { Suspense, useState } from 'react';
 
 import BlogCard from './BlogCard';
 import FeaturedBlogCard from './FeaturedBlogCard';
@@ -29,15 +29,18 @@ export interface BlogCategoryProps {
     desktopCols?: 2 | 3;
 }
 
-const BlogCategory = ({ categories, initialBlogs, initialMeta, initialCategory, partnerBlogs, desktopCols = 2 }: BlogCategoryProps) => {
+interface BlogCategoryViewProps extends BlogCategoryProps {
+    /** The ?category= value, or the initial category before the URL is read. */
+    selectedCategoryFromUrl: string;
+    /** The current query string, kept intact when the category changes. */
+    searchString: string;
+}
+
+const BlogCategoryView = ({ categories, initialBlogs, initialMeta, initialCategory, partnerBlogs, desktopCols = 2, selectedCategoryFromUrl, searchString }: BlogCategoryViewProps) => {
     const router = useRouter();
     const pathname = usePathname();
-    const searchParams = useSearchParams();
     const [mobileIndex, setMobileIndex] = useState(0);
     const [loading, setLoading] = useState(false);
-
-    // Get category from URL
-    const selectedCategoryFromUrl = searchParams.get('category') || 'All';
 
     // State for the current category and its blogs
     const [selectedCategory, setSelectedCategory] = useState(initialCategory || 'All');
@@ -107,7 +110,7 @@ const BlogCategory = ({ categories, initialBlogs, initialMeta, initialCategory, 
     const handleCategoryClick = (name: string) => {
         if (name === selectedCategory) return;
 
-        const params = new URLSearchParams(searchParams.toString());
+        const params = new URLSearchParams(searchString);
         if (name && name !== 'All') {
             params.set('category', name);
         } else {
@@ -307,5 +310,37 @@ const BlogCategory = ({ categories, initialBlogs, initialMeta, initialCategory, 
         </div>
     );
 };
+
+function BlogCategoryWithParams(props: BlogCategoryProps) {
+    const searchParams = useSearchParams();
+    return (
+        <BlogCategoryView
+            {...props}
+            selectedCategoryFromUrl={searchParams.get('category') || 'All'}
+            searchString={searchParams.toString()}
+        />
+    );
+}
+
+/**
+ * useSearchParams has no value during prerender, so on its own it made the
+ * whole blog listing bail out to client-side rendering: the static HTML of
+ * /blog carried a skeleton and no articles or H1. The fallback renders the
+ * listing for the initial category, which is exactly what the prerender should
+ * contain; the URL-aware version takes over once the client hydrates.
+ */
+const BlogCategory = (props: BlogCategoryProps) => (
+    <Suspense
+        fallback={
+            <BlogCategoryView
+                {...props}
+                selectedCategoryFromUrl={props.initialCategory || 'All'}
+                searchString=""
+            />
+        }
+    >
+        <BlogCategoryWithParams {...props} />
+    </Suspense>
+);
 
 export default BlogCategory;

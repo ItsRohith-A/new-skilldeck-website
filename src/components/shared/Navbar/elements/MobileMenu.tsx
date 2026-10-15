@@ -254,7 +254,6 @@ export const MobileMenu: React.FC<MobileMenuProps> = ({
                                             key={link.name}
                                             href={link.href}
                                             onClick={closeMenu}
-                                            rel="nofollow"
                                             className="block px-3 py-2.5 text-gray-600 text-sm hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
                                         >
                                             {link.name}

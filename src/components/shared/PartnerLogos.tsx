@@ -103,13 +103,15 @@ export default function PartnerLogos({
                                 title={logo.alt}
                             >
                                 {/* next/image so the CMS originals (some are multi-MB)
-                                    are resized and served as webp/avif, not raw. */}
+                                    are resized and served as webp/avif, not raw.
+                                    No `sizes`: at a fixed width Next emits a 1x/2x
+                                    srcset (2 URLs) instead of one per breakpoint (13),
+                                    which was ~3 KB of markup per logo. */}
                                 <Image
                                     src={logo.src}
                                     alt={logo.alt}
                                     width={128}
                                     height={64}
-                                    sizes="128px"
                                     className="max-w-full max-h-full object-contain"
                                     loading="lazy"
                                 />

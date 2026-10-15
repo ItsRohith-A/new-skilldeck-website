@@ -82,16 +82,20 @@ export default function CourseCard({ course, title, slug, categorySlug }: Course
 
             {/* Buttons */}
             <div className="mt-auto grid grid-cols-2 gap-3.5">
-                <Link href={`/${categorySlug}/${slug}`} className="w-full">
-                    <button className="w-full bg-slate-900 text-white py-3 rounded-full text-xs font-black uppercase tracking-wider hover:bg-purple-600 transition-all duration-300 cursor-pointer flex items-center justify-center gap-1 shadow-md shadow-slate-900/5 group/btn">
-                        Learn
-                        <ArrowRight className="w-3.5 h-3.5 group-hover/btn:translate-x-0.5 transition-transform" />
-                    </button>
+                {/* Styled links rather than <button>s nested in <a>, which is invalid
+                    HTML and unreliable for keyboard and screen-reader users. */}
+                <Link
+                    href={`/${categorySlug}/${slug}`}
+                    className="w-full bg-slate-900 text-white py-3 rounded-full text-xs font-black uppercase tracking-wider hover:bg-purple-600 transition-all duration-300 cursor-pointer flex items-center justify-center gap-1 shadow-md shadow-slate-900/5 group/btn"
+                >
+                    Learn
+                    <ArrowRight className="w-3.5 h-3.5 group-hover/btn:translate-x-0.5 transition-transform" />
                 </Link>
-                <Link href={`/${categorySlug}/${slug}/#institute-schedules`} className="w-full">
-                    <button className="w-full bg-transparent border border-slate-200 text-slate-700 py-3 rounded-full text-xs font-black uppercase tracking-wider hover:border-slate-800 hover:text-slate-900 transition-all duration-300 cursor-pointer">
-                        Schedules
-                    </button>
+                <Link
+                    href={`/${categorySlug}/${slug}#institute-schedules`}
+                    className="w-full flex items-center justify-center bg-transparent border border-slate-200 text-slate-700 py-3 rounded-full text-xs font-black uppercase tracking-wider hover:border-slate-800 hover:text-slate-900 transition-all duration-300 cursor-pointer"
+                >
+                    Schedules
                 </Link>
             </div>
         </div>

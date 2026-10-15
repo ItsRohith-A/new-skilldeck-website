@@ -107,10 +107,27 @@ export const fetchPlans = async (currency?: string): Promise<PricingPlan[]> => {
         const data = await response.json();
         const plansData = Array.isArray(data) ? data : (data.data || []);
 
-        const sanitizedPlans = plansData.map((p: any, index: number) => ({
-            ...p,
-            id: p.id || p._id || `plan-${index}`
-        }));
+        const sanitizedPlans = plansData.map((p: any, index: number) => {
+            const planCurrency = String(p.currency?.code || p.currency || "USD").toUpperCase();
+            // Plans are handed to client components, so every field is serialised
+            // into the page HTML — about 100 KB on the home page alone. The UI
+            // never reads `prices` or the per-feature `_id`s, and only looks up
+            // overage pricing in the plan's own currency with USD as fallback.
+            const { prices: _prices, ...rest } = p;
+            return {
+                ...rest,
+                id: p.id || p._id || `plan-${index}`,
+                features: Array.isArray(p.features)
+                    ? p.features.map(({ _id, ...feature }: any) => feature)
+                    : p.features,
+                multiCurrencyOveragePricing: Array.isArray(p.multiCurrencyOveragePricing)
+                    ? p.multiCurrencyOveragePricing.filter((o: any) => {
+                        const code = String(o.currency?.code || o.currencyCode || o.currency || "").toUpperCase();
+                        return code === planCurrency || code === "USD";
+                    })
+                    : p.multiCurrencyOveragePricing,
+            };
+        });
 
         const enrichedPlans = sanitizedPlans.map((p: any, i: number) => enrichPlan(p, i));
 

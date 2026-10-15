@@ -1,6 +1,5 @@
 "use client";
 
-import { env } from '@/lib/env';
 import Script from 'next/script';
 import { useEffect, useRef, useState } from 'react';
 
@@ -19,7 +18,9 @@ interface TurnstileWidgetProps {
     className?: string; // Optional custom className
 }
 
-const SITE_KEY = env.NEXT_TURNSTILE_SITE_KEY;
+// Read directly rather than through lib/env: importing that module here pulled
+// its server-only values into the client bundle. The site key is public.
+const SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || "0x4AAAAAACNkMrUWjyN58X4r";
 
 const TurnstileWidget: React.FC<TurnstileWidgetProps> = ({
     onVerify,

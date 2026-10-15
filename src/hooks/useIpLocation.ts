@@ -49,29 +49,10 @@ export const useIpLocation = (ip?: string | null) => {
 
             globalLocationPromise = (async () => {
                 try {
-                    let internalParams = '';
-
-                    if (ip) {
-                        internalParams = `?ip=${ip}`;
-                    } else {
-                        // Try to fetch public IP first if not provided (with safe 1.2s timeout so network tools/adblockers never stall page load)
-                        try {
-                            const controller = new AbortController();
-                            const timeoutId = setTimeout(() => controller.abort(), 1200);
-                            const ipRes = await fetch('https://api64.ipify.org?format=json', {
-                                signal: controller.signal
-                            });
-                            clearTimeout(timeoutId);
-                            if (ipRes.ok) {
-                                const ipData = await ipRes.json();
-                                if (ipData.ip) {
-                                    internalParams = `?ip=${ipData.ip}`;
-                                }
-                            }
-                        } catch (e) {
-                            console.warn("Failed to fetch public IP from external service (fallback to server IP)", e);
-                        }
-                    }
+                    // No ipify round trip: /api/location reads the visitor's country
+                    // and IP from the edge headers, which also makes it the
+                    // address the lead routes see. An explicit ip still wins.
+                    const internalParams = ip ? `?ip=${encodeURIComponent(ip)}` : '';
 
                     const url = `/api/location${internalParams}`;
                     const response = await fetch(url);
@@ -143,6 +124,12 @@ export const useIpLocation = (ip?: string | null) => {
                         }
                     }
                 }
+
+                // 2. Fetch fresh data, once per browser session. Refetching on
+                // every page view put a location request on every navigation.
+                const freshThisSession =
+                    !ip && typeof window !== 'undefined' && sessionStorage.getItem(CACHE_KEY);
+                if (freshThisSession) return;
 
                 // 2. Fetch fresh data (in background if cached)
                 const freshData = await fetchFreshLocation();

@@ -6,6 +6,16 @@ import Link from "next/link";
 import React, { useState } from "react";
 import { FooterColumn } from "@/types";
 
+/** Absolute URL to another host. skilldeck.net and its www alias count as ours. */
+function isExternalUrl(url: string): boolean {
+    if (!/^https?:\/\//i.test(url)) return false;
+    try {
+        return !/^(www\.)?skilldeck\.net$/i.test(new URL(url).hostname);
+    } catch {
+        return false;
+    }
+}
+
 interface FooterLinksProps {
     columns?: FooterColumn[];
 }
@@ -73,7 +83,10 @@ const FooterLinks = ({ columns = [] }: FooterLinksProps) => {
                                     {link.url ? (
                                         <Link
                                             href={link.url}
-                                            rel="nofollow"
+                                            // Internal links stay followed: nofollow on
+                                            // every footer link starved the pages they
+                                            // point at of sitewide internal links.
+                                            rel={isExternalUrl(link.url) ? "nofollow noopener" : undefined}
                                             className="text-sm text-brand-muted hover:text-brand-primary transition-colors"
                                         >
                                             {link.label}
