@@ -107,6 +107,22 @@ export default function InteractiveDotBackground({
             }
         };
 
+        const isTouchOrSmall =
+            window.matchMedia("(pointer: coarse)").matches ||
+            "ontouchstart" in window ||
+            window.innerWidth < 768;
+
+        const drawStatic = () => {
+            ctx.clearRect(0, 0, width, height);
+            ctx.fillStyle = dotColor;
+            for (let i = 0; i < dotsRef.current.length; i++) {
+                const dot = dotsRef.current[i];
+                ctx.beginPath();
+                ctx.arc(dot.originX, dot.originY, radius, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        };
+
         const resize = () => {
             const rect = canvas.getBoundingClientRect();
             width = rect.width;
@@ -115,13 +131,14 @@ export default function InteractiveDotBackground({
             canvas.height = height;
 
             const dots = [];
-            const cols = Math.ceil(width / gap);
-            const rows = Math.ceil(height / gap);
+            const effectiveGap = isTouchOrSmall ? gap * 1.5 : gap; // lighter density on mobile
+            const cols = Math.ceil(width / effectiveGap);
+            const rows = Math.ceil(height / effectiveGap);
 
             for (let r = 0; r < rows; r++) {
                 for (let c = 0; c < cols; c++) {
-                    const x = c * gap + gap / 2;
-                    const y = r * gap + gap / 2;
+                    const x = c * effectiveGap + effectiveGap / 2;
+                    const y = r * effectiveGap + effectiveGap / 2;
                     dots.push({
                         x,
                         y,
@@ -133,7 +150,12 @@ export default function InteractiveDotBackground({
                 }
             }
             dotsRef.current = dots;
-            triggerAnimation();
+
+            if (isTouchOrSmall) {
+                drawStatic();
+            } else {
+                triggerAnimation();
+            }
         };
 
         resize();
@@ -160,15 +182,19 @@ export default function InteractiveDotBackground({
             triggerAnimation();
         };
 
-        window.addEventListener("mousemove", handleMouseMove, { passive: true });
-        canvas.parentElement?.addEventListener("mouseleave", handleMouseLeave, { passive: true });
+        if (!isTouchOrSmall) {
+            window.addEventListener("mousemove", handleMouseMove, { passive: true });
+            canvas.parentElement?.addEventListener("mouseleave", handleMouseLeave, { passive: true });
+        }
 
         return () => {
             cancelAnimationFrame(animationFrameId);
             resizeObserver.disconnect();
-            window.removeEventListener("mousemove", handleMouseMove);
-            if (canvas.parentElement) {
-                canvas.parentElement.removeEventListener("mouseleave", handleMouseLeave);
+            if (!isTouchOrSmall) {
+                window.removeEventListener("mousemove", handleMouseMove);
+                if (canvas.parentElement) {
+                    canvas.parentElement.removeEventListener("mouseleave", handleMouseLeave);
+                }
             }
         };
     }, [dotColor, gap, radius, mouseRadius]);

@@ -40,6 +40,7 @@ import { Suspense } from "react";
 import DynamicScripts from "@/lib/DynamicScripts";
 import UtmTracker from "@/components/shared/UtmTracker";
 import Script from "next/script";
+import WebVitals from "@/components/shared/WebVitals";
 
 const RICH_TEXT_CSS =
   process.env.NEXT_PUBLIC_RICH_TEXT_CSS ||
@@ -150,6 +151,7 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-full flex flex-col" suppressHydrationWarning>
+        <WebVitals />
         {/* Disable native scroll restoration before hydration so back/forward
             navigation does not fight ScrollToTopOnRefresh. */}
         <Script id="scroll-restoration" strategy="beforeInteractive">
