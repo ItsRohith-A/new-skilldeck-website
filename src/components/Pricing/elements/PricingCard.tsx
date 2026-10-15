@@ -226,11 +226,14 @@ const PricingCard: React.FC<Props> = ({
                             <div className={`animate-pulse rounded-lg h-8 w-32 ${isDark ? 'bg-white/20' : 'bg-slate-200'}`} />
                         ) : (
                             <>
+                                {/* Annual leads with its per-month figure — the number
+                                    people compare against monthly plans — and states
+                                    the yearly charge underneath. */}
                                 <span className={`text-xl font-bold ${textColorClass}`}>
-                                    {formatPrice(displayPrice, plan.currency || 'USD')}
+                                    {formatPrice(monthlyEquivalent ?? displayPrice, plan.currency || 'USD')}
                                 </span>
                                 <span className={`text-xs md:text-sm ml-2 ${subTextColorClass}`}>
-                                    /{billingInterval === 'YEARLY' ? 'year' : 'mo'}
+                                    /mo
                                 </span>
                             </>
                         )}
@@ -239,9 +242,9 @@ const PricingCard: React.FC<Props> = ({
                         <div className="h-3">
                             {loading ? (
                                 <div className={`animate-pulse rounded-md h-4 w-40 mt-1 ${isDark ? 'bg-white/10' : 'bg-slate-100'}`} />
-                            ) : billingInterval === 'YEARLY' && monthlyEquivalent ? (
+                            ) : monthlyEquivalent ? (
                                 <p className={`text-xs 2xl:text-sm ${subTextColorClass}`}>
-                                    {formatPrice(monthlyEquivalent, plan.currency || 'USD')}/mo billed annually
+                                    Billed annually · {formatPrice(displayPrice, plan.currency || 'USD')}/year
                                 </p>
                             ) : null}
                         </div>

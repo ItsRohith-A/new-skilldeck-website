@@ -39,12 +39,17 @@ const PlansComparisonTableDesktop: React.FC<Props> = ({
                                             ) : (
                                                 <>
                                                     <span className="text-lg font-bold text-gray-900">
-                                                        {formatPrice(price, plan.currency || 'USD')}
+                                                        {formatPrice(billingInterval === 'YEARLY' ? price / 12 : price, plan.currency || 'USD')}
                                                     </span>
-                                                    <span className="text-sm text-gray-500">/{billingInterval === 'YEARLY' ? 'yr' : 'mo'}</span>
+                                                    <span className="text-sm text-gray-500">/mo</span>
                                                 </>
                                             )}
                                         </div>
+                                        {!loading && billingInterval === 'YEARLY' && (
+                                            <p className="text-xs text-gray-500 mt-0.5">
+                                                Billed annually · {formatPrice(price, plan.currency || 'USD')}/yr
+                                            </p>
+                                        )}
                                     </div>
                                     {/* Action Button */}
                                     <button

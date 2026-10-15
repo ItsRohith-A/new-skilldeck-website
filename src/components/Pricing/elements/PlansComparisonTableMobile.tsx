@@ -84,10 +84,12 @@ const PlansComparisonTableMobile: React.FC<Props> = ({
                                             ) : (
                                                 <>
                                                     <div className="text-sm md:text-base font-bold text-gray-900 mb-0.5">
-                                                        {formatPrice(price, plan.currency || 'USD')}
+                                                        {formatPrice(billingInterval === 'YEARLY' ? price / 12 : price, plan.currency || 'USD')}
                                                     </div>
                                                     <div className="text-xs text-gray-500 mb-2">
-                                                        /{billingInterval === 'YEARLY' ? 'yr' : 'mo'}
+                                                        {billingInterval === 'YEARLY'
+                                                            ? <>/mo · billed annually<br />{formatPrice(price, plan.currency || 'USD')}/yr</>
+                                                            : '/mo'}
                                                     </div>
                                                 </>
                                             )}

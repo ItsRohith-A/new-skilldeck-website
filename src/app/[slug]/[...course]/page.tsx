@@ -1,6 +1,9 @@
 import CourseHero from "@/components/category/courses/CourseHero";
 import CourseAccordionSection from "@/components/category/courses/overview/CourseAccordionSection";
 import CourseOverview from "@/components/category/courses/overview/CourseOverview";
+// City URLs render the shared course body client-side, behind a user gesture,
+// so only what is unique to the location lands in their HTML.
+import CourseOverviewGated from "@/components/category/courses/overview/CourseOverviewGated";
 import CourseRelatedLinks from "@/components/category/courses/overview/CourseRelatedLinks";
 import TopPartnersSection from "@/components/category/courses/overview/TopPartnersClientWrapper";
 import Footer from "@/components/shared/Footer";
@@ -335,16 +338,18 @@ export default async function CoursePage({
                     <div className="container mx-auto px-4 lg:px-0 md:py-12">
                         <TopPartnersSection courseSlug={courseSlug} courseTitle={course?.course_name || course?.title} locationSlug={locationSlug} />
                     </div>
-                    {/* Server-rendered on city URLs too. Gating the body behind a
-                        click left each indexable city page as little more than a
-                        hero and a partner list — thin pages at scale — and these
-                        are listed in the sitemaps with self-canonicals. */}
-                    <CourseOverview
-                        data={course}
-                        courseSlug={courseSlug}
-                        courseName={course.course_name}
-                    />
-
+                    {locationSlug ? (
+                        <CourseOverviewGated
+                            courseSlug={courseSlug}
+                            courseTitle={course.course_title}
+                        />
+                    ) : (
+                        <CourseOverview
+                            data={course}
+                            courseSlug={courseSlug}
+                            courseName={course.course_name}
+                        />
+                    )}
                     <div className="container mx-auto px-4 lg:px-0 pb-16 space-y-12">
                         {(course.bottomSection?.value || course.internalSection?.value) && (
                             <div className="space-y-6">

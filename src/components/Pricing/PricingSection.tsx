@@ -25,7 +25,7 @@ interface Props {
 
 export default function PricingSection({ onToggleNavbar, plans: initialPlans, showHeading = true }: Props) {
     const [loading, setLoading] = useState(true);
-    const [billingInterval, setBillingInterval] = useState<BillingInterval>('MONTHLY');
+    const [billingInterval, setBillingInterval] = useState<BillingInterval>('YEARLY');
     const [viewMode, setViewMode] = useState<'cards' | 'table'>('cards');
     const [plans, setPlans] = useState<PricingPlan[]>(initialPlans);
     const [isLifetimeModalOpen, setIsLifetimeModalOpen] = useState(false);
@@ -156,18 +156,8 @@ export default function PricingSection({ onToggleNavbar, plans: initialPlans, sh
                 <div className="relative flex flex-col md:flex-row justify-center items-center mb-6 2xl:mb-10 gap-2.5 sm:gap-3 md:gap-6">
                     {/* Billing Interval Toggle */}
                     <div className="bg-gray-100 p-1 sm:p-1.5 rounded-full inline-flex items-center relative flex-nowrap justify-center gap-0.5 sm:gap-1 max-w-full overflow-x-auto no-scrollbar">
-                        <button
-                            onClick={() => setBillingInterval('MONTHLY')}
-                            className={`
-                                relative z-10 px-3.5 sm:px-8 py-2 sm:py-2.5 2xl:px-10 text-xs sm:text-sm font-semibold rounded-full transition-all duration-300 cursor-pointer shrink-0 whitespace-nowrap
-                                ${billingInterval === 'MONTHLY'
-                                    ? 'bg-[linear-gradient(125deg,rgba(92,63,250,1)_0%,rgba(203,59,149,1)_48%,rgba(254,106,27,1)_100%)] text-white shadow-md'
-                                    : 'text-gray-500 hover:text-gray-900'
-                                }
-                            `}
-                        >
-                            Monthly
-                        </button>
+                        {/* Annual leads: it is the default and the plan we push; monthly
+                            stays one click away for anyone who wants to pay by month. */}
                         <button
                             onClick={() => setBillingInterval('YEARLY')}
                             className={`
@@ -190,6 +180,18 @@ export default function PricingSection({ onToggleNavbar, plans: initialPlans, sh
                                     Save ~{maxSavingsPercentage}%
                                 </span>
                             )}
+                        </button>
+                        <button
+                            onClick={() => setBillingInterval('MONTHLY')}
+                            className={`
+                                relative z-10 px-3.5 sm:px-8 py-2 sm:py-2.5 2xl:px-10 text-xs sm:text-sm font-semibold rounded-full transition-all duration-300 cursor-pointer shrink-0 whitespace-nowrap
+                                ${billingInterval === 'MONTHLY'
+                                    ? 'bg-[linear-gradient(125deg,rgba(92,63,250,1)_0%,rgba(203,59,149,1)_48%,rgba(254,106,27,1)_100%)] text-white shadow-md'
+                                    : 'text-gray-500 hover:text-gray-900'
+                                }
+                            `}
+                        >
+                            Monthly
                         </button>
                         <button
                             type="button"
