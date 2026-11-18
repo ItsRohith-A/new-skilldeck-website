@@ -19,6 +19,10 @@ export interface FaqSeo {
     ogDescription?: string;
     ogImage?: string;
     canonicalUrl?: string;
+    /** "SEO Internal section": related links block. */
+    internalSection?: { title?: string; value?: string } | null;
+    /** "SEO Rich Content": collapsible content block at the bottom of the page. */
+    bottomSection?: { title?: string; value?: string } | null;
 }
 
 export interface FaqPageData {
@@ -69,9 +73,13 @@ export async function fetchFaqPage(): Promise<FaqPageData> {
     }
 
     const data: FaqApiPayload = await response.json();
-    const nameBySlug = new Map((data.categories || []).map((c) => [c.slug, c.name]));
+    // The API already sorts both lists; sorting here keeps the CMS order even if that changes.
+    const byOrder = (a: { order: number }, b: { order: number }) => (a.order ?? 0) - (b.order ?? 0);
+    const categories = [...(data.categories || [])].sort(byOrder);
+    const nameBySlug = new Map(categories.map((c) => [c.slug, c.name]));
 
-    const faqs: FaqItem[] = (data.faqs || [])
+    const faqs: FaqItem[] = [...(data.faqs || [])]
+        .sort(byOrder)
         .filter((f) => nameBySlug.has(f.category))
         .map((f) => {
             const answer = sanitizeAnswerHtml(f.answer || "");
@@ -84,7 +92,7 @@ export async function fetchFaqPage(): Promise<FaqPageData> {
         });
 
     return {
-        categories: (data.categories || []).map((c) => c.name),
+        categories: categories.map((c) => c.name),
         faqs,
         seo: data.seo || null,
     };

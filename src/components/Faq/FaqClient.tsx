@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import FaqHero from '@/components/Faq/elements/FaqHero';
 import FaqCategoryTabs, { ALL_TOPICS } from '@/components/Faq/elements/FaqCategoryTabs';
 import FaqList, { type FaqGroup } from '@/components/Faq/elements/FaqList';
 import FaqCta from '@/components/Faq/elements/FaqCta';
+import { ChevronDown } from 'lucide-react';
 
 import type { FaqItem } from '@/lib/faqs';
 
@@ -12,7 +13,12 @@ interface FaqClientProps {
     faqs: FaqItem[];
     /** Category names in CMS order. */
     categories: string[];
+    /** SEO content blocks from the CMS (rendered on the server), shown between the FAQs and the contact CTA. */
+    seoSections?: ReactNode;
 }
+
+/** Topics shown at first in the "All topics" view; "Load more" reveals this many more each time. */
+const GROUPS_PER_PAGE = 3;
 
 /** Stable anchor id per question, so an answer can be linked to (/faq#how-do-i-...). */
 const toId = (question: string, used: Set<string>) => {
@@ -23,10 +29,11 @@ const toId = (question: string, used: Set<string>) => {
     return id;
 };
 
-export default function FaqClient({ faqs, categories }: FaqClientProps) {
+export default function FaqClient({ faqs, categories, seoSections }: FaqClientProps) {
     const [searchQuery, setSearchQuery] = useState('');
     const [activeCategory, setActiveCategory] = useState<string>(ALL_TOPICS);
     const [openIds, setOpenIds] = useState<Set<string>>(() => new Set());
+    const [visibleGroups, setVisibleGroups] = useState(GROUPS_PER_PAGE);
     const listRef = useRef<HTMLElement>(null);
 
     const withIds = useMemo(() => {
@@ -52,6 +59,12 @@ export default function FaqClient({ faqs, categories }: FaqClientProps) {
     }, [withIds, categories, activeCategory, searchQuery]);
 
     const shown = groups.reduce((sum, g) => sum + g.faqs.length, 0);
+    const filtered = activeCategory !== ALL_TOPICS || searchQuery.trim() !== '';
+
+    // Paging applies only to the unfiltered list; a topic or search result is shown whole.
+    const pagedGroups = filtered ? groups : groups.slice(0, visibleGroups);
+    const hiddenGroups = groups.length - pagedGroups.length;
+    const hiddenQuestions = groups.slice(pagedGroups.length).reduce((sum, g) => sum + g.faqs.length, 0);
 
     // Open (and scroll to) the answer named in the URL hash, e.g. from a shared link.
     useEffect(() => {
@@ -60,6 +73,7 @@ export default function FaqClient({ faqs, categories }: FaqClientProps) {
             if (!id || !withIds.some((f) => f.id === id)) return;
             setActiveCategory(ALL_TOPICS);
             setSearchQuery('');
+            setVisibleGroups(Infinity); // the linked answer may sit in a topic past "Load more"
             setOpenIds((prev) => new Set(prev).add(id));
             requestAnimationFrame(() => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
         };
@@ -99,8 +113,6 @@ export default function FaqClient({ faqs, categories }: FaqClientProps) {
         scrollToList();
     };
 
-    const filtered = activeCategory !== ALL_TOPICS || searchQuery.trim() !== '';
-
     return (
         <>
             <FaqHero
@@ -139,10 +151,29 @@ export default function FaqClient({ faqs, categories }: FaqClientProps) {
                             </div>
                         )}
 
-                        <FaqList groups={groups} openIds={openIds} onToggle={toggle} searchQuery={searchQuery} onReset={reset} />
+                        <FaqList groups={pagedGroups} openIds={openIds} onToggle={toggle} searchQuery={searchQuery} onReset={reset} />
+
+                        {hiddenGroups > 0 && (
+                            <div className="mt-10 flex flex-col items-center gap-2">
+                                <button
+                                    type="button"
+                                    data-no-loader="true"
+                                    onClick={() => setVisibleGroups((n) => n + GROUPS_PER_PAGE)}
+                                    className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-6 py-3 text-sm font-semibold text-slate-900 shadow-sm hover:border-brand-primary/40 hover:text-brand-primary transition-colors"
+                                >
+                                    Load more topics
+                                    <ChevronDown className="w-4 h-4" />
+                                </button>
+                                <p className="body-small">
+                                    {hiddenGroups} more {hiddenGroups === 1 ? 'topic' : 'topics'} · {hiddenQuestions} {hiddenQuestions === 1 ? 'question' : 'questions'}
+                                </p>
+                            </div>
+                        )}
                     </div>
                 </div>
             </section>
+
+            {seoSections}
 
             <FaqCta />
         </>

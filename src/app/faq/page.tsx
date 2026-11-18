@@ -1,6 +1,8 @@
 import MainNav from "@/components/shared/Navbar";
 import Footer from "@/components/shared/Footer";
 import FaqClient from "@/components/Faq/FaqClient";
+import CourseAccordionSection from "@/components/category/courses/overview/CourseAccordionSection";
+import CourseRelatedLinks from "@/components/category/courses/overview/CourseRelatedLinks";
 import { fetchFaqPage } from "@/lib/faqs";
 import { env } from "@/lib/env";
 import type { Metadata } from 'next';
@@ -75,7 +77,29 @@ export default async function FaqPage() {
             )}
             <MainNav />
             <main className="flex-1">
-                <FaqClient faqs={faqs} categories={categories} />
+                <FaqClient
+                    faqs={faqs}
+                    categories={categories}
+                    seoSections={
+                        // Same SEO blocks as service and blog pages: "SEO Rich Content" then "SEO Internal section".
+                        (seo?.bottomSection?.value || seo?.internalSection?.value) ? (
+                            <div className="container mx-auto max-w-6xl px-4 lg:px-0 pb-12 md:pb-16 space-y-6">
+                                {seo?.bottomSection?.value && (
+                                    <CourseAccordionSection
+                                        title={seo.bottomSection.title || ""}
+                                        value={seo.bottomSection.value}
+                                    />
+                                )}
+                                {seo?.internalSection?.value && (
+                                    <CourseRelatedLinks
+                                        title={seo.internalSection.title || ""}
+                                        value={seo.internalSection.value}
+                                    />
+                                )}
+                            </div>
+                        ) : null
+                    }
+                />
             </main>
             <Footer />
         </div>
