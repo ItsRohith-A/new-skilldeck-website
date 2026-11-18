@@ -15,6 +15,17 @@ const COMPONENT_REGISTRY: Record<string, React.ComponentType<any>> = {
     'schedule-section': BlogScheduleTable
 };
 
+/** SkilldeckEditor output carries its wrapper class or its own <style>; legacy Jodit HTML has neither. */
+const EDITOR_HTML_RE = /skilldeck-rich-text|<style[\s>]/i;
+
+/** Removes <script> tags, inline event handlers and javascript: hrefs; keeps <style> so editor CSS applies. */
+function sanitizeEditorHtml(html: string): string {
+    return html
+        .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+        .replace(/\s+on\w+\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]*)/gi, '')
+        .replace(/href\s*=\s*["']\s*javascript:[^"']*/gi, 'href="#"');
+}
+
 function getTextContent(node: Element): string {
     return (node.children || [])
         .map((child: any) => {
@@ -180,12 +191,19 @@ const Body = ({ singleArticle }: any) => {
                 </div>
             </div>
 
-
             {/* Body HTML Content */}
             <div className='blog-body overflow-hidden pt-4'>
-                <div className="skilldeck-content font-inter text-slate-700 leading-relaxed max-w-none text-sm md:text-base">
-                    {parse(DOMPurify.sanitize(article?.body || ''), options)}
-                </div>
+                {EDITOR_HTML_RE.test(article?.body || '') ? (
+                    // SkilldeckEditor HTML + CSS: styled by the shared rich-text stylesheet (app/layout.tsx),
+                    // not the legacy .skilldeck-content typography, which would fight the editor's rules.
+                    <div className="skilldeck-rich-text max-w-none">
+                        {parse(sanitizeEditorHtml(article.body), options)}
+                    </div>
+                ) : (
+                    <div className="skilldeck-content font-inter text-slate-700 leading-relaxed max-w-none text-sm md:text-base">
+                        {parse(DOMPurify.sanitize(article?.body || ''), options)}
+                    </div>
+                )}
             </div>
 
             {/* Bottom Section (Accordion) */}

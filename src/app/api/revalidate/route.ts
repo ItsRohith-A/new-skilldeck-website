@@ -166,6 +166,10 @@ export async function POST(request: NextRequest) {
             purgeUrls.push(`${SITE_URL}/companies/${slug}`);
         }
         revalidatePath('/companies');
+    } else if (type === 'faq' || type === 'faqs') {
+        revalidateTag('faqs', 'max');
+        revalidatePath('/faq');
+        purgeUrls.push(`${SITE_URL}/faq`);
     } else if (type === 'testimonial' || type === 'testimonials') {
         revalidateTag('testimonials', 'max');
         revalidatePath('/', 'layout');

@@ -47,8 +47,8 @@ export default function TermsOfServicePage() {
                             <h2 className="heading-section2 mb-4">2. Description of Services</h2>
                             <p className="body-medium text-gray-600">
                                 SkillDeck provides a suite of business tools including but not limited to Learning Management
-                                Systems (LMS), Website Builder &amp; CMS, Web Chat solutions, and Customer Relationship Management
-                                (CRM) software. We reserve the right to modify, suspend, or discontinue any part of the Services
+                                Systems (LMS), Website Builder &amp; CMS, Web Chat solutions, Customer Relationship Management
+                                (CRM) software, and Social Media management for Facebook, Instagram and LinkedIn. We reserve the right to modify, suspend, or discontinue any part of the Services
                                 at any time.
                             </p>
                         </div>
@@ -109,7 +109,31 @@ export default function TermsOfServicePage() {
                         </div>
 
                         <div>
-                            <h2 className="heading-section2 mb-4">8. Disclaimer of Warranties</h2>
+                            <h2 className="heading-section2 mb-4">8. Third-Party Platforms (Facebook, Instagram, LinkedIn)</h2>
+                            <p className="body-medium text-gray-600 mb-4">
+                                The Social Media module lets you connect accounts you manage on third-party platforms such as
+                                Facebook, Instagram and LinkedIn. When you connect an account, you authorise SkillDeck to access
+                                it and act on it on your behalf, only for the features you use. You agree that:
+                            </p>
+                            <ul className="list-disc pl-5 space-y-2 body-medium text-gray-600 mb-4">
+                                <li>You only connect Pages and accounts you own or are authorised to manage.</li>
+                                <li>You are responsible for the content you publish and the replies and messages you send through SkillDeck.</li>
+                                <li>Your use follows each platform&apos;s own terms and policies, including the Meta Terms of Service,
+                                    Instagram Terms of Use, Meta Community Standards and LinkedIn User Agreement.</li>
+                                <li>You will not use the Services to send spam, unsolicited or bulk promotional messages, or misleading or prohibited content.</li>
+                            </ul>
+                            <p className="body-medium text-gray-600 mb-4">
+                                SkillDeck is not affiliated with or endorsed by Meta or LinkedIn. These platforms may change or
+                                limit their services at any time, which can affect features in SkillDeck. You can disconnect an
+                                account at any time. How we handle data from these platforms is described in our{' '}
+                                <Link href="/privacy-policy" className="text-brand-primary font-semibold hover:underline">
+                                    Privacy Policy
+                                </Link>.
+                            </p>
+                        </div>
+
+                        <div>
+                            <h2 className="heading-section2 mb-4">9. Disclaimer of Warranties</h2>
                             <p className="body-medium text-gray-600 uppercase tracking-wide text-sm">
                                 THE SERVICES ARE PROVIDED &quot;AS IS&quot; AND &quot;AS AVAILABLE&quot; WITHOUT WARRANTIES OF ANY KIND, EITHER
                                 EXPRESS OR IMPLIED. WE DO NOT WARRANT THAT THE SERVICES WILL BE UNINTERRUPTED, SECURE, OR
@@ -118,7 +142,7 @@ export default function TermsOfServicePage() {
                         </div>
 
                         <div>
-                            <h2 className="heading-section2 mb-4">9. Contact</h2>
+                            <h2 className="heading-section2 mb-4">10. Contact</h2>
                             <p className="body-medium text-gray-600">
                                 If you have questions about these Terms, please contact us at{' '}
                                 <a href="mailto:hello@skilldeck.net" className="text-brand-primary font-semibold hover:underline">
