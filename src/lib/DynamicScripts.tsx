@@ -17,18 +17,38 @@ interface ScriptsResponse {
     scripts: ScriptItem[];
 }
 
-// Helper to extract the `src` URL from a <script src="..."> tag
-function extractSrc(rawScript: string): string | null {
-    const match = rawScript.match(/<script[^>]+src=["']([^"']+)["']/i);
-    return match ? match[1] : null;
+interface ScriptPart {
+    src?: string;
+    /** The tag's `type`, e.g. "application/ld+json"; undefined for plain JavaScript. */
+    type?: string;
+    code?: string;
 }
 
-// Helper to strip <script> wrapper tags and return inner content
-function extractInlineContent(rawScript: string): string {
-    return rawScript
-        .replace(/<script[^>]*>/gi, "")
-        .replace(/<\/script>/gi, "")
-        .trim();
+const JS_TYPES = new Set(["", "text/javascript", "application/javascript", "module"]);
+
+/**
+ * Splits a CMS snippet into its <script> tags. A snippet can hold several tags (gtag.js is an
+ * external tag plus an inline config tag), and HTML around them (<noscript>, <!-- comments -->,
+ * <meta>) is dropped: it is not JavaScript, and running it as a script throws
+ * "Unexpected token '<'". A snippet with no tags at all is taken as plain JavaScript.
+ */
+function parseSnippet(raw: string): ScriptPart[] {
+    const source = raw.replace(/<!--[\s\S]*?-->/g, "").trim();
+    const tags = [...source.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script\s*>/gi)];
+
+    if (!tags.length) {
+        // Bare code is fine; leftover markup (or a tag missing its closing </script>) is not.
+        return source && !source.startsWith("<") ? [{ code: source }] : [];
+    }
+
+    return tags.flatMap(([, attrs, body]): ScriptPart[] => {
+        const src = attrs.match(/\bsrc\s*=\s*["']([^"']+)["']/i)?.[1];
+        const type = attrs.match(/\btype\s*=\s*["']([^"']*)["']/i)?.[1]?.trim().toLowerCase();
+        const code = body.trim();
+        if (src) return [{ src, type }];
+        if (code) return [{ code, type: type && !JS_TYPES.has(type) ? type : undefined }];
+        return [];
+    });
 }
 
 export default async function DynamicScripts() {
@@ -90,10 +110,8 @@ export default async function DynamicScripts() {
                     </noscript>
                 </>
             )}
-            {otherScripts.map((script, index) => {
-                const key = script._id?.$oid || `${script.name}-${index}`;
-                const src = extractSrc(script.script);
-                const inlineContent = extractInlineContent(script.script);
+            {otherScripts.flatMap((script, index) => {
+                const baseKey = script._id?.$oid || `${script.name}-${index}`;
 
                 // Determine Next.js Script strategy based on location:
                 // - "head" scripts use afterInteractive (non-blocking, loaded after hydration)
@@ -101,32 +119,36 @@ export default async function DynamicScripts() {
                 const strategy: "afterInteractive" | "lazyOnload" =
                     script.location === "head" ? "afterInteractive" : "lazyOnload";
 
-                // External script (has a src attribute)
-                if (src) {
+                return parseSnippet(script.script || "").map((part, partIndex) => {
+                    const key = partIndex ? `${baseKey}-${partIndex}` : baseKey;
+
+                    // External script (has a src attribute)
+                    if (part.src) {
+                        return <Script key={key} id={key} src={part.src} strategy={strategy} async />;
+                    }
+
+                    // Data blocks such as JSON-LD are not executed; keep them as a plain tag.
+                    if (part.type) {
+                        return (
+                            <script
+                                key={key}
+                                id={key}
+                                type={part.type}
+                                dangerouslySetInnerHTML={{ __html: part.code!.replace(/</g, "\\u003c") }}
+                            />
+                        );
+                    }
+
+                    // Inline JavaScript
                     return (
                         <Script
                             key={key}
                             id={key}
-                            src={src}
                             strategy={strategy}
-                            async
+                            dangerouslySetInnerHTML={{ __html: part.code! }}
                         />
                     );
-                }
-
-                // Inline script (no src, just code)
-                if (inlineContent) {
-                    return (
-                        <Script
-                            key={key}
-                            id={key}
-                            strategy={strategy}
-                            dangerouslySetInnerHTML={{ __html: inlineContent }}
-                        />
-                    );
-                }
-
-                return null;
+                });
             })}
         </>
     );
