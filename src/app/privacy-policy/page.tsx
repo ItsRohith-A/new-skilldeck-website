@@ -113,6 +113,62 @@ export default function PrivacyPolicyPage() {
                                 we will take steps to delete it.
                             </p>
                         </div>
+
+                        <div>
+                            <h2 className="heading-section2 mb-4">9. Connected Social Media Accounts (Facebook, Instagram, LinkedIn)</h2>
+                            <p className="body-medium text-gray-600 mb-4">
+                                SkillDeck&apos;s Social Media module lets a business connect the Facebook Pages, Instagram professional
+                                accounts and LinkedIn Pages it manages, so it can publish posts, reply to comments and messages, and view
+                                performance from the SkillDeck dashboard. You connect an account yourself through the network&apos;s own login
+                                (Facebook Login for Business or LinkedIn sign-in) and choose which permissions and accounts to share.
+                            </p>
+                            <p className="body-medium text-gray-600 mb-4"><strong>What we access:</strong></p>
+                            <ul className="list-disc pl-5 space-y-2 body-medium text-gray-600 mb-4">
+                                <li>The list of Pages and accounts you manage, and the name, username, profile picture and follower count of the ones you connect.</li>
+                                <li>Posts on the connected account and their reactions, comments and shares.</li>
+                                <li>Comments, reviews, mentions and direct messages sent to the connected account, with the public name and picture of the sender.</li>
+                                <li>Performance metrics (insights) such as reach, engagement, followers and profile views.</li>
+                                <li>An access token issued by the network, which lets SkillDeck act on the account you connected.</li>
+                            </ul>
+                            <p className="body-medium text-gray-600 mb-4"><strong>How we use it:</strong> only to provide the features you use in
+                                SkillDeck: publishing and scheduling posts you write, editing or deleting them, showing your posts and
+                                metrics, and letting you reply to and moderate comments and messages. Every post, reply and moderation
+                                action is taken by a person in your business. We do not send automated or promotional messages, we do
+                                not use this data for advertising or profiling, we do not combine it across customers, and we do not sell
+                                or share it with third parties, except service providers that host our systems.
+                            </p>
+                            <p className="body-medium text-gray-600 mb-4"><strong>How we store it:</strong> access tokens are encrypted
+                                (AES-256-GCM) and kept in your organisation&apos;s own database. Comments, reviews, messages and insights are
+                                fetched from the network when you open the relevant screen and are not stored in our database. We store
+                                the posts you create in SkillDeck and the connected account&apos;s name and profile picture.
+                            </p>
+                            <p className="body-medium text-gray-600 mb-4"><strong>How long we keep it:</strong> while the account stays
+                                connected. When you disconnect an account in SkillDeck, remove SkillDeck from your Facebook, Instagram or
+                                LinkedIn settings, or ask for deletion, we delete its access token and stored profile data and stop all
+                                access.
+                            </p>
+                            <p className="body-medium text-gray-600 mb-4"><strong>How to delete your data:</strong></p>
+                            <ul className="list-disc pl-5 space-y-2 body-medium text-gray-600 mb-4">
+                                <li>In SkillDeck, go to Marketing &gt; Social Media &gt; Accounts and click Disconnect on the account; or</li>
+                                <li>On Facebook, go to Settings &amp; privacy &gt; Settings &gt; Business integrations, remove SkillDeck and
+                                    choose to delete data. Facebook sends us a deletion request and gives you a confirmation code to check its status; or</li>
+                                <li>Email <a href="mailto:hello@skilldeck.net" className="text-brand-primary font-semibold hover:underline">hello@skilldeck.net</a> with the
+                                    account name, and we will delete the data within 30 days.</li>
+                            </ul>
+                            <p className="body-medium text-gray-600">
+                                Our use of data received from Meta platforms follows the Meta Platform Terms and Developer Policies, and our use of
+                                LinkedIn data follows the LinkedIn API Terms of Use.
+                            </p>
+                        </div>
+
+                        <div>
+                            <h2 className="heading-section2 mb-4">10. Contact Us</h2>
+                            <p className="body-medium text-gray-600">
+                                For questions about this Privacy Policy or to exercise your rights, email{" "}
+                                <a href="mailto:hello@skilldeck.net" className="text-brand-primary font-semibold hover:underline">hello@skilldeck.net</a>.
+                                See also our <a href="/grievance-redressal" className="text-brand-primary font-semibold hover:underline">Grievance Redressal</a> page.
+                            </p>
+                        </div>
                     </div>
                 </div>
             </main>
