@@ -162,7 +162,46 @@ export default function PrivacyPolicyPage() {
                         </div>
 
                         <div>
-                            <h2 className="heading-section2 mb-4">10. Contact Us</h2>
+                            <h2 className="heading-section2 mb-4">10. Google Account Data (Google Sign-In and Google Calendar)</h2>
+                            <p className="body-medium text-gray-600 mb-4">
+                                SkillDeck uses Google APIs in two places. Each one asks for your permission on Google&apos;s own consent
+                                screen, and asks only for what that feature needs.
+                            </p>
+                            <ul className="list-disc pl-5 space-y-2 body-medium text-gray-600 mb-4">
+                                <li><strong>Sign in with Google:</strong> learners and users can sign in with their Google account. We receive
+                                    your name, email address and profile picture, and use them only to create and identify your account.</li>
+                                <li><strong>Google Calendar for meeting bookings:</strong> a member of a business using SkillDeck can connect their
+                                    Google Calendar so that visitors can book meetings with them. We use this access to (a) read the times when
+                                    the member is busy, so we only offer free times to visitors (we see start and end times only, not the titles,
+                                    descriptions or guests of other events), and (b) create, update or cancel the calendar event, with a Google
+                                    Meet link, for each meeting booked through SkillDeck. We do not read, change or delete any other events.</li>
+                            </ul>
+                            <p className="body-medium text-gray-600 mb-4"><strong>How we store it:</strong> Google access and refresh tokens
+                                are encrypted (AES-256-GCM) and kept in the business&apos;s own database. For each booked meeting we store the
+                                booking details, the Google event ID and the Meet link. Busy times are fetched when visitors look for a time
+                                and are not stored.
+                            </p>
+                            <p className="body-medium text-gray-600 mb-4"><strong>Sharing and limits:</strong> we do not sell Google user
+                                data, use it for advertising, or let people read it except where needed to provide the feature, for security,
+                                or to comply with law. We do not use Google user data to develop, improve or train generalised artificial
+                                intelligence or machine learning models.
+                            </p>
+                            <p className="body-medium text-gray-600 mb-4"><strong>How to remove access and delete data:</strong> disconnect
+                                Google Calendar in SkillDeck, or remove SkillDeck at{' '}
+                                <a href="https://myaccount.google.com/permissions" target="_blank" rel="noopener noreferrer" className="text-brand-primary font-semibold hover:underline">myaccount.google.com/permissions</a>.
+                                We then delete the stored tokens and stop all access. To delete other data, email{' '}
+                                <a href="mailto:hello@skilldeck.net" className="text-brand-primary font-semibold hover:underline">hello@skilldeck.net</a>;
+                                we act within 30 days.
+                            </p>
+                            <p className="body-medium text-gray-600">
+                                SkillDeck&apos;s use and transfer to any other app of information received from Google APIs will adhere to the{' '}
+                                <a href="https://developers.google.com/terms/api-services-user-data-policy" target="_blank" rel="noopener noreferrer" className="text-brand-primary font-semibold hover:underline">Google API Services User Data Policy</a>,
+                                including the Limited Use requirements.
+                            </p>
+                        </div>
+
+                        <div>
+                            <h2 className="heading-section2 mb-4">11. Contact Us</h2>
                             <p className="body-medium text-gray-600">
                                 For questions about this Privacy Policy or to exercise your rights, email{" "}
                                 <a href="mailto:hello@skilldeck.net" className="text-brand-primary font-semibold hover:underline">hello@skilldeck.net</a>.

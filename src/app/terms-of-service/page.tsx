@@ -109,21 +109,24 @@ export default function TermsOfServicePage() {
                         </div>
 
                         <div>
-                            <h2 className="heading-section2 mb-4">8. Third-Party Platforms (Facebook, Instagram, LinkedIn)</h2>
+                            <h2 className="heading-section2 mb-4">8. Third-Party Platforms (Facebook, Instagram, LinkedIn, Google)</h2>
                             <p className="body-medium text-gray-600 mb-4">
-                                The Social Media module lets you connect accounts you manage on third-party platforms such as
-                                Facebook, Instagram and LinkedIn. When you connect an account, you authorise SkillDeck to access
+                                SkillDeck lets you connect accounts you hold on third-party platforms: Facebook, Instagram and
+                                LinkedIn in the Social Media module, and Google (Google Calendar) for meeting bookings. When you
+                                connect an account, you authorise SkillDeck to access
                                 it and act on it on your behalf, only for the features you use. You agree that:
                             </p>
                             <ul className="list-disc pl-5 space-y-2 body-medium text-gray-600 mb-4">
                                 <li>You only connect Pages and accounts you own or are authorised to manage.</li>
                                 <li>You are responsible for the content you publish and the replies and messages you send through SkillDeck.</li>
                                 <li>Your use follows each platform&apos;s own terms and policies, including the Meta Terms of Service,
-                                    Instagram Terms of Use, Meta Community Standards and LinkedIn User Agreement.</li>
+                                    Instagram Terms of Use, Meta Community Standards, LinkedIn User Agreement and Google Terms of Service.</li>
+                                <li>If visitors book meetings with you through SkillDeck, you are responsible for how you use the
+                                    details they give you, and for having a lawful basis to contact them.</li>
                                 <li>You will not use the Services to send spam, unsolicited or bulk promotional messages, or misleading or prohibited content.</li>
                             </ul>
                             <p className="body-medium text-gray-600 mb-4">
-                                SkillDeck is not affiliated with or endorsed by Meta or LinkedIn. These platforms may change or
+                                SkillDeck is not affiliated with or endorsed by Meta, LinkedIn or Google. These platforms may change or
                                 limit their services at any time, which can affect features in SkillDeck. You can disconnect an
                                 account at any time. How we handle data from these platforms is described in our{' '}
                                 <Link href="/privacy-policy" className="text-brand-primary font-semibold hover:underline">
