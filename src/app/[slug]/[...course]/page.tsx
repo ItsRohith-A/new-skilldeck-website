@@ -13,6 +13,7 @@ import { fetchFromBackend } from "@/lib/apiProxy";
 import { env } from "@/lib/env";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { cache } from "react";
 import { redirectOrNotFound } from "@/lib/redirects";
 import { buildCanonical } from "@/lib/canonical";
 
@@ -69,11 +70,9 @@ export async function generateStaticParams() {
         const totalPages = first.meta?.pages || 1;
 
         if (totalPages > 1) {
-            const rest = await Promise.all(
-                Array.from({ length: totalPages - 1 }, (_, i) => fetchPage(i + 2).catch(() => null))
-            );
-            for (const page of rest) {
-                if (page) courses.push(...(page.data || []));
+            for (let p = 2; p <= totalPages; p++) {
+                const pageData = await fetchPage(p).catch(() => null);
+                if (pageData?.data) courses.push(...pageData.data);
             }
         }
 
@@ -91,7 +90,7 @@ export async function generateStaticParams() {
 
 export const revalidate = false; // Pure On-Demand ISR: cached permanently on Edge CDN until webhook purge
 
-async function getCourse(slug: string, location?: string, pageUrl?: string) {
+const getCourse = cache(async (slug: string, location?: string, pageUrl?: string) => {
     if (slug?.includes('.') || (location && location.includes('.'))) {
         return null;
     }
@@ -132,7 +131,7 @@ async function getCourse(slug: string, location?: string, pageUrl?: string) {
         // as above: never turn an outage into a cached 404.
         throw error;
     }
-}
+});
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string, course: string[] }> }): Promise<Metadata> {
     const { slug, course: courseParts } = await params;
