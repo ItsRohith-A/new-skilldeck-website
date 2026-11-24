@@ -2,7 +2,7 @@ import { redirectOrNotFound } from '@/lib/redirects';
 import { buildCanonical } from '@/lib/canonical';
 import { env } from '@/lib/env';
 import { Metadata } from 'next';
-import { Suspense } from 'react';
+import { Suspense, cache } from 'react';
 
 // Components
 import PatternHero from '@/components/patterns/PatternHero';
@@ -43,7 +43,7 @@ export async function generateStaticParams() {
 
 export const revalidate = false; // Pure On-Demand ISR: held on the CDN until a webhook purge
 
-async function getPatternData(patternSlug: string) {
+const getPatternData = cache(async (patternSlug: string) => {
     try {
         const response = await fetchFromBackend(`/patterns/${patternSlug}`, {
             next: { tags: [`pattern-${patternSlug}`] }
@@ -59,9 +59,9 @@ async function getPatternData(patternSlug: string) {
         console.error('Error resolving pattern data:', error);
         return null;
     }
-}
+});
 
-async function getRelatedPatterns(parentSlug: string, patternFor: 'course' | 'service' = 'course') {
+const getRelatedPatterns = cache(async (parentSlug: string, patternFor: 'course' | 'service' = 'course') => {
     if (!parentSlug) return [];
     try {
         const queryParams = new URLSearchParams({
@@ -79,7 +79,7 @@ async function getRelatedPatterns(parentSlug: string, patternFor: 'course' | 'se
         console.error("Failed to fetch related patterns", e);
         return [];
     }
-}
+});
 
 export async function generateMetadata({ params }: { params: Promise<{ patternSlug: string }> }): Promise<Metadata> {
     const { patternSlug } = await params;

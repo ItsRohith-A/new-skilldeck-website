@@ -87,6 +87,10 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "flagcdn.com" },
       // Stock photography for the /service-demo design concept.
       { protocol: "https", hostname: "images.unsplash.com" },
+      // Local development only: a local backend serves uploads from the local bucket
+      ...(process.env.NODE_ENV !== "production"
+        ? [{ protocol: "https" as const, hostname: "local-skilldeck-s3.s3.ap-south-1.amazonaws.com" }]
+        : []),
     ],
     formats: ["image/avif", "image/webp"],
     minimumCacheTTL: 31536000,
@@ -97,8 +101,8 @@ const nextConfig: NextConfig = {
     // The build prerenders every course page against a rate-limited backend.
     // Fewer pages in flight per worker keeps it under the limit, and a page
     // that still fails gets retried instead of failing the whole build.
-    staticGenerationMaxConcurrency: 4,
-    staticGenerationRetryCount: 2,
+    staticGenerationMaxConcurrency: 2,
+    staticGenerationRetryCount: 3,
     optimizePackageImports: [
       "lucide-react",
       "framer-motion",

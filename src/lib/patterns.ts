@@ -44,16 +44,12 @@ export const getAllPatterns = cache(async (): Promise<PatternSummary[]> => {
         const totalPages = first.meta?.pages || 1;
 
         if (totalPages > 1) {
-            const rest = await Promise.all(
-                Array.from({ length: totalPages - 1 }, (_, i) =>
-                    fetchPage(i + 2).catch((err) => {
-                        console.error(`[patterns] error fetching page ${i + 2}:`, err);
-                        return null;
-                    })
-                )
-            );
-            for (const page of rest) {
-                if (page) patterns.push(...(page.data || []));
+            for (let p = 2; p <= totalPages; p++) {
+                const pageData = await fetchPage(p).catch((err) => {
+                    console.error(`[patterns] error fetching page ${p}:`, err);
+                    return null;
+                });
+                if (pageData?.data) patterns.push(...pageData.data);
             }
         }
 

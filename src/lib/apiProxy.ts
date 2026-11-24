@@ -5,18 +5,88 @@ import { env } from "./env";
 const inFlightRequests = new Map<string, Promise<Response>>();
 
 const RETRYABLE_STATUSES = new Set([429, 503]);
-const RATE_LIMIT_RETRIES = 4;
-const MAX_RETRY_DELAY_MS = 10000;
+const RATE_LIMIT_RETRIES = 8;
+const MAX_RETRY_DELAY_MS = 30000;
+const MAX_CONCURRENT_REQUESTS = 6;
 
-/** Retry-After (seconds or HTTP date) when sent, else exponential backoff with jitter. */
+let activeRequests = 0;
+const queue: (() => void)[] = [];
+let pauseUntil = 0;
+
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+async function acquireSlot(): Promise<void> {
+  if (typeof window !== "undefined") return;
+
+  if (Date.now() < pauseUntil) {
+    await sleep(pauseUntil - Date.now());
+  }
+
+  if (activeRequests < MAX_CONCURRENT_REQUESTS) {
+    activeRequests++;
+    return;
+  }
+
+  return new Promise((resolve) => {
+    queue.push(async () => {
+      if (Date.now() < pauseUntil) {
+        await sleep(pauseUntil - Date.now());
+      }
+      activeRequests++;
+      resolve();
+    });
+  });
+}
+
+function releaseSlot(): void {
+  if (typeof window !== "undefined") return;
+
+  activeRequests = Math.max(0, activeRequests - 1);
+  if (queue.length > 0 && activeRequests < MAX_CONCURRENT_REQUESTS) {
+    const next = queue.shift();
+    if (next) next();
+  }
+}
+
+function setRateLimitPause(delayMs: number): void {
+  pauseUntil = Math.max(pauseUntil, Date.now() + delayMs);
+}
+
+/** Retry-After (seconds or HTTP date) or RateLimit-Reset when sent, else exponential backoff with jitter. */
 function retryDelayMs(response: Response, attempt: number): number {
   const retryAfter = response.headers.get("retry-after");
   if (retryAfter) {
     const seconds = Number(retryAfter);
-    const ms = Number.isFinite(seconds) ? seconds * 1000 : Date.parse(retryAfter) - Date.now();
-    if (Number.isFinite(ms) && ms > 0) return Math.min(ms, MAX_RETRY_DELAY_MS);
+    if (Number.isFinite(seconds) && seconds > 0) {
+      return Math.min(seconds * 1000, MAX_RETRY_DELAY_MS);
+    }
+    const parsedDate = Date.parse(retryAfter);
+    if (!Number.isNaN(parsedDate)) {
+      const diff = parsedDate - Date.now();
+      if (diff > 0) return Math.min(diff, MAX_RETRY_DELAY_MS);
+    }
   }
-  return Math.min(500 * 2 ** (attempt - 1) + Math.random() * 250, MAX_RETRY_DELAY_MS);
+
+  const resetHeader = response.headers.get("x-ratelimit-reset") || response.headers.get("ratelimit-reset");
+  if (resetHeader) {
+    const resetNum = Number(resetHeader);
+    if (Number.isFinite(resetNum)) {
+      if (resetNum > 1_000_000_000_000) {
+        const diff = resetNum - Date.now();
+        if (diff > 0) return Math.min(diff, MAX_RETRY_DELAY_MS);
+      } else if (resetNum > 1_000_000_000) {
+        const diff = resetNum * 1000 - Date.now();
+        if (diff > 0) return Math.min(diff, MAX_RETRY_DELAY_MS);
+      } else if (resetNum > 0) {
+        return Math.min(resetNum * 1000, MAX_RETRY_DELAY_MS);
+      }
+    }
+  }
+
+  const base = response.status === 429 ? 1500 : 500;
+  return Math.min(base * 2 ** (attempt - 1) + Math.random() * 500, MAX_RETRY_DELAY_MS);
 }
 
 interface FetchOptions {
@@ -28,6 +98,8 @@ interface FetchOptions {
   cache?: RequestCache;
   skipPurge?: boolean;
   prefix?: string;
+  /** Extra request headers (e.g. the visitor's IP as x-user-ip) */
+  headers?: Record<string, string>;
 }
 
 export function getSubdomain(request: NextRequest): string | null {
@@ -50,7 +122,7 @@ export function getSubdomain(request: NextRequest): string | null {
 }
 
 export async function fetchFromBackend(endpoint: string, options?: FetchOptions): Promise<Response> {
-  const { request, queryParams, method = "GET", body, next, cache, prefix } = options || {};
+  const { request, queryParams, method = "GET", body, next, cache, prefix, headers: extraHeaders } = options || {};
 
   const routePrefix = prefix || ((endpoint.startsWith("/schedules") || endpoint.startsWith("/tenants")) ? "/api/v1/skilldeck" : "/api/v1/content");
   let backendUrl = `${env.API_BASE_URL}${routePrefix}${endpoint}`;
@@ -61,6 +133,7 @@ export async function fetchFromBackend(endpoint: string, options?: FetchOptions)
   const headers: Record<string, string> = {
     "x-api-key": env.API_KEY,
     "Content-Type": "application/json",
+    ...extraHeaders,
   };
 
   if (request) {
@@ -94,6 +167,7 @@ export async function fetchFromBackend(endpoint: string, options?: FetchOptions)
     }
 
     const fetchPromise = (async () => {
+      await acquireSlot();
       try {
         const doFetch = async () => {
           const controller = new AbortController();
@@ -120,7 +194,11 @@ export async function fetchFromBackend(endpoint: string, options?: FetchOptions)
         // build. Back off and retry GETs, honouring Retry-After within a cap.
         if (isGET) {
           for (let attempt = 1; attempt <= RATE_LIMIT_RETRIES && RETRYABLE_STATUSES.has(response.status); attempt++) {
-            await new Promise((resolve) => setTimeout(resolve, retryDelayMs(response, attempt)));
+            const delay = retryDelayMs(response, attempt);
+            if (response.status === 429) {
+              setRateLimitPause(delay);
+            }
+            await sleep(delay);
             response = await doFetch();
           }
         }
@@ -148,6 +226,7 @@ export async function fetchFromBackend(endpoint: string, options?: FetchOptions)
 
         return response;
       } finally {
+        releaseSlot();
         if (isGET && typeof window === "undefined") {
           inFlightRequests.delete(backendUrl);
         }

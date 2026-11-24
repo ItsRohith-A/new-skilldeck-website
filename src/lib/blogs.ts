@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { fetchFromBackend } from "./apiProxy";
 
 export interface BlogCategory {
@@ -166,7 +167,7 @@ export const fetchAggregatedBlogs = async (queryParams: BlogQueryParams = {}, pa
     }
 };
 
-export const fetchBlogBySlug = async (slug: string, blogId?: string, pageUrl?: string): Promise<any | null> => {
+export const fetchBlogBySlug = cache(async (slug: string, blogId?: string, pageUrl?: string): Promise<any | null> => {
     try {
         const { env } = await import("./env");
         const API_URL = env.SERVER_URL;
@@ -232,4 +233,4 @@ export const fetchBlogBySlug = async (slug: string, blogId?: string, pageUrl?: s
         console.error('Error fetching blog by slug:', error);
         return null;
     }
-};
+});

@@ -1,4 +1,5 @@
 import { Metadata } from "next";
+import { cache } from "react";
 import { redirectOrNotFound } from "@/lib/redirects";
 import { fetchFromBackend } from "@/lib/apiProxy";
 import { env } from "@/lib/env";
@@ -50,7 +51,7 @@ interface ServiceParams {
 }
 
 // Function to fetch service data
-async function getServiceData(slug: string, pageUrl?: string): Promise<ServiceData | null> {
+const getServiceData = cache(async (slug: string, pageUrl?: string): Promise<ServiceData | null> => {
     try {
         const response = await fetchFromBackend(`/services/${slug}`, {
             next: { tags: [`service-${slug}`, 'services'] }
@@ -85,7 +86,7 @@ async function getServiceData(slug: string, pageUrl?: string): Promise<ServiceDa
         // Network failures and the 15s fetch timeout land here.
         throw error;
     }
-}
+});
 
 // Metadata Generator
 export async function generateMetadata({ params }: { params: Promise<ServiceParams> }): Promise<Metadata> {
