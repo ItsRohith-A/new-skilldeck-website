@@ -50,7 +50,7 @@ export function formatLocation(slug: string): string {
  * prerender, and they are reachable because dynamicParams stays on.
  */
 export async function generateStaticParams() {
-    const PAGE_SIZE = 100; // the listing endpoint caps out here
+    const PAGE_SIZE = 50;
 
     async function fetchPage(page: number) {
         const queryParams = new URLSearchParams({ page: String(page), limit: String(PAGE_SIZE) });
@@ -67,14 +67,6 @@ export async function generateStaticParams() {
         if (!first) return [];
 
         const courses: any[] = [...(first.data || [])];
-        const totalPages = first.meta?.pages || 1;
-
-        if (totalPages > 1) {
-            for (let p = 2; p <= totalPages; p++) {
-                const pageData = await fetchPage(p).catch(() => null);
-                if (pageData?.data) courses.push(...pageData.data);
-            }
-        }
 
         return courses
             .map((course: any) => ({

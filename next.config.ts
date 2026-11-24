@@ -87,10 +87,6 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "flagcdn.com" },
       // Stock photography for the /service-demo design concept.
       { protocol: "https", hostname: "images.unsplash.com" },
-      // Local development only: a local backend serves uploads from the local bucket
-      ...(process.env.NODE_ENV !== "production"
-        ? [{ protocol: "https" as const, hostname: "local-skilldeck-s3.s3.ap-south-1.amazonaws.com" }]
-        : []),
     ],
     formats: ["image/avif", "image/webp"],
     minimumCacheTTL: 31536000,
@@ -98,10 +94,13 @@ const nextConfig: NextConfig = {
     imageSizes: [16, 32, 48, 64, 96, 128, 256],
   },
   experimental: {
-    // The build prerenders every course page against a rate-limited backend.
-    // Fewer pages in flight per worker keeps it under the limit, and a page
-    // that still fails gets retried instead of failing the whole build.
-    staticGenerationMaxConcurrency: 2,
+    // Vercel Turbo Build Machines have 30 cores. Without limiting workers,
+    // Next.js spawns 30 parallel export workers that bombard the backend API
+    // beyond its 50-request burst rate limit. Limiting to 1 worker keeps
+    // requests steady and well within rate limits.
+    cpus: 1,
+    workerThreads: false,
+    staticGenerationMaxConcurrency: 1,
     staticGenerationRetryCount: 3,
     optimizePackageImports: [
       "lucide-react",
