@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { AnimatePresence, motion, useMotionValueEvent, useReducedMotion, useScroll } from "framer-motion";
 import { ArrowRight, ChevronDown, Layers, Menu, X } from "lucide-react";
-import { useLeadModal } from "@/components/Forms/LeadModalContext";
+import { useDemoBooking } from "@/components/Booking/useDemoBooking";
 import DynamicServiceIcon from "@/components/shared/DynamicServiceIcon";
 import { DemoButton } from "./primitives";
 
@@ -42,7 +42,6 @@ const LINKS = [
 export default function DemoNav({ services = [] }: { services?: NavService[] }) {
     const { scrollY } = useScroll();
     const reduced = useReducedMotion();
-    const { openModal } = useLeadModal();
 
     const [condensed, setCondensed] = useState(false);
     const [activeId, setActiveId] = useState<string | null>(null);
@@ -81,14 +80,11 @@ export default function DemoNav({ services = [] }: { services?: NavService[] }) 
         return () => window.removeEventListener("hashchange", close);
     }, [menuOpen]);
 
+    const goToBooking = useDemoBooking();
     const bookDemo = () => {
         setMenuOpen(false);
         setServicesOpen(false);
-        openModal({
-            source: "service-demo-nav",
-            formTitle: "Book a SkillDeck walkthrough",
-            defaultValues: { subject: "Demo request — training platform" },
-        });
+        goToBooking();
     };
 
     return (

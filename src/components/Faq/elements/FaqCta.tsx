@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { MessageCircle, Mail, Phone } from 'lucide-react';
+import { DEMO_BOOKING_PATH } from "@/lib/booking";
 
 export default function FaqCta() {
     return (
@@ -25,7 +26,7 @@ export default function FaqCta() {
                                 Contact Us
                             </Link>
                             <a
-                                href="mailto:hello@skilldeck.net"
+                                href={DEMO_BOOKING_PATH}
                                 className="inline-flex items-center justify-center gap-2 bg-white/10 border border-white/20 text-white px-6 py-3 rounded-xl font-semibold hover:bg-white/20 transition-colors"
                             >
                                 <Phone className="w-5 h-5" />

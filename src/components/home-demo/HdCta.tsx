@@ -2,7 +2,7 @@
 
 import { ArrowUpRight, Check, Globe, Phone, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/Button";
-import { useLeadModal } from "@/components/Forms/LeadModalContext";
+import { useDemoBooking } from "@/components/Booking/useDemoBooking";
 
 const formats = [
     { icon: Phone, title: "Virtual Walkthrough", description: "30-minute interactive session with our experts." },
@@ -18,7 +18,7 @@ const whatYouGet = [
 ];
 
 export default function HdCta() {
-    const { openModal } = useLeadModal();
+    const bookDemo = useDemoBooking();
 
     return (
         <section className="section-y bg-white">
@@ -56,12 +56,7 @@ export default function HdCta() {
                             </div>
 
                             <Button
-                                onClick={() =>
-                                    openModal({
-                                        source: "home-cta",
-                                        formTitle: "Book a Demo with Skilldeck",
-                                    })
-                                }
+                                onClick={bookDemo}
                                 variant="primary"
                                 size="lg"
                                 className="rounded-full font-bold"

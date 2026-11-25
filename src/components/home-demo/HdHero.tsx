@@ -5,6 +5,7 @@ import { ArrowRight, Building2, Gauge, Users2 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import HdGradientText from "./HdGradientText";
 import HdToolsConverge from "./HdToolsConverge";
+import { DEMO_BOOKING_PATH } from "@/lib/booking";
 
 const trustStats = [
     { icon: Users2, value: "500+", label: "Institutes trust us" },
@@ -55,7 +56,7 @@ export default function HdHero() {
                             </Button>
                             <Button
                                 as="a"
-                                href="#features"
+                                href={DEMO_BOOKING_PATH}
                                 variant="outline-primary"
                                 size="md"
                                 className="rounded-xl text-xs sm:text-sm px-3.5 sm:px-5 h-11 flex items-center justify-center"

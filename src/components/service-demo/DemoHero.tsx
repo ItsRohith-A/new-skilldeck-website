@@ -1,7 +1,7 @@
 "use client";
 
 import { ArrowRight, Sparkles, Star } from "lucide-react";
-import { useLeadModal } from "@/components/Forms/LeadModalContext";
+import { useDemoBooking } from "@/components/Booking/useDemoBooking";
 import { DemoButton } from "./primitives";
 import { AutomationCard, CourseCard, EngagementCard, LiveSessionCard, MentorCard } from "./collage";
 import { shell } from "./theme";
@@ -20,14 +20,8 @@ import { ParallaxLayer } from "./motion";
  * rail of the three cards that survive at small sizes.
  */
 export default function DemoHero() {
-    const { openModal } = useLeadModal();
 
-    const bookDemo = () =>
-        openModal({
-            source: "service-demo-hero",
-            formTitle: "Book a SkillDeck walkthrough",
-            defaultValues: { subject: "Demo request — training platform" },
-        });
+    const bookDemo = useDemoBooking();
 
     return (
         <section className="relative overflow-hidden bg-white pt-28 md:pt-32 pb-16 md:pb-20">
