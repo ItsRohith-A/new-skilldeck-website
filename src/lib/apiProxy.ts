@@ -4,9 +4,10 @@ import { env } from "./env";
 
 const inFlightRequests = new Map<string, Promise<Response>>();
 
+const IS_BUILD = process.env.NEXT_PHASE === "phase-production-build";
 const RETRYABLE_STATUSES = new Set([429, 503]);
-const RATE_LIMIT_RETRIES = 8;
-const MAX_RETRY_DELAY_MS = 30000;
+const RATE_LIMIT_RETRIES = IS_BUILD ? 6 : 3;
+const MAX_RETRY_DELAY_MS = IS_BUILD ? 15000 : 5000;
 const MAX_CONCURRENT_REQUESTS = 6;
 
 let activeRequests = 0;
@@ -85,8 +86,8 @@ function retryDelayMs(response: Response, attempt: number): number {
     }
   }
 
-  const base = response.status === 429 ? 1500 : 500;
-  return Math.min(base * 2 ** (attempt - 1) + Math.random() * 500, MAX_RETRY_DELAY_MS);
+  const base = response.status === 429 && IS_BUILD ? 1500 : 500;
+  return Math.min(base * 2 ** (attempt - 1) + Math.random() * 250, MAX_RETRY_DELAY_MS);
 }
 
 interface FetchOptions {
